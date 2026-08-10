@@ -1,0 +1,245 @@
+@import url('../fonts/fonts.css');
+
+/* ========================================
+   Design Tokens
+   Base: 1rem = 16px
+   ======================================== */
+
+:root {
+  /* Fonts (Paperlogy → noonnu font-family: Paperozi) */
+  --font-suit: 'Suit', sans-serif;
+  --font-paperlogy: 'Paperozi', sans-serif;
+
+  /* Base Color */
+  --color-text-dark: #333333;
+  --color-grey-600: #747883;
+  --color-grey-500: #9da1ac;
+  --color-grey-400: #b8bcc4;
+  --color-grey-300: #d2d5da;
+  --color-grey-200: #e6e7eb;
+  --color-grey-100: #f3f4f6;
+  --color-grey-50: #fbfcfe;
+  --color-white: #ffffff;
+
+  /* Primary / Brand */
+  --color-brand-dark: #322a23;
+  --color-brand-point: #a68e72;
+  --color-brand-light-1: #f0ede4;
+  --color-brand-light-2: #f9f7f3;
+
+  /* Error */
+  --color-error-300: #dc2626;
+  --color-error-400: #991b1b;
+
+  /* Breakpoints (reference) */
+  --bp-mobile-min: 20rem; /* 320px */ 
+  --bp-tablet: 48rem; /* 768px */
+  --bp-pc: 64rem; /* 1024px */
+  --layout-max: 120rem; /* 1920px */
+
+  /* Grid — mobile default (320–767) */
+  --grid-columns: 4;
+  --grid-gutter: 1.25rem; /* 20px */
+  --grid-margin: 1.25rem; /* 20px */
+
+  /* Typography — PC scale (tablet/mobile TBD) */
+  --fs-extra-large: 4rem; /* 64px */
+  --fs-title: 2.5rem; /* 40px */
+  --fs-subtitle-lg: 2.25rem; /* 36px */
+  --fs-subtitle-md: 1.75rem; /* 28px */
+  --fs-body-01: 1.5rem; /* 24px */
+  --fs-body-02: 1.375rem; /* 22px */
+  --fs-body-03: 1.25rem; /* 20px */
+  --fs-body-04: 1.125rem; /* 18px */
+  --fs-body-05: 1rem; /* 16px */
+  --fs-footer: 1rem; /* 16px */
+}
+
+/* Tablet: 768–1023px */
+@media (min-width: 48rem) {
+  :root {
+    --grid-columns: 6;
+    --grid-gutter: 1.25rem;
+    --grid-margin: 1.25rem;
+  }
+}
+
+/* PC: 1024px+ */
+@media (min-width: 64rem) {
+  :root {
+    --grid-columns: 12;
+    --grid-gutter: 1.25rem;
+    --grid-margin: 7.5rem; /* 120px */
+  }
+}
+
+/* ========================================
+   Base
+   ======================================== */
+
+html {
+  font-size: 100%; /* 1rem = 16px */
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+body {
+  min-width: var(--bp-mobile-min);
+  font-family: var(--font-suit);
+  font-weight: 400;
+  font-size: var(--fs-body-05);
+  color: var(--color-text-dark);
+  background-color: var(--color-white);
+}
+
+img,
+svg,
+video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ========================================
+   Layout
+   ======================================== */
+
+.container {
+  width: 100%;
+  max-width: var(--layout-max);
+  margin-inline: auto;
+  padding-inline: var(--grid-margin);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
+  column-gap: var(--grid-gutter);
+  row-gap: var(--grid-gutter);
+}
+
+/* ========================================
+   Typography — PC
+   ======================================== */
+
+/* Extra Large — Paperlogy ExtraBold 64 */
+.text-extra-large {
+  font-family: var(--font-paperlogy);
+  font-weight: 800;
+  font-size: var(--fs-extra-large);
+}
+
+/* Extra Large — Suit ExtraBold 64 */
+.text-extra-large-suit {
+  font-family: var(--font-suit);
+  font-weight: 800;
+  font-size: var(--fs-extra-large);
+}
+
+/* Title02 — Paperlogy Bold 40 */
+.text-title-02 {
+  font-family: var(--font-paperlogy);
+  font-weight: 700;
+  font-size: var(--fs-title);
+}
+
+/* Title03 — Suit Medium 40 */
+.text-title-03 {
+  font-family: var(--font-suit);
+  font-weight: 500;
+  font-size: var(--fs-title);
+}
+
+/* Subtitle01 — Paperlogy Bold 36 */
+.text-subtitle-01 {
+  font-family: var(--font-paperlogy);
+  font-weight: 700;
+  font-size: var(--fs-subtitle-lg);
+}
+
+/* Subtitle02 — Suit Semibold 36 */
+.text-subtitle-02 {
+  font-family: var(--font-suit);
+  font-weight: 600;
+  font-size: var(--fs-subtitle-lg);
+}
+
+/* Subtitle03 — Suit Semibold 28 */
+.text-subtitle-03 {
+  font-family: var(--font-suit);
+  font-weight: 600;
+  font-size: var(--fs-subtitle-md);
+}
+
+/* Subtitle04 — Paperlogy Semibold 28 */
+.text-subtitle-04 {
+  font-family: var(--font-paperlogy);
+  font-weight: 600;
+  font-size: var(--fs-subtitle-md);
+}
+
+/* Body01 — Suit Regular 24 */
+.text-body-01 {
+  font-family: var(--font-suit);
+  font-weight: 400;
+  font-size: var(--fs-body-01);
+}
+
+/* Body02 — Suit Regular 22 */
+.text-body-02 {
+  font-family: var(--font-suit);
+  font-weight: 400;
+  font-size: var(--fs-body-02);
+}
+
+/* P-Body02 — Paperlogy Regular 22 */
+.text-p-body-02 {
+  font-family: var(--font-paperlogy);
+  font-weight: 400;
+  font-size: var(--fs-body-02);
+}
+
+/* Body03 — Suit Regular 20 */
+.text-body-03 {
+  font-family: var(--font-suit);
+  font-weight: 400;
+  font-size: var(--fs-body-03);
+}
+
+/* P-Body03 — Paperlogy Regular 20 */
+.text-p-body-03 {
+  font-family: var(--font-paperlogy);
+  font-weight: 400;
+  font-size: var(--fs-body-03);
+}
+
+/* Body04 — Suit Regular 18 */
+.text-body-04 {
+  font-family: var(--font-suit);
+  font-weight: 400;
+  font-size: var(--fs-body-04);
+}
+
+/* Body05 — Suit Regular 16 */
+.text-body-05 {
+  font-family: var(--font-suit);
+  font-weight: 400;
+  font-size: var(--fs-body-05);
+}
+
+/* Footer — Suit Regular 16 */
+.text-footer {
+  font-family: var(--font-suit);
+  font-weight: 400;
+  font-size: var(--fs-footer);
+}
