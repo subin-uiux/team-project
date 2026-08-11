@@ -1,0 +1,79 @@
+---
+description: EQUIL BEM 클래스 네이밍 규칙 (HTML/CSS/SCSS/JS)
+globs: "**/*.{html,css,scss,js}"
+alwaysApply: true
+---
+
+# EQUIL Class Naming Rules
+
+HTML, CSS, SCSS, JavaScript에서 클래스명을 생성·수정할 때 이 규칙을 따른다.
+
+## BEM + kebab-case
+
+형식: `Block__Element--modifier`
+
+- 영문 소문자 kebab-case만 사용
+- camelCase, PascalCase, snake_case 금지
+
+```html
+<!-- ✅ -->
+<main class="main-sleep-fit">
+  <h2 class="main-sleep-fit__title">...</h2>
+</main>
+
+<!-- ❌ -->
+<main class="mainSleepFit">
+```
+
+## 페이지 전용 Section Block
+
+페이지 전용 section은 `페이지명-섹션명` Block을 사용한다.
+
+예: `main-hero`, `mattress-tech-pressure`, `pillow-tech-structure`, `bedding-tech-process`, `heating-mat-tech-technology`, `brand-story-philosophy`
+
+- 기존에 정해진 section Block이 있으면 **임의로 새 이름을 만들거나 변경하지 않는다**
+- 코드 작성 전 관련 HTML/CSS/JS를 먼저 확인한다
+
+## Element (`__`)
+
+```html
+<!-- ✅ -->
+<div class="main-hero__container">
+  <div class="main-hero__content">
+    <h1 class="main-hero__title">...</h1>
+  </div>
+</div>
+
+<!-- ❌ 계층 중첩 금지 -->
+<div class="main-hero__content__title">
+```
+
+## Modifier (`--`) / JS 상태 (`is-`)
+
+디자인·종류 변형: `button--primary`, `product-card--featured`
+
+JS로 바뀌는 상태: `is-active`, `is-open`, `is-hidden`, `is-selected` (`--` 대신 `is-` 사용)
+
+## 공통 / 재사용 Block
+
+여러 페이지에서 재사용하면 페이지명을 붙이지 않는다: `button`, `product-card`, `section-heading`, `header`, `footer`
+
+공통 레이아웃 `container` 허용. 페이지 전용 스타일이 필요하면 함께 사용:
+
+```html
+<div class="container main-hero__container">
+```
+
+## 의미 있는 이름 / 줄임말
+
+금지: `box`, `box1`, `text1`, `img1`, `wrap1`, `inner1`, `left`, `right`
+
+허용: `image`, `title`, `subtitle`, `text`, `desc`, `content`, `button`, `link`, `item`, `list`, `icon`, `label`
+
+금지 줄임말: `img`, `tit`, `txt`, `btn` — 단 `description` → `desc`는 허용
+
+## 변경 시 주의
+
+1. HTML 클래스 추가·수정 시 관련 CSS/SCSS selector와 JS selector를 함께 확인한다
+2. 기존 클래스가 있으면 요청 없이 이름을 바꾸지 않는다
+3. 작성 전 현재 파일과 관련 파일을 확인하고 기존 구조·네이밍을 유지한다
