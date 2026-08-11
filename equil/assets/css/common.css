@@ -45,6 +45,7 @@
 
   /* Typography — PC scale (tablet/mobile TBD) */
   --fs-extra-large: 4rem; /* 64px */
+  --fs-hero-title: 3.125rem; /* 50px */
   --fs-title: 2.5rem; /* 40px */
   --fs-subtitle-lg: 2.25rem; /* 36px */
   --fs-subtitle-md: 1.75rem; /* 28px */
@@ -147,17 +148,31 @@ a {
   font-size: var(--fs-extra-large);
 }
 
-/* Title02 — Paperlogy Bold 40 */
-.text-title-02 {
+/* Hero-title — Paperlogy Bold 50 */
+.text-hero-title {
+  font-family: var(--font-paperlogy);
+  font-weight: 700;
+  font-size: var(--fs-hero-title);
+}
+
+/* Title01 — Paperlogy Bold 40 */
+.text-title-01 {
   font-family: var(--font-paperlogy);
   font-weight: 700;
   font-size: var(--fs-title);
 }
 
-/* Title03 — Suit Medium 40 */
-.text-title-03 {
+/* Title02 — Suit Medium 40 */
+.text-title-02 {
   font-family: var(--font-suit);
   font-weight: 500;
+  font-size: var(--fs-title);
+}
+
+/* Title03 — Suit Semibold 40 */
+.text-title-03 {
+  font-family: var(--font-suit);
+  font-weight: 600;
   font-size: var(--fs-title);
 }
 
@@ -168,24 +183,17 @@ a {
   font-size: var(--fs-subtitle-lg);
 }
 
-/* Subtitle02 — Suit Semibold 36 */
+/* Subtitle02 — Suit Bold 36 */
 .text-subtitle-02 {
   font-family: var(--font-suit);
-  font-weight: 600;
+  font-weight: 700;
   font-size: var(--fs-subtitle-lg);
 }
 
-/* Subtitle03 — Suit Semibold 28 */
+/* Subtitle03 — Suit Bold 28 */
 .text-subtitle-03 {
   font-family: var(--font-suit);
-  font-weight: 600;
-  font-size: var(--fs-subtitle-md);
-}
-
-/* Subtitle04 — Paperlogy Semibold 28 */
-.text-subtitle-04 {
-  font-family: var(--font-paperlogy);
-  font-weight: 600;
+  font-weight: 700;
   font-size: var(--fs-subtitle-md);
 }
 
