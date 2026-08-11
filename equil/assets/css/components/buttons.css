@@ -1,0 +1,176 @@
+/* ========================================
+   Buttons
+   ======================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  white-space: nowrap;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+/* ---------- Sleep fit test btn ---------- */
+.btn-sleep-fit {
+  gap: 1.125rem; /* 18px */
+  padding: 0.75rem 1.875rem; /* 12px 30px */
+  border-radius: 3.125rem; /* 50px */
+  background-color: var(--color-brand-point);
+  font-family: var(--font-paperlogy);
+  font-weight: 700;
+  font-size: 1.5rem; /* 24px */
+  color: var(--color-white);
+}
+
+.btn-sleep-fit__arrow {
+  flex-shrink: 0;
+  font-size: 1.625rem; /* ~26px */
+  line-height: 1;
+}
+
+.btn-sleep-fit:hover,
+.btn-sleep-fit:active {
+  background-color: var(--color-brand-light-1);
+  color: var(--color-brand-dark);
+}
+
+/* ---------- Tap btn ---------- */
+.btn-tap-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem; /* 12px */
+}
+
+.btn-tap {
+  padding: 0.5rem 0.875rem; /* 8px 14px */
+  border-radius: 2.5rem; /* 40px */
+  border: 0.0625rem solid var(--color-brand-dark); /* 1px */
+  background-color: var(--color-white);
+  font-family: var(--font-paperlogy);
+  font-weight: 500;
+  font-size: 1.125rem; /* 18px */
+  color: var(--color-brand-dark);
+}
+
+.btn-tap:hover,
+.btn-tap:active {
+  background-color: var(--color-brand-dark);
+  color: var(--color-white);
+}
+
+/* ---------- CTA btn ---------- */
+.btn-cta {
+  gap: 0.5rem;
+  padding: 0.75rem 2.25rem; /* 12px 36px */
+  border-radius: 6.25rem; /* 100px */
+  background-color: var(--color-brand-light-1);
+  font-family: var(--font-suit);
+  font-weight: 600;
+  font-size: 1.875rem; /* 30px */
+  color: var(--color-brand-dark);
+}
+
+.btn-cta__arrow {
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.btn-cta:hover,
+.btn-cta:active {
+  background-color: var(--color-brand-dark);
+  color: var(--color-brand-light-1);
+}
+
+/* ---------- Product category btn ---------- */
+.btn-product-ctg {
+  flex-direction: column;
+  gap: 0.25rem; /* 4px */
+  padding: 1.25rem 3.75rem; /* 20px 60px */
+  border-radius: 6.25rem; /* 100px */
+  border: 0.0625rem solid transparent; /* layout shift 방지 */
+  background-color: #f9f9f9;
+  font-family: var(--font-paperlogy);
+  font-weight: 400;
+  font-size: 1.25rem; /* 20px */
+  color: var(--color-text-dark);
+  white-space: normal;
+}
+
+.btn-product-ctg__media {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 12.5rem; /* 200px */
+  height: 7.125rem; /* 114px */
+  background-color: var(--color-grey-100);
+  color: var(--color-grey-400);
+}
+
+.btn-product-ctg__media svg {
+  width: 2.5rem; /* 40px */
+  height: 2.5rem;
+}
+
+.btn-product-ctg:hover,
+.btn-product-ctg:active {
+  border-color: var(--color-brand-dark);
+  background-color: #f9f9f9;
+  color: var(--color-text-dark);
+}
+
+/* ---------- Test before btn ---------- */
+.btn-test-before {
+  padding: 0.625rem 3.125rem; /* 10px 50px */
+  border-radius: 1.25rem; /* 20px */
+  border: 0.0625rem solid var(--color-brand-dark);
+  background-color: var(--color-white);
+  font-family: var(--font-suit);
+  font-weight: 400;
+  font-size: 1.25rem; /* 20px */
+  color: var(--color-brand-dark);
+}
+
+.btn-test-before:hover,
+.btn-test-before:active {
+  background-color: var(--color-brand-light-1);
+  color: var(--color-brand-dark);
+}
+
+/* ---------- Test next btn ---------- */
+.btn-test-next {
+  padding: 0.625rem 3.125rem; /* 10px 50px */
+  border-radius: 1.25rem; /* 20px */
+  border: 0.0625rem solid var(--color-brand-dark);
+  background-color: var(--color-brand-dark);
+  font-family: var(--font-suit);
+  font-weight: 400;
+  font-size: 1.25rem; /* 20px */
+  color: var(--color-white); /* 디자인 기준: dark 배경 위 흰 텍스트 */
+}
+
+.btn-test-next:hover,
+.btn-test-next:active {
+  background-color: var(--color-brand-light-1);
+  color: var(--color-brand-dark);
+}
+
+.btn-test-next:disabled,
+.btn-test-next[disabled] {
+  border-color: var(--color-grey-300);
+  background-color: var(--color-grey-300);
+  color: var(--color-grey-600);
+  cursor: not-allowed;
+}
+
+.btn-test-next:disabled:hover,
+.btn-test-next:disabled:active,
+.btn-test-next[disabled]:hover,
+.btn-test-next[disabled]:active {
+  border-color: var(--color-grey-300);
+  background-color: var(--color-grey-300);
+  color: var(--color-grey-600);
+}
