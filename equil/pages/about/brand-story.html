@@ -26,6 +26,23 @@
         <a class="site-header__link" href="../store.html">STORE</a>
         <a class="site-header__cta" href="../sleep-fit-test/index.html">SLEEP FIT TEST</a>
       </nav>
+      <div class="site-header__actions">
+        <a class="site-header__cta" href="../sleep-fit-test/index.html">SLEEP FIT TEST</a>
+        <button
+          type="button"
+          class="site-header__menu-btn"
+          aria-label="메뉴 열기"
+          aria-expanded="false"
+          aria-controls="site-header-drawer"
+        >
+          <img
+            class="site-header__menu-icon"
+            src="../../assets/images/common/icons/hamburger-bar.png"
+            alt=""
+          />
+          <span class="site-header__menu-close" aria-hidden="true"></span>
+        </button>
+      </div>
     </div>
 
     <div class="site-header__mega" aria-hidden="true">
@@ -76,6 +93,35 @@
         </div>
       </div>
     </div>
+
+    <div class="site-header__dim"></div>
+    <nav id="site-header-drawer" class="site-header__drawer" aria-label="모바일 메뉴">
+      <div class="site-header__drawer-item">
+        <button type="button" class="site-header__drawer-toggle">
+          <span>ABOUT</span>
+          <span class="site-header__drawer-arrow" aria-hidden="true">∨</span>
+        </button>
+        <ul class="site-header__subnav">
+          <li><a class="site-header__sublink" href="../about/brand-story.html">Brand Story</a></li>
+          <li><a class="site-header__sublink" href="../about/mattress-tech.html">Mattress</a></li>
+          <li><a class="site-header__sublink" href="../about/pillow-tech.html">Pillow</a></li>
+          <li><a class="site-header__sublink" href="../about/bedding-tech.html">Bedding</a></li>
+          <li><a class="site-header__sublink" href="../about/heating-mat-tech.html">Heating Mat</a></li>
+        </ul>
+      </div>
+      <a class="site-header__drawer-link" href="../product.html">PRODUCT</a>
+      <div class="site-header__drawer-item">
+        <button type="button" class="site-header__drawer-toggle">
+          <span>COMMUNITY</span>
+          <span class="site-header__drawer-arrow" aria-hidden="true">∨</span>
+        </button>
+        <ul class="site-header__subnav">
+          <li><a class="site-header__sublink" href="../community/news.html">News</a></li>
+          <li><a class="site-header__sublink" href="../community/events.html">Event</a></li>
+        </ul>
+      </div>
+      <a class="site-header__drawer-link" href="../store.html">STORE</a>
+    </nav>
   </header>
 
   <main>
@@ -93,7 +139,32 @@
     </section>
   </main>
 
-  <footer class="footer">
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <div class="site-footer__info">
+        <a class="site-footer__logo" href="../../index.html">EQUIL</a>
+        <p class="site-footer__meta">
+          상호명 : EQUIL | 주소 : 서울시 종로구 북촌로 52길<br />
+          전화 : 032-012-3245 | 메일 : equil@contact.co.kr | 사업자등록번호 : 721-052-41201
+        </p>
+        <nav class="site-footer__links" aria-label="푸터 링크">
+          <a class="site-footer__link" href="#">서비스 소개</a>
+          <a class="site-footer__link" href="#">이용약관</a>
+          <a class="site-footer__link" href="#">개인정보처리방침</a>
+        </nav>
+      </div>
+      <div class="site-footer__sns">
+        <a class="site-footer__sns-link" href="#" aria-label="Instagram">
+          <img src="../../assets/images/common/icons/insta.png" alt="" />
+        </a>
+        <a class="site-footer__sns-link" href="#" aria-label="Facebook">
+          <img src="../../assets/images/common/icons/facebook.png" alt="" />
+        </a>
+        <a class="site-footer__sns-link" href="#" aria-label="Blog">
+          <img src="../../assets/images/common/icons/blog.png" alt="" />
+        </a>
+      </div>
+    </div>
   </footer>
 
   <script src="../../assets/js/common.js"></script>
