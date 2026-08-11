@@ -8,11 +8,25 @@
     new Promise((resolve, reject) => {
       const existing = document.querySelector(`script[src="${src}"]`);
       if (existing) {
-        if (existing.dataset.loaded === 'true') {
+        if (existing.dataset.loaded === 'true' || existing.getAttribute('data-loaded') === 'true') {
           resolve();
           return;
         }
-        existing.addEventListener('load', () => resolve(), { once: true });
+        // Already in document (e.g. sync tag) — wait if still loading
+        if (src.includes('gsap.min.js') && typeof window.gsap !== 'undefined') {
+          existing.dataset.loaded = 'true';
+          resolve();
+          return;
+        }
+        if (src.includes('ScrollTrigger.min.js') && typeof window.ScrollTrigger !== 'undefined') {
+          existing.dataset.loaded = 'true';
+          resolve();
+          return;
+        }
+        existing.addEventListener('load', () => {
+          existing.dataset.loaded = 'true';
+          resolve();
+        }, { once: true });
         existing.addEventListener(
           'error',
           () => reject(new Error(`Failed to load ${src}`)),
@@ -40,11 +54,15 @@
       document.head.appendChild(script);
     });
 
-  window.equilLibsReady = loadScript(GSAP_SRC)
-    .then(() => loadScript(SCROLL_TRIGGER_SRC))
-    .then(() => {
-      gsap.registerPlugin(ScrollTrigger);
-    });
+  window.equilLibsReady = (async () => {
+    if (typeof window.gsap === 'undefined') {
+      await loadScript(GSAP_SRC);
+    }
+    if (typeof window.ScrollTrigger === 'undefined') {
+      await loadScript(SCROLL_TRIGGER_SRC);
+    }
+    window.gsap.registerPlugin(window.ScrollTrigger);
+  })();
 
   const header = document.querySelector('.site-header');
   if (!header) return;
