@@ -1,0 +1,62 @@
+/* Guide page only — not part of product UI */
+.guide {
+  padding-block: 3.75rem; /* 60px */
+  padding-top: 8.75rem; /* header 80px + 60px */
+  background-color: var(--color-brand-light-2);
+}
+
+.guide__header {
+  margin-bottom: 3.75rem;
+}
+
+.guide__logo {
+  font-family: var(--font-paperlogy);
+  font-weight: 900;
+  font-size: 1.875rem; /* 30px */
+  letter-spacing: 0.1em; /* 10% */
+  color: var(--color-brand-dark);
+}
+
+.guide__title {
+  margin-top: 1.5rem;
+  font-family: var(--font-paperlogy);
+  font-weight: 700;
+  font-size: 2.5rem;
+  color: var(--color-brand-dark);
+}
+
+.guide__desc {
+  margin-top: 0.75rem;
+  font-family: var(--font-suit);
+  font-size: 1rem;
+  color: var(--color-grey-600);
+}
+
+.guide__section {
+  margin-bottom: 3.75rem;
+  padding: 2.5rem;
+  background-color: var(--color-white);
+  border: 0.0625rem solid var(--color-grey-200);
+}
+
+.guide__section-title {
+  margin-bottom: 0.5rem;
+  font-family: var(--font-paperlogy);
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--color-brand-dark);
+}
+
+.guide__section-note {
+  margin-bottom: 1.5rem;
+  font-family: var(--font-suit);
+  font-size: 0.875rem;
+  color: var(--color-grey-500);
+}
+
+.guide__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.5rem;
+}
