@@ -1,7 +1,6 @@
 /* Guide page only — not part of product UI */
 .guide {
   padding-block: 3.75rem; /* 60px */
-  padding-top: 8.75rem; /* header 80px + 60px */
   background-color: var(--color-brand-light-2);
 }
 

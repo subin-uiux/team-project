@@ -92,6 +92,7 @@ html {
 
 body {
   min-width: var(--bp-mobile-min);
+  padding-top: 5rem; /* fixed header bar 80px */
   font-family: var(--font-suit);
   font-weight: 400;
   font-size: var(--fs-body-05);
