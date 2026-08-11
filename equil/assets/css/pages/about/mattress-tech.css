@@ -1,0 +1,53 @@
+/* ========================================
+   mattress-tech-hero
+   ======================================== */
+
+.mattress-tech-hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.mattress-tech-hero__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+}
+
+.mattress-tech-hero__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-color: #000;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.mattress-tech-hero__container {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mattress-tech-hero__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem; /* 14px */
+  text-align: center;
+  opacity: 0;
+}
+
+.mattress-tech-hero__title,
+.mattress-tech-hero__desc {
+  margin: 0;
+  color: #fff;
+  line-height: 150%;
+}
