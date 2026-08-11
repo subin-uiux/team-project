@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EQUIL | Component Guide</title>
+    <link rel="stylesheet" href="assets/css/reset.css" />
+    <link rel="stylesheet" href="assets/css/common.css" />
+    <link rel="stylesheet" href="assets/css/components/buttons.css" />
+    <link rel="stylesheet" href="assets/css/components/cards.css" />
+    <link rel="stylesheet" href="assets/css/header.css" />
+    <link rel="stylesheet" href="assets/css/pages/guide.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header__bar">
+        <a class="site-header__logo" href="index.html">EQUIL</a>
+        <nav class="site-header__nav" aria-label="주 메뉴">
+          <a class="site-header__link" href="pages/about/brand-story.html">ABOUT</a>
+          <a class="site-header__link" href="pages/product.html">PRODUCT</a>
+          <a class="site-header__link" href="pages/community/news.html">COMMUNITY</a>
+          <a class="site-header__link" href="pages/store.html">STORE</a>
+          <a class="site-header__cta" href="pages/sleep-fit-test/index.html">SLEEP FIT TEST</a>
+        </nav>
+      </div>
+
+      <div class="site-header__mega" aria-hidden="true">
+        <div class="site-header__mega-inner">
+          <div class="site-header__mega-panel">
+            <section class="site-header__col">
+              <h2 class="site-header__col-title">ABOUT</h2>
+              <p class="site-header__col-desc">
+                EQUIL의 철학과 가치,<br />
+                그리고 브랜드의 시작을 소개합니다.
+              </p>
+              <ul class="site-header__subnav">
+                <li><a class="site-header__sublink" href="pages/about/brand-story.html">Brand Story</a></li>
+                <li><a class="site-header__sublink" href="pages/about/mattress-tech.html">Mattress</a></li>
+                <li><a class="site-header__sublink" href="pages/about/pillow-tech.html">Pillow</a></li>
+                <li><a class="site-header__sublink" href="pages/about/bedding-tech.html">Bedding</a></li>
+                <li><a class="site-header__sublink" href="pages/about/heating-mat-tech.html">Heating Mat</a></li>
+              </ul>
+            </section>
+
+            <section class="site-header__col">
+              <h2 class="site-header__col-title">PRODUCT</h2>
+              <p class="site-header__col-desc">
+                EQUIL의 제품 라인업을 확인하고,<br />
+                당신에게 맞는 제품을 찾아보세요.
+              </p>
+            </section>
+
+            <section class="site-header__col">
+              <h2 class="site-header__col-title">COMMUNITY</h2>
+              <p class="site-header__col-desc">
+                EQUIL의 새로운 소식과 이벤트,<br />
+                캠페인 및 다양한 협업을 만나보세요.
+              </p>
+              <ul class="site-header__subnav">
+                <li><a class="site-header__sublink" href="pages/community/news.html">News</a></li>
+                <li><a class="site-header__sublink" href="pages/community/events.html">Event</a></li>
+              </ul>
+            </section>
+
+            <section class="site-header__col site-header__col--store">
+              <h2 class="site-header__col-title">STORE</h2>
+              <p class="site-header__col-desc">
+                EQUIL 매장에서 직접 누워보고,<br />
+                나에게 맞는 편안함을 경험해보세요.
+              </p>
+            </section>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="guide">
+      <div class="container">
+        <header class="guide__header">
+          <p class="guide__logo">EQUIL</p>
+          <h1 class="guide__title">Component Guide</h1>
+          <p class="guide__desc">마우스를 올리거나 클릭해 상태를 확인해 주세요. 상단 헤더에 마우스를 올리면 메가메뉴가 열립니다.</p>
+        </header>
+
+        <section class="guide__section" aria-labelledby="btn-sleep-fit">
+          <h2 id="btn-sleep-fit" class="guide__section-title">Sleep fit test btn</h2>
+          <p class="guide__section-note">Default → Hover / Active</p>
+          <div class="guide__row">
+            <button type="button" class="btn btn-sleep-fit">
+              <span>BUTTON</span>
+              <span class="btn-sleep-fit__arrow" aria-hidden="true">↗</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="guide__section" aria-labelledby="btn-tap">
+          <h2 id="btn-tap" class="guide__section-title">Tap btn</h2>
+          <p class="guide__section-note">3개 일렬 · gap 12px · Default → Hover / Active</p>
+          <div class="guide__row">
+            <div class="btn-tap-group">
+              <button type="button" class="btn btn-tap">BUTTON</button>
+              <button type="button" class="btn btn-tap">BUTTON</button>
+              <button type="button" class="btn btn-tap">BUTTON</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="guide__section" aria-labelledby="btn-cta">
+          <h2 id="btn-cta" class="guide__section-title">CTA btn</h2>
+          <p class="guide__section-note">Default → Hover / Active</p>
+          <div class="guide__row">
+            <button type="button" class="btn btn-cta">
+              <span>BUTTON</span>
+              <span class="btn-cta__arrow" aria-hidden="true">&gt;</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="guide__section" aria-labelledby="btn-product-ctg">
+          <h2 id="btn-product-ctg" class="guide__section-title">Product ctg btn</h2>
+          <p class="guide__section-note">이미지 영역 200×114 · gap 4px · Default → Hover / Active</p>
+          <div class="guide__row">
+            <button type="button" class="btn btn-product-ctg">
+              <span class="btn-product-ctg__media" aria-hidden="true">
+                <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5" />
+                  <circle cx="14" cy="16" r="2.5" fill="currentColor" />
+                  <path
+                    d="M8 28L16 20L21 25L26 19L32 28H8Z"
+                    fill="currentColor"
+                    opacity="0.45"
+                  />
+                </svg>
+              </span>
+              <span>BUTTON</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="guide__section" aria-labelledby="btn-test-before">
+          <h2 id="btn-test-before" class="guide__section-title">Test before btn</h2>
+          <p class="guide__section-note">Default → Hover / Active</p>
+          <div class="guide__row">
+            <button type="button" class="btn btn-test-before">BUTTON</button>
+          </div>
+        </section>
+
+        <section class="guide__section" aria-labelledby="btn-test-next">
+          <h2 id="btn-test-next" class="guide__section-title">Test next btn</h2>
+          <p class="guide__section-note">Default → Hover / Active · Disabled</p>
+          <div class="guide__row">
+            <button type="button" class="btn btn-test-next">BUTTON</button>
+            <button type="button" class="btn btn-test-next" disabled>BUTTON</button>
+          </div>
+        </section>
+
+        <section class="guide__section" aria-labelledby="card-review">
+          <h2 id="card-review" class="guide__section-title">Review card</h2>
+          <p class="guide__section-note">원형 이미지 · 중앙 정렬 · Hover 없음</p>
+          <div class="guide__row">
+            <article class="card card-review">
+              <div class="card-review__media" aria-hidden="true">
+                <svg class="card__placeholder-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5" />
+                  <circle cx="14" cy="16" r="2.5" fill="currentColor" />
+                  <path d="M8 28L16 20L21 25L26 19L32 28H8Z" fill="currentColor" opacity="0.45" />
+                </svg>
+              </div>
+              <div class="card-review__body">
+                <p class="card-review__title">TITLE</p>
+                <p class="card-review__text">TEXT</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="guide__section" aria-labelledby="card-cta-product">
+          <h2 id="card-cta-product" class="guide__section-title">CTA product card</h2>
+          <p class="guide__section-note">Default → Hover (#333 30% dim)</p>
+          <div class="guide__row">
+            <article class="card card-cta-product" tabindex="0">
+              <div class="card-cta-product__media" aria-hidden="true">
+                <svg class="card__placeholder-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5" />
+                  <circle cx="14" cy="16" r="2.5" fill="currentColor" />
+                  <path d="M8 28L16 20L21 25L26 19L32 28H8Z" fill="currentColor" opacity="0.45" />
+                </svg>
+              </div>
+              <div class="card-cta-product__overlay">
+                <p class="card-cta-product__title">TITLE</p>
+                <p class="card-cta-product__text">TEXT</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="guide__section" aria-labelledby="card-material">
+          <h2 id="card-material" class="guide__section-title">Material card</h2>
+          <p class="guide__section-note">Default → Hover (brand/point 70% dim)</p>
+          <div class="guide__row">
+            <article class="card card-material" tabindex="0">
+              <div class="card-material__media" aria-hidden="true">
+                <svg class="card__placeholder-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5" />
+                  <circle cx="14" cy="16" r="2.5" fill="currentColor" />
+                  <path d="M8 28L16 20L21 25L26 19L32 28H8Z" fill="currentColor" opacity="0.45" />
+                </svg>
+              </div>
+              <div class="card-material__overlay">
+                <p class="card-material__eng-title">ENG TITLE</p>
+                <p class="card-material__title">TITLE</p>
+                <p class="card-material__text">TEXT</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="guide__section" aria-labelledby="card-product">
+          <h2 id="card-product" class="guide__section-title">Product card</h2>
+          <p class="guide__section-note">이미지 830×377 · text box 상하 border · Hover 없음</p>
+          <div class="guide__row">
+            <article class="card card-product">
+              <div class="card-product__media" aria-hidden="true">
+                <svg class="card__placeholder-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5" />
+                  <circle cx="14" cy="16" r="2.5" fill="currentColor" />
+                  <path d="M8 28L16 20L21 25L26 19L32 28H8Z" fill="currentColor" opacity="0.45" />
+                </svg>
+              </div>
+              <div class="card-product__body">
+                <p class="card-product__title">TITLE</p>
+                <p class="card-product__text">TEXT</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="guide__section" aria-labelledby="card-event">
+          <h2 id="card-event" class="guide__section-title">Event card</h2>
+          <p class="guide__section-note">이미지 546×431 · title 좌측 정렬 · Hover 없음</p>
+          <div class="guide__row">
+            <article class="card card-event">
+              <div class="card-event__media" aria-hidden="true">
+                <svg class="card__placeholder-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5" />
+                  <circle cx="14" cy="16" r="2.5" fill="currentColor" />
+                  <path d="M8 28L16 20L21 25L26 19L32 28H8Z" fill="currentColor" opacity="0.45" />
+                </svg>
+              </div>
+              <h3 class="card-event__title">TITLE</h3>
+            </article>
+          </div>
+        </section>
+      </div>
+    </main>
+    <script src="assets/js/common.js"></script>
+  </body>
+</html>
