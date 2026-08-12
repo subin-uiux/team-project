@@ -140,6 +140,10 @@
   gap: 0.9375rem; /* 15px */
 }
 
+.pillow-tech-sleep-position__tabs .btn-tap {
+  font-family: var(--font-suit);
+}
+
 /* ========================================
    pillow-tech-structure
    ======================================== */

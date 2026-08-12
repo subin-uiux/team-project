@@ -84,12 +84,10 @@
   };
 
   const HOTSPOT_POSITIONS = [
-    { left: '32%', top: '62%' }, /* 01 경추 지지 곡선 — 좌측 볼록 */
-    { left: '60%', top: '75%' }, /* 02 머리 안착 존 — 중앙 홈 */
-    { left: '90%', top: '58%' }, /* 03 압력 분산 구조 — 우측 볼록 */
+    { left: '32%', top: '62%' },
+    { left: '60%', top: '75%' },
+    { left: '90%', top: '58%' },
   ];
-
-  const STRUCTURE_TRANSITION_DURATION = 0.75;
 
   const initPillowTechStructure = () => {
     const section = document.querySelector('.pillow-tech-structure');
@@ -101,264 +99,63 @@
     const hotspot = section.querySelector('.pillow-tech-structure__hotspot');
     if (!features.length || !hotspot) return;
 
-    const LAST_FEATURE_INDEX = features.length - 1;
+    const LAST_INDEX = features.length - 1;
+    const COOLDOWN_MS = 1000;
     let currentIndex = 0;
-    let isLocked = false;
-    let isAnimating = false;
     let pinTrigger = null;
-    let transitionTl = null;
+    let lastSwitchTime = 0;
 
-    const nextSection = document.querySelector('.pillow-tech-zones');
+    const activateFeature = (index) => {
+      currentIndex = index;
+      lastSwitchTime = Date.now();
 
-    const getNextSectionTop = () => {
-      if (!nextSection) return 0;
-      return nextSection.getBoundingClientRect().top + window.pageYOffset;
-    };
+      features.forEach((feature, i) => {
+        const isActive = i === index;
+        feature.classList.toggle('is-active', isActive);
 
-    const unlockAndGoNext = () => {
-      isLocked = false;
-      isAnimating = false;
+        const indicator = feature.querySelector('.pillow-tech-structure__indicator');
+        const desc = feature.querySelector('.pillow-tech-structure__feature-desc');
 
-      if (pinTrigger) {
-        pinTrigger.kill(true);
-        pinTrigger = null;
-      }
+        if (indicator) {
+          indicator.style.opacity = isActive ? '1' : '0';
+        }
 
-      ScrollTrigger.refresh();
-      if (nextSection) {
-        window.scrollTo(0, getNextSectionTop());
-      }
-    };
-
-    const getFeatureElements = (feature) => ({
-      indicator: feature.querySelector('.pillow-tech-structure__indicator'),
-      desc: feature.querySelector('.pillow-tech-structure__feature-desc'),
-    });
-
-    const setHotspotPosition = (index, { animate = false } = {}) => {
-      const position = HOTSPOT_POSITIONS[index];
-      if (!position) return;
-
-      if (animate) {
-        gsap.to(hotspot, {
-          left: position.left,
-          top: position.top,
-          opacity: 1,
-          duration: STRUCTURE_TRANSITION_DURATION,
-          ease: 'power2.inOut',
-        });
-        return;
-      }
-
-      gsap.set(hotspot, {
-        left: position.left,
-        top: position.top,
-        opacity: 1,
-      });
-    };
-
-    const applyFeatureState = (index, { animate = false, unlockOnComplete = null } = {}) => {
-      if (transitionTl) {
-        transitionTl.kill();
-        transitionTl = null;
-      }
-
-      if (!animate || index === currentIndex) {
-        isAnimating = false;
-        currentIndex = index;
-
-        features.forEach((feature, featureIndex) => {
-          const isActive = featureIndex === index;
-          const { indicator, desc } = getFeatureElements(feature);
-
-          feature.classList.toggle('is-active', isActive);
-
-          if (indicator) {
-            gsap.set(indicator, { opacity: isActive ? 1 : 0 });
-          }
-
-          if (desc && !desc.textContent.trim()) return;
-
-          if (desc) {
-            desc.hidden = !isActive;
-            gsap.set(desc, {
-              opacity: isActive ? 1 : 0,
-              y: 0,
-              clearProps: 'transform',
-            });
-          }
-        });
-
-        setHotspotPosition(index);
-        return;
-      }
-
-      isAnimating = true;
-      const prevIndex = currentIndex;
-      const prevFeature = features[prevIndex];
-      const nextFeature = features[nextIndex];
-      const prevEls = getFeatureElements(prevFeature);
-      const nextEls = getFeatureElements(nextFeature);
-
-      features.forEach((feature, featureIndex) => {
-        feature.classList.toggle('is-active', featureIndex === index);
+        if (desc) {
+          desc.hidden = !isActive;
+        }
       });
 
-      transitionTl = gsap.timeline({
-        defaults: { ease: 'power2.inOut' },
-        onComplete: () => {
-          currentIndex = index;
-          isAnimating = false;
-          transitionTl = null;
-
-          if (prevEls.desc) {
-            prevEls.desc.hidden = true;
-            gsap.set(prevEls.desc, { clearProps: 'transform' });
-          }
-
-          if (typeof unlockOnComplete === 'function') {
-            unlockOnComplete();
-          }
-        },
-      });
-
-      if (prevEls.indicator) {
-        transitionTl.to(
-          prevEls.indicator,
-          { opacity: 0, duration: STRUCTURE_TRANSITION_DURATION * 0.45, ease: 'power2.in' },
-          0
-        );
-      }
-
-      if (nextEls.indicator) {
-        gsap.set(nextEls.indicator, { opacity: 0 });
-        transitionTl.to(
-          nextEls.indicator,
-          { opacity: 1, duration: STRUCTURE_TRANSITION_DURATION * 0.55, ease: 'power2.out' },
-          STRUCTURE_TRANSITION_DURATION * 0.25
-        );
-      }
-
-      setHotspotPosition(index, { animate: true });
-
-      if (prevEls.desc && prevEls.desc.textContent.trim()) {
-        transitionTl.to(
-          prevEls.desc,
-          {
-            opacity: 0,
-            y: -10,
-            duration: STRUCTURE_TRANSITION_DURATION * 0.45,
-            ease: 'power2.in',
-          },
-          0
-        );
-      }
-
-      if (nextEls.desc && nextEls.desc.textContent.trim()) {
-        nextEls.desc.hidden = false;
-        gsap.set(nextEls.desc, { opacity: 0, y: 14 });
-
-        transitionTl.to(
-          nextEls.desc,
-          {
-            opacity: 1,
-            y: 0,
-            duration: STRUCTURE_TRANSITION_DURATION * 0.6,
-            ease: 'power2.out',
-          },
-          STRUCTURE_TRANSITION_DURATION * 0.3
-        );
+      const pos = HOTSPOT_POSITIONS[index];
+      if (pos) {
+        hotspot.style.left = pos.left;
+        hotspot.style.top = pos.top;
       }
     };
 
-    const activate = (startIndex) => {
-      isLocked = true;
-      applyFeatureState(startIndex);
-    };
-
-    const deactivate = () => {
-      isLocked = false;
-      isAnimating = false;
-      if (transitionTl) {
-        transitionTl.kill();
-        transitionTl = null;
-      }
-    };
-
-    const finishForward = () => {
-      isLocked = false;
-    };
-
-    const finishBackward = () => {
-      isLocked = false;
-    };
+    activateFeature(0);
 
     const onWheel = (event) => {
-      if (!pinTrigger) return;
-
-      if (isAnimating) {
-        event.preventDefault();
-        return;
-      }
+      if (!pinTrigger || !pinTrigger.isActive) return;
 
       const goingDown = event.deltaY > 0;
 
-      if (goingDown && currentIndex === LAST_FEATURE_INDEX) {
-        finishForward();
-        return;
-      }
+      if (goingDown && currentIndex === LAST_INDEX) return;
+      if (!goingDown && currentIndex === 0) return;
 
-      if (!goingDown && currentIndex === 0) {
-        finishBackward();
-        return;
-      }
-
-      if (goingDown) {
-        const nextIndex = currentIndex + 1;
-        if (nextIndex === currentIndex) return;
-        event.preventDefault();
-        applyFeatureState(nextIndex, {
-          animate: true,
-          unlockOnComplete: nextIndex === LAST_FEATURE_INDEX ? unlockAndGoNext : null,
-        });
-        return;
-      }
-
-      const prevIndex = currentIndex - 1;
-      if (prevIndex === currentIndex) return;
       event.preventDefault();
-      applyFeatureState(prevIndex, { animate: true });
+
+      if (Date.now() - lastSwitchTime < COOLDOWN_MS) return;
+
+      activateFeature(goingDown ? currentIndex + 1 : currentIndex - 1);
     };
-
-    features.forEach((feature, featureIndex) => {
-      const { indicator, desc } = getFeatureElements(feature);
-      const isActive = featureIndex === 0;
-
-      feature.classList.toggle('is-active', isActive);
-
-      if (indicator) {
-        gsap.set(indicator, { opacity: isActive ? 1 : 0 });
-      }
-
-      if (desc && desc.textContent.trim()) {
-        desc.hidden = !isActive;
-        gsap.set(desc, { opacity: isActive ? 1 : 0, y: 0 });
-      }
-    });
-
-    setHotspotPosition(0);
 
     pinTrigger = ScrollTrigger.create({
       trigger: section,
       start: 'top top',
-      end: '+=100%',
+      end: '+=800%',
       pin: true,
       anticipatePin: 1,
       invalidateOnRefresh: true,
-      onEnter: () => activate(0),
-      onEnterBack: () => activate(LAST_FEATURE_INDEX),
-      onLeave: deactivate,
-      onLeaveBack: deactivate,
     });
 
     section.addEventListener('wheel', onWheel, { passive: false });
