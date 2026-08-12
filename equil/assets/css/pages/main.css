@@ -154,14 +154,14 @@
 
 .main-problem__number {
   font-family: var(--font-suit);
-  font-weight: 700;
+  font-weight: var(--fw-suit-bold);
   font-size: var(--fs-title); /* 40px */
 }
 
 .main-problem__title {
   margin-top: 1.25rem; /* 20px */
   font-family: var(--font-suit);
-  font-weight: 700;
+  font-weight: var(--fw-suit-bold);
   font-size: var(--fs-title); /* 40px */
 }
 

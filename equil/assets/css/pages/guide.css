@@ -131,7 +131,7 @@
 .guide-color-card__name {
   margin: 0;
   font-family: var(--font-suit);
-  font-weight: 700;
+  font-weight: var(--fw-suit-bold);
   font-size: 0.875rem; /* 14px */
   color: var(--color-text-dark);
 }

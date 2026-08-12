@@ -10,6 +10,9 @@
   --font-suit: 'Suit', sans-serif;
   --font-paperlogy: 'Paperozi', sans-serif;
 
+  /* Suit weights — Bold 스펙은 font-weight 600 (Semibold) */
+  --fw-suit-bold: 600;
+
   /* Base Color */
   --color-text-dark: #333333;
   --color-grey-600: #747883;
@@ -185,10 +188,10 @@ a {
   font-size: var(--fs-hero-title);
 }
 
-/* Title01 — Paperlogy Bold 40 */
+/* Title01 — Paperlogy Semibold 40 */
 .text-title-01 {
   font-family: var(--font-paperlogy);
-  font-weight: 700;
+  font-weight: 600;
   font-size: var(--fs-title);
 }
 
@@ -216,14 +219,14 @@ a {
 /* Subtitle02 — Suit Bold 36 */
 .text-subtitle-02 {
   font-family: var(--font-suit);
-  font-weight: 700;
+  font-weight: var(--fw-suit-bold);
   font-size: var(--fs-subtitle-lg);
 }
 
 /* Subtitle03 — Suit Bold 28 */
 .text-subtitle-03 {
   font-family: var(--font-suit);
-  font-weight: 700;
+  font-weight: var(--fw-suit-bold);
   font-size: var(--fs-subtitle-md);
 }
 

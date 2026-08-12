@@ -187,7 +187,7 @@
 .card-material__title {
   margin-bottom: 2.1875rem; /* 35px */
   font-family: var(--font-suit);
-  font-weight: 700;
+  font-weight: var(--fw-suit-bold);
   font-size: 1.75rem; /* 28px */
   color: var(--color-white);
 }

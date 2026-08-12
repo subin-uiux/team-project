@@ -109,6 +109,7 @@
   const closeMenu = () => {
     header.classList.remove('is-menu-open');
     document.body.classList.remove('is-menu-open');
+    document.body.classList.remove('is-mega-open');
     if (menuBtn) {
       menuBtn.setAttribute('aria-expanded', 'false');
       menuBtn.setAttribute('aria-label', '메뉴 열기');
@@ -143,6 +144,43 @@
   if (dim) {
     dim.addEventListener('click', closeMenu);
   }
+
+  const mega = header.querySelector('.site-header__mega');
+  const navLinks = header.querySelectorAll('.site-header__link');
+  const megaMq = window.matchMedia('(min-width: 64rem)');
+
+  const setMegaOpen = (isOpen) => {
+    document.body.classList.toggle('is-mega-open', isOpen);
+  };
+
+  const openMega = () => {
+    if (!megaMq.matches || header.classList.contains('is-menu-open')) return;
+    setMegaOpen(true);
+  };
+
+  const closeMega = () => {
+    setMegaOpen(false);
+  };
+
+  navLinks.forEach((link) => {
+    link.addEventListener('mouseenter', openMega);
+    link.addEventListener('focus', openMega);
+  });
+
+  if (mega) {
+    mega.addEventListener('mouseenter', openMega);
+  }
+
+  header.addEventListener('mouseleave', (event) => {
+    if (!megaMq.matches) return;
+    if (!header.contains(event.relatedTarget)) {
+      closeMega();
+    }
+  });
+
+  megaMq.addEventListener('change', () => {
+    closeMega();
+  });
 
   drawerToggles.forEach((toggle) => {
     toggle.addEventListener('click', () => {

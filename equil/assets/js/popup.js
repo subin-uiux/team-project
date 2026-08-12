@@ -24,12 +24,22 @@
   });
 
   document.querySelectorAll('[data-popup-open]').forEach((trigger) => {
-    trigger.addEventListener('click', () => {
+    trigger.addEventListener('click', (event) => {
       const targetId = trigger.getAttribute('data-popup-open');
       if (!targetId) return;
 
       const layer = document.getElementById(targetId);
-      if (layer) openLayer(layer);
+      if (!layer) return;
+
+      if (trigger.hasAttribute('data-news-id')) {
+        event.preventDefault();
+        const newsId = trigger.getAttribute('data-news-id');
+        if (typeof window.fillNewsPopup === 'function') {
+          window.fillNewsPopup(newsId);
+        }
+      }
+
+      openLayer(layer);
     });
   });
 
