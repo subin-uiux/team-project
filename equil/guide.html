@@ -516,7 +516,7 @@
 
         <section class="guide__section" aria-labelledby="card-event">
           <h2 id="card-event" class="guide__section-title">Event card</h2>
-          <p class="guide__section-note">이미지 546×431 · title 좌측 정렬 · Hover 없음</p>
+          <p class="guide__section-note">이미지 546×431 · title Suit Semibold 22 · 종료 카드는 클릭 불가</p>
           <div class="guide__row">
             <article class="card card-event">
               <div class="card-event__media" aria-hidden="true">
@@ -525,6 +525,17 @@
                   <circle cx="14" cy="16" r="2.5" fill="currentColor" />
                   <path d="M8 28L16 20L21 25L26 19L32 28H8Z" fill="currentColor" opacity="0.45" />
                 </svg>
+              </div>
+              <h3 class="card-event__title">TITLE</h3>
+            </article>
+            <article class="card card-event card-event--ended" aria-disabled="true">
+              <div class="card-event__media" aria-hidden="true">
+                <svg class="card__placeholder-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5" />
+                  <circle cx="14" cy="16" r="2.5" fill="currentColor" />
+                  <path d="M8 28L16 20L21 25L26 19L32 28H8Z" fill="currentColor" opacity="0.45" />
+                </svg>
+                <p class="card-event__status">이미 종료된 이벤트 입니다.</p>
               </div>
               <h3 class="card-event__title">TITLE</h3>
             </article>
@@ -564,13 +575,13 @@
 
         <section class="guide__section" aria-labelledby="popup-event">
           <h2 id="popup-event" class="guide__section-title">Event popup</h2>
-          <p class="guide__section-note">padding 40px · 이미지 479×548 · 이미지/본문 gap 40px</p>
+          <p class="guide__section-note">padding 40px · 이미지 479×548 · 이미지/본문 gap 40px · 문단 gap 20px · 안내사항 grey500</p>
           <div class="guide__row guide__row--start">
             <article class="popup-event">
               <button type="button" class="popup-event__close" aria-label="닫기">×</button>
               <div class="popup-event__inner">
                 <header class="popup-event__header">
-                  <h3 class="popup-event__title">Event Title</h3>
+                  <h3 class="popup-event__title">Title</h3>
                   <p class="popup-event__date">2026. 08. 12</p>
                 </header>
                 <div class="popup-event__content">
@@ -582,13 +593,22 @@
                     </svg>
                   </div>
                   <div class="popup-event__body">
-                    <p class="popup-event__body-title">Event Body Title</p>
-                    <p class="popup-event__body-text">
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
-                      labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                      nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit
-                      esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.
-                    </p>
+                    <section class="popup-event__section popup-event__section--divided">
+                      <h3 class="popup-event__body-title">Title</h3>
+                      <p class="popup-event__body-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                    </section>
+                    <section class="popup-event__section">
+                      <h3 class="popup-event__body-title">Title</h3>
+                      <p class="popup-event__body-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                    </section>
+                    <section class="popup-event__section">
+                      <h3 class="popup-event__body-title">Title</h3>
+                      <p class="popup-event__body-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                    </section>
+                    <section class="popup-event__section popup-event__section--notice">
+                      <h3 class="popup-event__body-title">Title</h3>
+                      <p class="popup-event__body-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                    </section>
                   </div>
                 </div>
               </div>

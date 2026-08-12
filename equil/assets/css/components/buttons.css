@@ -137,7 +137,8 @@
 }
 
 .btn-tab:hover,
-.btn-tab:active {
+.btn-tab:active,
+.btn-tab.is-active {
   background-color: var(--color-brand-dark);
   color: var(--color-white);
 }
