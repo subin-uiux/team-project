@@ -14,56 +14,37 @@
   -webkit-appearance: none;
 }
 
-/* ---------- Sleep fit test btn ---------- */
-.btn-sleep-fit {
+/* ---------- Btn Large (ex. sleep-fit) ---------- */
+.btn-large {
   gap: 1.125rem; /* 18px */
-  padding: 0.75rem 1.875rem; /* 12px 30px */
+  padding: 0.75rem 2.25rem; /* 12px 36px */
   border-radius: 3.125rem; /* 50px */
   background-color: var(--color-brand-point);
   font-family: var(--font-paperlogy);
   font-weight: 700;
   font-size: 1.5rem; /* 24px */
+  letter-spacing: 0.1em; /* 10% */
   color: var(--color-white);
 }
 
-.btn-sleep-fit__arrow {
+.btn-large__arrow {
   flex-shrink: 0;
-  font-size: 1.625rem; /* ~26px */
-  line-height: 1;
+  display: block;
+  width: 1.2rem;
+  height: 1.2rem;
+  background-color: currentColor;
+  -webkit-mask: url('../../images/common/icons/test-arrow.svg') center / contain no-repeat;
+  mask: url('../../images/common/icons/test-arrow.svg') center / contain no-repeat;
 }
 
-.btn-sleep-fit:hover,
-.btn-sleep-fit:active {
+.btn-large:hover,
+.btn-large:active {
   background-color: var(--color-brand-light-1);
   color: var(--color-brand-dark);
 }
 
-/* ---------- Tap btn ---------- */
-.btn-tap-group {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem; /* 12px */
-}
-
-.btn-tap {
-  padding: 0.5rem 0.875rem; /* 8px 14px */
-  border-radius: 2.5rem; /* 40px */
-  border: 0.0625rem solid var(--color-brand-dark); /* 1px */
-  background-color: var(--color-white);
-  font-family: var(--font-paperlogy);
-  font-weight: 500;
-  font-size: 1.125rem; /* 18px */
-  color: var(--color-brand-dark);
-}
-
-.btn-tap:hover,
-.btn-tap:active {
-  background-color: var(--color-brand-dark);
-  color: var(--color-white);
-}
-
-/* ---------- CTA btn ---------- */
-.btn-cta {
+/* ---------- Btn Medium (ex. cta) ---------- */
+.btn-medium {
   gap: 0.5rem;
   padding: 0.75rem 2.25rem; /* 12px 36px */
   border-radius: 6.25rem; /* 100px */
@@ -74,19 +55,94 @@
   color: var(--color-brand-dark);
 }
 
-.btn-cta__arrow {
+.btn-medium__arrow {
   flex-shrink: 0;
   line-height: 1;
 }
 
-.btn-cta:hover,
-.btn-cta:active {
+.btn-medium:hover,
+.btn-medium:active {
   background-color: var(--color-brand-dark);
   color: var(--color-brand-light-1);
 }
 
-/* ---------- Product category btn ---------- */
-.btn-product-ctg {
+/* ---------- Btn Small (ex. test-before / test-next) ---------- */
+.btn-small {
+  padding: 0.75rem 2.25rem; /* 12px 36px */
+  border-radius: 1.25rem; /* 20px */
+  border: 0.0625rem solid var(--color-brand-dark);
+  background-color: var(--color-white);
+  font-family: var(--font-suit);
+  font-weight: 400;
+  font-size: 1.25rem; /* 20px */
+  color: var(--color-brand-dark);
+}
+
+.btn-small:hover,
+.btn-small:active {
+  background-color: var(--color-brand-light-1);
+  color: var(--color-brand-dark);
+}
+
+.btn-small-next {
+  padding: 0.75rem 2.25rem; /* 12px 36px */
+  border-radius: 1.25rem; /* 20px */
+  border: 0.0625rem solid var(--color-brand-dark);
+  background-color: var(--color-brand-dark);
+  font-family: var(--font-suit);
+  font-weight: 400;
+  font-size: 1.25rem; /* 20px */
+  color: var(--color-white); /* 디자인 기준: dark 배경 위 흰색 텍스트 */
+}
+
+.btn-small-next:hover,
+.btn-small-next:active {
+  background-color: var(--color-brand-light-1);
+  color: var(--color-brand-dark);
+}
+
+.btn-small-next:disabled,
+.btn-small-next[disabled] {
+  border-color: var(--color-grey-300);
+  background-color: var(--color-grey-300);
+  color: var(--color-grey-600);
+  cursor: not-allowed;
+}
+
+.btn-small-next:disabled:hover,
+.btn-small-next:disabled:active,
+.btn-small-next[disabled]:hover,
+.btn-small-next[disabled]:active {
+  border-color: var(--color-grey-300);
+  background-color: var(--color-grey-300);
+  color: var(--color-grey-600);
+}
+
+/* ---------- Tab btn ---------- */
+.btn-tab-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem; /* 12px */
+}
+
+.btn-tab {
+  padding: 0.5rem 0.875rem; /* 8px 14px */
+  border-radius: 2.5rem; /* 40px */
+  border: 0.0625rem solid var(--color-brand-dark); /* 1px */
+  background-color: var(--color-white);
+  font-family: var(--font-paperlogy);
+  font-weight: 500;
+  font-size: 1.125rem; /* 18px */
+  color: var(--color-brand-dark);
+}
+
+.btn-tab:hover,
+.btn-tab:active {
+  background-color: var(--color-brand-dark);
+  color: var(--color-white);
+}
+
+.btn-tab-ctg {
   flex-direction: column;
   gap: 0.25rem; /* 4px */
   padding: 1.25rem 3.75rem; /* 20px 60px */
@@ -100,7 +156,7 @@
   white-space: normal;
 }
 
-.btn-product-ctg__media {
+.btn-tab-ctg__media {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -110,67 +166,14 @@
   color: var(--color-grey-400);
 }
 
-.btn-product-ctg__media svg {
+.btn-tab-ctg__media svg {
   width: 2.5rem; /* 40px */
   height: 2.5rem;
 }
 
-.btn-product-ctg:hover,
-.btn-product-ctg:active {
+.btn-tab-ctg:hover,
+.btn-tab-ctg:active {
   border-color: var(--color-brand-dark);
   background-color: #f9f9f9;
   color: var(--color-text-dark);
-}
-
-/* ---------- Test before btn ---------- */
-.btn-test-before {
-  padding: 0.625rem 3.125rem; /* 10px 50px */
-  border-radius: 1.25rem; /* 20px */
-  border: 0.0625rem solid var(--color-brand-dark);
-  background-color: var(--color-white);
-  font-family: var(--font-suit);
-  font-weight: 400;
-  font-size: 1.25rem; /* 20px */
-  color: var(--color-brand-dark);
-}
-
-.btn-test-before:hover,
-.btn-test-before:active {
-  background-color: var(--color-brand-light-1);
-  color: var(--color-brand-dark);
-}
-
-/* ---------- Test next btn ---------- */
-.btn-test-next {
-  padding: 0.625rem 3.125rem; /* 10px 50px */
-  border-radius: 1.25rem; /* 20px */
-  border: 0.0625rem solid var(--color-brand-dark);
-  background-color: var(--color-brand-dark);
-  font-family: var(--font-suit);
-  font-weight: 400;
-  font-size: 1.25rem; /* 20px */
-  color: var(--color-white); /* 디자인 기준: dark 배경 위 흰 텍스트 */
-}
-
-.btn-test-next:hover,
-.btn-test-next:active {
-  background-color: var(--color-brand-light-1);
-  color: var(--color-brand-dark);
-}
-
-.btn-test-next:disabled,
-.btn-test-next[disabled] {
-  border-color: var(--color-grey-300);
-  background-color: var(--color-grey-300);
-  color: var(--color-grey-600);
-  cursor: not-allowed;
-}
-
-.btn-test-next:disabled:hover,
-.btn-test-next:disabled:active,
-.btn-test-next[disabled]:hover,
-.btn-test-next[disabled]:active {
-  border-color: var(--color-grey-300);
-  background-color: var(--color-grey-300);
-  color: var(--color-grey-600);
 }

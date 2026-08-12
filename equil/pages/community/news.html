@@ -11,6 +11,8 @@
   <link rel="stylesheet" href="../../assets/css/common.css">
   <link rel="stylesheet" href="../../assets/css/header.css">
   <link rel="stylesheet" href="../../assets/css/footer.css">
+  <link rel="stylesheet" href="../../assets/css/components/buttons.css">
+  <link rel="stylesheet" href="../../assets/css/components/popups.css">
   <link rel="stylesheet" href="../../assets/css/pages/community/news.css">
 </head>
 
@@ -131,9 +133,42 @@
     </section>
     <section class="news-list">
       <div class="container">
+        <button type="button" class="btn btn-small" data-popup-open="popup-news-layer">
+          News 팝업 열기
+        </button>
       </div>
     </section>
   </main>
+
+  <div class="popup-layer" id="popup-news-layer" aria-hidden="true">
+    <button type="button" class="popup-layer__dim" data-popup-close aria-label="닫기"></button>
+    <div class="popup-layer__dialog" role="dialog" aria-modal="true" aria-labelledby="popup-news-title">
+      <article class="popup-news">
+        <button type="button" class="popup-news__close" data-popup-close aria-label="닫기">×</button>
+        <div class="popup-news__inner">
+          <header class="popup-news__header">
+            <h2 id="popup-news-title" class="popup-news__title">News Title</h2>
+            <p class="popup-news__date">2026. 08. 12</p>
+          </header>
+          <div class="popup-news__media" aria-hidden="true">
+            <svg class="popup__placeholder-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5" />
+              <circle cx="14" cy="16" r="2.5" fill="currentColor" />
+              <path d="M8 28L16 20L21 25L26 19L32 28H8Z" fill="currentColor" opacity="0.45" />
+            </svg>
+          </div>
+          <div class="popup-news__body">
+            <p class="popup-news__text">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore
+              et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+              aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+              cillum dolore eu fugiat nulla pariatur.
+            </p>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
 
   <footer class="site-footer">
     <div class="site-footer__inner">
@@ -164,6 +199,7 @@
   </footer>
 
   <script src="../../assets/js/common.js"></script>
+  <script src="../../assets/js/popup.js"></script>
 </body>
 
 </html>
