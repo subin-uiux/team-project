@@ -1,0 +1,58 @@
+---
+description: EQUIL 공통 UI 패턴 용어·클래스 (3단 타이틀, fadeUp)
+globs: "**/*.{html,css,scss,js}"
+alwaysApply: true
+---
+
+# EQUIL UI Patterns
+
+팀 내 용어와 코드 매핑. 요청·리뷰 시 아래 이름을 사용한다.
+
+## 3단 타이틀
+
+**용어:** `3단 타이틀` — sub-title / title / 본문(desc) 3층 텍스트 블록.
+
+**HTML (공통 Block `heading-3tier`):**
+
+```html
+<div class="heading-3tier">
+  <p class="heading-3tier__sub-title">ENGLISH SUB TITLE</p>
+  <h2 class="heading-3tier__title">한글 제목</h2>
+  <p class="heading-3tier__desc">한글 본문</p>
+</div>
+```
+
+**스타일:** `equil/assets/css/common.css` — 한글은 SUIT, `line-height: 130%`
+
+| 요소 | 폰트 | weight | size | 상단 간격 |
+|------|------|--------|------|-----------|
+| sub-title | Paperlogy | 400 | 22px (`--fs-body-02`) | — |
+| title | SUIT | 600 | 40px (`--fs-title`) | sub-title 아래 14px |
+| desc | SUIT | 300 | 20px (`--fs-body-03`) | title 아래 12px |
+
+- sub-title 색: `var(--color-brand-point)`
+- title·desc 색: `var(--color-brand-dark)`
+- 섹션 전용 여백·정렬은 section Element 클래스로 추가 (예: `pillow-tech-sleep-position__heading`)
+
+**사용 예:** `pillow-tech-sleep-position` 상단 텍스트
+
+## fadeUp (텍스트 fadeUp)
+
+**용어:** `fadeUp` — 고정 위치에서 안 보이다가 **아래→위**로 등장하는 텍스트 애니메이션. **글자(char) 단위 stagger**.
+
+**구현:** GSAP + ScrollTrigger (`equil/assets/js/common.js`에서 로드)
+
+| 속성 | 값 |
+|------|-----|
+| opacity | 0 → 1 |
+| y | 40px → 0 |
+| duration | 1.26s |
+| ease | `power3.out` |
+| stagger | 글자 수에 따라 (`duration / (chars × 2.5)`) |
+| ScrollTrigger | `start: top 90%`, `once: true` |
+
+**마크업:** 대상 텍스트를 JS로 글자 span으로 분리. span 클래스는 **해당 section Block의 Element** (예: `mattress-tech-structure-overview__char`). `display: inline-block`, `will-change: transform, opacity`.
+
+**참고 구현:** `equil/assets/js/pages/mattress-tech.js` — `initMattressTechStructureOverview`
+
+**요청 예시:** "이 타이틀에 fadeUp 넣어주세요" → 위 스펙의 글자 단위 fade-up + ScrollTrigger 1회 재생.

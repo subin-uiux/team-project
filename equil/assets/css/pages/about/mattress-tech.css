@@ -231,3 +231,52 @@
   color: var(--color-white);
 }
 
+/* ========================================
+   mattress-tech-structure-overview
+   ======================================== */
+
+.mattress-tech-structure-overview {
+  height: 100vh;
+  background-color: var(--color-white);
+}
+
+.mattress-tech-structure-overview__container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mattress-tech-structure-overview__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.6875rem; /* 27px */
+}
+
+.mattress-tech-structure-overview__title {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: 400;
+  font-size: var(--fs-subtitle-lg); /* 36px */
+  line-height: 130%;
+  color: var(--color-text-dark);
+  text-align: center;
+}
+
+.mattress-tech-structure-overview__char {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+.mattress-tech-structure-overview__emphasis {
+  font-weight: 700;
+  font-size: 2.625rem; /* 42px */
+}
+
+.mattress-tech-structure-overview__image {
+  width: 72rem; /* 1152px */
+  max-width: none;
+  height: auto;
+}
+

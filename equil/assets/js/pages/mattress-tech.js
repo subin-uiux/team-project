@@ -149,6 +149,7 @@
 
         video.addEventListener('timeupdate', onTimeUpdate);
         video.addEventListener('ended', onEnded);
+        video.playbackRate = 1.8;
         video.currentTime = 0;
 
         getVideoDuration().then(() => {
@@ -292,10 +293,176 @@
     section.addEventListener('wheel', onWheel, { passive: false });
   };
 
+  const initMattressTechStructureOverview = () => {
+    const section = document.querySelector('.mattress-tech-structure-overview');
+    const title = section?.querySelector('.mattress-tech-structure-overview__title');
+    const image = section?.querySelector('.mattress-tech-structure-overview__image');
+    const nextSection = document.querySelector('.mattress-tech-top-layer');
+    if (!section || !title || !image || !nextSection) return;
+
+    let isTransitioning = false;
+    let hasCompleted = false;
+    let transitionTl = null;
+    let pinTrigger = null;
+
+    // modoomat fadeUp defaults * 1.4 slower / by character
+    const FADE_UP_DURATION = 1.26;
+    const FADE_OUT_DURATION = 1;
+
+    const splitTitleChars = (element) => {
+      const walk = (node) => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const chars = Array.from(node.textContent);
+          const fragment = document.createDocumentFragment();
+
+          chars.forEach((char) => {
+            if (/^\s$/.test(char)) {
+              fragment.appendChild(document.createTextNode(char));
+              return;
+            }
+
+            const span = document.createElement('span');
+            span.className = 'mattress-tech-structure-overview__char';
+            span.textContent = char;
+            fragment.appendChild(span);
+          });
+
+          node.parentNode.replaceChild(fragment, node);
+          return;
+        }
+
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          Array.from(node.childNodes).forEach(walk);
+        }
+      };
+
+      Array.from(element.childNodes).forEach(walk);
+      return Array.from(
+        element.querySelectorAll('.mattress-tech-structure-overview__char')
+      );
+    };
+
+    const chars = splitTitleChars(title);
+    const charStagger =
+      FADE_UP_DURATION / Math.max(chars.length * 2.5, 1);
+
+    gsap.set(chars, { opacity: 0, y: 40 });
+    gsap.fromTo(
+      chars,
+      { opacity: 0, y: 40 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: FADE_UP_DURATION,
+        ease: 'power3.out',
+        stagger: chars.length > 1 ? charStagger : 0,
+        scrollTrigger: {
+          trigger: title,
+          start: 'top 90%',
+          once: true,
+        },
+        onComplete: () => {
+          gsap.set(chars, { clearProps: 'will-change' });
+        },
+      }
+    );
+
+    const resetVisualState = () => {
+      if (transitionTl) {
+        transitionTl.kill();
+        transitionTl = null;
+      }
+
+      gsap.set(title, { opacity: 1 });
+      gsap.set(chars, { opacity: 1, y: 0 });
+      gsap.set(image, { opacity: 1 });
+
+      isTransitioning = false;
+      hasCompleted = false;
+      section.classList.remove('is-transitioning');
+    };
+
+    const getNextSectionTop = () =>
+      nextSection.getBoundingClientRect().top + window.pageYOffset;
+
+    const createPinTrigger = () => {
+      if (pinTrigger) {
+        pinTrigger.kill(true);
+        pinTrigger = null;
+      }
+
+      pinTrigger = ScrollTrigger.create({
+        trigger: section,
+        start: 'top top',
+        end: '+=30%',
+        pin: true,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+        onEnterBack: () => {
+          resetVisualState();
+        },
+      });
+    };
+
+    const unlockAndGoNext = () => {
+      isTransitioning = false;
+      hasCompleted = true;
+      section.classList.remove('is-transitioning');
+
+      if (pinTrigger) {
+        pinTrigger.kill(true);
+        pinTrigger = null;
+      }
+
+      ScrollTrigger.refresh();
+      window.scrollTo(0, getNextSectionTop());
+      createPinTrigger();
+      ScrollTrigger.refresh();
+    };
+
+    const playTransition = () => {
+      if (isTransitioning || hasCompleted) return;
+
+      isTransitioning = true;
+      section.classList.add('is-transitioning');
+
+      transitionTl = gsap.timeline({
+        onComplete: unlockAndGoNext,
+      });
+
+      transitionTl.to([title, image], {
+        opacity: 0,
+        duration: FADE_OUT_DURATION,
+        ease: 'none',
+      });
+    };
+
+    createPinTrigger();
+
+    section.addEventListener(
+      'wheel',
+      (event) => {
+        if (!pinTrigger || !pinTrigger.isActive) return;
+
+        if (isTransitioning) {
+          event.preventDefault();
+          return;
+        }
+
+        if (event.deltaY > 0 && !hasCompleted) {
+          event.preventDefault();
+          playTransition();
+        }
+      },
+      { passive: false }
+    );
+  };
+
   const start = () => {
     const init = () => {
       initMattressTechHero();
       initMattressTechResearch();
+      initMattressTechStructureOverview();
       ScrollTrigger.refresh();
     };
 

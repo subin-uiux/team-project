@@ -56,7 +56,9 @@ JS로 바뀌는 상태: `is-active`, `is-open`, `is-hidden`, `is-selected` (`--`
 
 ## 공통 / 재사용 Block
 
-여러 페이지에서 재사용하면 페이지명을 붙이지 않는다: `button`, `product-card`, `section-heading`, `header`, `footer`
+여러 페이지에서 재사용하면 페이지명을 붙이지 않는다: `button`, `product-card`, `section-heading`, `header`, `footer`, `heading-3tier` (3단 타이틀)
+
+UI 패턴 용어·스펙(3단 타이틀, fadeUp): `.cursor/rules/ui-patterns.mdc`
 
 공통 레이아웃 `container` 허용. 페이지 전용 스타일이 필요하면 함께 사용:
 
