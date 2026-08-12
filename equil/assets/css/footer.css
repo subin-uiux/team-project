@@ -70,3 +70,16 @@
   width: auto;
   height: auto;
 }
+
+@media (max-width: 63.9375rem) {
+  .site-footer {
+    height: auto;
+    padding: 1.875rem 2rem; /* 30px 32px */
+  }
+
+  .site-footer__inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2rem;
+  }
+}
