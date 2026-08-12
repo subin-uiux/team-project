@@ -2,6 +2,15 @@
 
 페이지별 고정 section Block 목록입니다. 기존 이름을 임의로 변경하거나 새 Block을 만들지 말고, 아래 이름을 사용합니다.
 
+## 공통 UI 패턴 (재사용)
+
+섹션 Block이 아닌 공통 패턴. 팀 용어·상세 스펙은 `.cursor/rules/ui-patterns.mdc` 참고.
+
+| 용어 | 클래스 / 패턴 |
+|------|----------------|
+| **3단 타이틀** | `heading-3tier`, `heading-3tier__sub-title`, `heading-3tier__title`, `heading-3tier__desc` |
+| **fadeUp** | GSAP 글자 단위 등장 애니메이션 — `(section-block)__char` |
+
 ## index.html
 
 ```

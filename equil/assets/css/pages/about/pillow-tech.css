@@ -1,0 +1,301 @@
+/* ========================================
+   pillow-tech-hero
+   ======================================== */
+
+.pillow-tech-hero {
+  position: relative;
+  width: 100%;
+}
+
+.pillow-tech-hero__frame {
+  position: relative;
+  width: 100%;
+  height: 437px;
+  overflow: hidden;
+}
+
+.pillow-tech-hero__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  transform: scale(1);
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.pillow-tech-hero__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-color: #000;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.pillow-tech-hero__container {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pillow-tech-hero__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem; /* 14px */
+  text-align: center;
+  opacity: 0;
+}
+
+.pillow-tech-hero__title,
+.pillow-tech-hero__desc {
+  margin: 0;
+  color: #fff;
+  line-height: 150%;
+}
+
+/* ========================================
+   pillow-tech-sleep-position
+   ======================================== */
+
+.pillow-tech-sleep-position {
+  width: 100%;
+  height: 67.5rem; /* 1080px */
+  display: flex;
+  align-items: center;
+  background-color: var(--color-white);
+}
+
+.pillow-tech-sleep-position__container {
+  display: flex;
+  flex-direction: column;
+  gap: 3.125rem; /* 50px */
+}
+
+.pillow-tech-sleep-position__panel {
+  display: flex;
+  height: 36.625rem; /* 586px */
+  border-radius: 1.875rem; /* 30px */
+  overflow: hidden;
+}
+
+.pillow-tech-sleep-position__media {
+  flex: 6;
+  min-width: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.pillow-tech-sleep-position__content {
+  flex: 4;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  padding: 3.75rem; /* 60px */
+  background-color: var(--color-brand-light-2);
+}
+
+.pillow-tech-sleep-position__image {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+}
+
+.pillow-tech-sleep-position__text {
+  position: relative;
+}
+
+.pillow-tech-sleep-position__panel-item {
+  margin: 0;
+}
+
+.pillow-tech-sleep-position__panel-title {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: 700;
+  font-size: var(--fs-subtitle-md); /* 28px */
+  line-height: 130%;
+  color: var(--color-brand-dark);
+}
+
+.pillow-tech-sleep-position__panel-desc {
+  margin: 1.25rem 0 0; /* 20px */
+  font-family: var(--font-suit);
+  font-weight: 300;
+  font-size: var(--fs-body-03); /* 20px */
+  line-height: 130%;
+  color: var(--color-brand-dark);
+}
+
+.pillow-tech-sleep-position__tabs {
+  gap: 0.9375rem; /* 15px */
+}
+
+/* ========================================
+   pillow-tech-structure
+   ======================================== */
+
+.pillow-tech-structure {
+  width: 100%;
+  height: 100vh;
+  background-color: var(--color-white);
+}
+
+.pillow-tech-structure__layout {
+  display: flex;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  gap: 6.25rem; /* 100px */
+}
+
+.pillow-tech-structure__media {
+  position: relative;
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+.pillow-tech-structure__image {
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: 85vh;
+}
+
+.pillow-tech-structure__hotspot {
+  position: absolute;
+  left: 32%;
+  top: 62%;
+  width: 3.75rem; /* 60px */
+  height: 3.75rem;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  will-change: left, top, opacity;
+}
+
+.pillow-tech-structure__hotspot-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  background-color: #ff7700;
+  transform: translate(-50%, -50%);
+}
+
+.pillow-tech-structure__hotspot-ring--outer {
+  width: 3.75rem; /* 60px */
+  height: 3.75rem;
+  opacity: 0.3;
+}
+
+.pillow-tech-structure__hotspot-ring--middle {
+  width: 2.5rem; /* 40px */
+  height: 2.5rem;
+  opacity: 0.6;
+}
+
+.pillow-tech-structure__hotspot-ring--inner {
+  width: 1.25rem; /* 20px */
+  height: 1.25rem;
+  opacity: 1;
+}
+
+.pillow-tech-structure__content {
+  flex: 1;
+  min-width: 0;
+  padding-right: var(--grid-margin);
+}
+
+.pillow-tech-structure__title {
+  margin: 0;
+  font-family: var(--font-paperlogy);
+  font-weight: 700;
+  font-size: 2rem; /* 32px */
+  line-height: 130%;
+  letter-spacing: 0.06em;
+  color: var(--color-brand-dark);
+}
+
+.pillow-tech-structure__features {
+  margin-top: 5rem; /* 80px */
+  display: flex;
+  flex-direction: column;
+  gap: 1.875rem; /* 30px */
+}
+
+.pillow-tech-structure__feature-row {
+  display: flex;
+  align-items: stretch;
+  gap: 2.5rem; /* 40px */
+}
+
+.pillow-tech-structure__indicator {
+  flex-shrink: 0;
+  width: 1px;
+  opacity: 0;
+  background-color: var(--color-brand-dark);
+  will-change: opacity;
+}
+
+.pillow-tech-structure__feature-number,
+.pillow-tech-structure__feature-title {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-size: var(--fs-subtitle-md); /* 28px */
+  line-height: 130%;
+  color: var(--color-grey-200);
+  transition: color 0.6s ease;
+}
+
+.pillow-tech-structure__feature-title {
+  font-weight: 600;
+}
+
+.pillow-tech-structure__feature-number {
+  font-weight: 700;
+}
+
+.pillow-tech-structure__feature.is-active .pillow-tech-structure__feature-number {
+  color: var(--color-brand-point);
+}
+
+.pillow-tech-structure__feature.is-active .pillow-tech-structure__feature-title {
+  color: var(--color-brand-dark);
+}
+
+.pillow-tech-structure__feature-inner {
+  min-width: 0;
+}
+
+.pillow-tech-structure__feature-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 0.625rem; /* 10px */
+}
+
+.pillow-tech-structure__feature-desc {
+  margin: 0.875rem 0 0; /* 14px */
+  font-family: var(--font-suit);
+  font-weight: 400;
+  font-size: var(--fs-body-04); /* 18px */
+  line-height: 150%;
+  color: var(--color-brand-dark);
+  will-change: opacity, transform;
+}
+
+.pillow-tech-structure__feature-desc[hidden] {
+  display: none;
+}
+
+.pillow-tech-structure__feature-desc:empty {
+  display: none;
+}

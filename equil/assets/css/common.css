@@ -253,3 +253,42 @@ a {
   font-weight: 400;
   font-size: var(--fs-footer);
 }
+
+/* ========================================
+   3단 타이틀
+   ======================================== */
+
+.heading-3tier {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  line-height: 130%;
+}
+
+.heading-3tier__sub-title {
+  margin: 0;
+  font-family: var(--font-paperlogy);
+  font-weight: 400;
+  font-size: var(--fs-body-02); /* 22px */
+  line-height: 130%;
+  color: var(--color-brand-point);
+}
+
+.heading-3tier__title {
+  margin: 0.875rem 0 0; /* 14px */
+  font-family: var(--font-suit);
+  font-weight: 600;
+  font-size: var(--fs-title); /* 40px */
+  line-height: 130%;
+  color: var(--color-brand-dark);
+}
+
+.heading-3tier__desc {
+  margin: 0.75rem 0 0; /* 12px */
+  font-family: var(--font-suit);
+  font-weight: 300;
+  font-size: var(--fs-body-03); /* 20px */
+  line-height: 130%;
+  color: var(--color-brand-dark);
+}

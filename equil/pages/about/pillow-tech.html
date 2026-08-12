@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="../../assets/css/common.css">
   <link rel="stylesheet" href="../../assets/css/header.css">
   <link rel="stylesheet" href="../../assets/css/footer.css">
+  <link rel="stylesheet" href="../../assets/css/components/buttons.css">
   <link rel="stylesheet" href="../../assets/css/pages/about/pillow-tech.css">
 </head>
 
@@ -126,15 +127,184 @@
 
   <main>
     <section class="pillow-tech-hero">
-      <div class="container">
+      <div class="pillow-tech-hero__frame">
+        <img
+          class="pillow-tech-hero__image"
+          src="../../assets/images/about/pillow-tech/pillow-tech-hero_bg.webp"
+          alt=""
+        >
+        <div class="pillow-tech-hero__overlay" aria-hidden="true"></div>
+        <div class="container pillow-tech-hero__container">
+          <div class="pillow-tech-hero__content">
+            <h1 class="pillow-tech-hero__title text-hero-title">Pillow Technical</h1>
+            <p class="pillow-tech-hero__desc text-body-03">
+              사람마다 다른 목의 곡선과 수면 자세를 분석해,<br>
+              머리와 목이 가장 편안하게 놓이는 높이와 구조를 설계했습니다.
+            </p>
+          </div>
+        </div>
       </div>
     </section>
     <section class="pillow-tech-sleep-position">
-      <div class="container">
+      <div class="container pillow-tech-sleep-position__container">
+        <div class="heading-3tier pillow-tech-sleep-position__heading">
+          <p class="heading-3tier__sub-title">THREE ZONES, ONE BALANCED COMFORT</p>
+          <h2 class="heading-3tier__title">
+            세 가지 구조가 만드는<br>
+            하나의 편안함
+          </h2>
+          <p class="heading-3tier__desc">
+            머리 수용, 목 지지, 형태 안정의 세 가지 기능이 조화를 이루도록 설계했습니다.
+          </p>
+        </div>
+
+        <div class="pillow-tech-sleep-position__panel">
+          <div class="pillow-tech-sleep-position__media">
+            <img
+              class="pillow-tech-sleep-position__image"
+              src="../../assets/images/about/pillow-tech/pillow-tech-sleep-position_img01.webp"
+              alt=""
+            >
+          </div>
+
+          <div class="pillow-tech-sleep-position__content">
+            <div class="pillow-tech-sleep-position__text">
+              <div class="pillow-tech-sleep-position__panel-item is-active" data-index="0">
+                <h3 class="pillow-tech-sleep-position__panel-title">바로 누운 자세</h3>
+                <p class="pillow-tech-sleep-position__panel-desc">
+                  베개가 너무 높거나 낮으면 머리가 앞뒤로 기울어<br>
+                  목의 자연스러운 곡선이 흐트러질 수 있습니다.<br>
+                  <br>
+                  또한 목 아래 공간이 비어 있으면<br>
+                  경추 주변에 긴장이 남을 수 있습니다.
+                </p>
+              </div>
+              <div class="pillow-tech-sleep-position__panel-item" data-index="1" hidden>
+                <h3 class="pillow-tech-sleep-position__panel-title">옆으로 누운 자세</h3>
+                <p class="pillow-tech-sleep-position__panel-desc">
+                  어깨와 머리 사이의 공간을 충분히 채우지 못하면<br>
+                  머리가 한쪽으로 기울어질 수 있습니다.<br>
+                  <br>
+                  반대로 베개가 너무 높으면 목이 위로 꺾여 불편함이 생길 수 있습니다.
+                </p>
+              </div>
+              <div class="pillow-tech-sleep-position__panel-item" data-index="2" hidden>
+                <h3 class="pillow-tech-sleep-position__panel-title">경추가 민감한 사람</h3>
+                <p class="pillow-tech-sleep-position__panel-desc">
+                  목디스크나 경추 불편함이 있는 경우<br>
+                  작은 높이 차이에도 목이 쉽게 긴장할 수 있습니다.<br>
+                  <br>
+                  지나치게 높거나 단단한 베개는 목을 압박하고,<br>
+                  불편한 자세를 오래 유지하게 만들 수 있습니다.
+                </p>
+              </div>
+            </div>
+
+            <div
+              class="btn-tap-group pillow-tech-sleep-position__tabs"
+              role="tablist"
+              aria-label="수면 자세"
+            >
+              <button
+                type="button"
+                class="btn btn-tap pillow-tech-sleep-position__tab is-selected"
+                role="tab"
+                aria-selected="true"
+                data-index="0"
+              >
+                바로 누운 자세
+              </button>
+              <button
+                type="button"
+                class="btn btn-tap pillow-tech-sleep-position__tab"
+                role="tab"
+                aria-selected="false"
+                data-index="1"
+              >
+                옆으로 누운 자세
+              </button>
+              <button
+                type="button"
+                class="btn btn-tap pillow-tech-sleep-position__tab"
+                role="tab"
+                aria-selected="false"
+                data-index="2"
+              >
+                경추가 민감한 사람
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
     <section class="pillow-tech-structure">
-      <div class="container">
+      <div class="pillow-tech-structure__layout">
+        <div class="pillow-tech-structure__media">
+          <img
+            class="pillow-tech-structure__image"
+            src="../../assets/images/about/pillow-tech/pillow-tech-structure_pillow.webp"
+            alt=""
+          >
+          <div class="pillow-tech-structure__hotspot" aria-hidden="true">
+            <span class="pillow-tech-structure__hotspot-ring pillow-tech-structure__hotspot-ring--outer"></span>
+            <span class="pillow-tech-structure__hotspot-ring pillow-tech-structure__hotspot-ring--middle"></span>
+            <span class="pillow-tech-structure__hotspot-ring pillow-tech-structure__hotspot-ring--inner"></span>
+          </div>
+        </div>
+
+        <div class="pillow-tech-structure__content">
+          <h2 class="pillow-tech-structure__title">PILLOW STRUCTURES</h2>
+
+          <div class="pillow-tech-structure__features">
+            <article class="pillow-tech-structure__feature is-active" data-index="0">
+              <div class="pillow-tech-structure__feature-row">
+                <div class="pillow-tech-structure__indicator" aria-hidden="true"></div>
+                <div class="pillow-tech-structure__feature-inner">
+                  <div class="pillow-tech-structure__feature-heading">
+                    <span class="pillow-tech-structure__feature-number">01</span>
+                    <h3 class="pillow-tech-structure__feature-title">경추 지지 곡선</h3>
+                  </div>
+                  <p class="pillow-tech-structure__feature-desc">
+                    하단의 볼록한 구조가 목 아래의 빈 공간을 채워주며,<br>
+                    경추가 과도하게 꺾이거나 처지는 현상을 줄여줍니다.
+                  </p>
+                </div>
+              </div>
+            </article>
+
+            <article class="pillow-tech-structure__feature" data-index="1">
+              <div class="pillow-tech-structure__feature-row">
+                <div class="pillow-tech-structure__indicator" aria-hidden="true"></div>
+                <div class="pillow-tech-structure__feature-inner">
+                  <div class="pillow-tech-structure__feature-heading">
+                    <span class="pillow-tech-structure__feature-number">02</span>
+                    <h3 class="pillow-tech-structure__feature-title">머리 안착 존</h3>
+                  </div>
+                  <p class="pillow-tech-structure__feature-desc">
+                    중앙의 완만한 홈이 뒤통수를 편안하게 감싸<br>
+                    머리가 한쪽으로 치우치지 않도록 안정적으로 받쳐줍니다.
+                  </p>
+                </div>
+              </div>
+            </article>
+
+            <article class="pillow-tech-structure__feature" data-index="2">
+              <div class="pillow-tech-structure__feature-row">
+                <div class="pillow-tech-structure__indicator" aria-hidden="true"></div>
+                <div class="pillow-tech-structure__feature-inner">
+                  <div class="pillow-tech-structure__feature-heading">
+                    <span class="pillow-tech-structure__feature-number">03</span>
+                    <h3 class="pillow-tech-structure__feature-title">압력 분산 구조</h3>
+                  </div>
+                  <p class="pillow-tech-structure__feature-desc">
+                    머리와 목에 집중되는 압력을 넓게 분산해<br>
+                    특정 부위가 눌리는 부담을 줄이고 편안한 착와감을 제공합니다.
+                  </p>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
       </div>
     </section>
     <section class="pillow-tech-zones">
@@ -180,6 +350,7 @@
   </footer>
 
   <script src="../../assets/js/common.js"></script>
+  <script src="../../assets/js/pages/pillow-tech.js"></script>
 </body>
 
 </html>
