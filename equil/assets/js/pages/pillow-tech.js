@@ -301,8 +301,6 @@
         return;
       }
 
-      if (!isLocked) return;
-
       const goingDown = event.deltaY > 0;
 
       if (goingDown && currentIndex === LAST_FEATURE_INDEX) {
@@ -315,10 +313,10 @@
         return;
       }
 
-      event.preventDefault();
-
       if (goingDown) {
         const nextIndex = currentIndex + 1;
+        if (nextIndex === currentIndex) return;
+        event.preventDefault();
         applyFeatureState(nextIndex, {
           animate: true,
           unlockOnComplete: nextIndex === LAST_FEATURE_INDEX ? unlockAndGoNext : null,
@@ -326,7 +324,10 @@
         return;
       }
 
-      applyFeatureState(currentIndex - 1, { animate: true });
+      const prevIndex = currentIndex - 1;
+      if (prevIndex === currentIndex) return;
+      event.preventDefault();
+      applyFeatureState(prevIndex, { animate: true });
     };
 
     features.forEach((feature, featureIndex) => {
