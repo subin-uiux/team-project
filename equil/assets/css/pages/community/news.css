@@ -1,0 +1,106 @@
+/* ========================================
+   news-hero
+   ======================================== */
+
+.news-hero {
+  padding-top: 7.5rem; /* 120px */
+  padding-bottom: 7.5rem; /* 120px */
+}
+
+.news-hero__title {
+  margin: 0;
+  letter-spacing: 0.1em; /* 10% */
+  text-align: center;
+  color: var(--color-text-dark);
+}
+
+/* ========================================
+   news-list
+   ======================================== */
+
+.news-list {
+  padding-bottom: 5rem; /* 80px */
+}
+
+.news-list__list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 105rem; /* 1680px */
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  margin-inline: auto;
+}
+
+.news-list__item {
+  width: 100%;
+  height: 13.125rem; /* 210px */
+  box-sizing: border-box;
+  border-bottom: 0.0625rem solid var(--color-grey-300); /* 1px */
+}
+
+.news-list__link {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 2.5rem; /* 40px */
+  box-sizing: border-box;
+  color: inherit;
+  text-decoration: none;
+}
+
+.news-list__number {
+  flex-shrink: 0;
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: 500;
+  font-size: 1rem; /* 16px */
+  color: var(--color-grey-600);
+}
+
+.news-list__media {
+  flex-shrink: 0;
+  padding: 0 3.25rem; /* 52px */
+}
+
+.news-list__image-frame {
+  width: 21.25rem; /* 340px */
+  height: 8.0625rem; /* 129px */
+  overflow: hidden;
+}
+
+.news-list__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+}
+
+.news-list__content {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  min-width: 0;
+}
+
+.news-list__title {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: var(--fw-suit-bold);
+  font-size: 1.5rem; /* 24px */
+  color: var(--color-text-dark);
+}
+
+.news-list__date {
+  flex-shrink: 0;
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: var(--fw-suit-bold);
+  font-size: 1rem; /* 16px */
+  color: var(--color-grey-600);
+}

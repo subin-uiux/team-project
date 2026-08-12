@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="assets/css/common.css" />
     <link rel="stylesheet" href="assets/css/components/buttons.css" />
     <link rel="stylesheet" href="assets/css/components/cards.css" />
+    <link rel="stylesheet" href="assets/css/components/popups.css" />
     <link rel="stylesheet" href="assets/css/header.css" />
     <link rel="stylesheet" href="assets/css/footer.css" />
     <link rel="stylesheet" href="assets/css/pages/guide.css" />
@@ -129,75 +130,306 @@
           <p class="guide__desc">마우스를 올리거나 클릭해 상태를 확인해 주세요. 상단 헤더에 마우스를 올리면 메가메뉴가 열립니다.</p>
         </header>
 
-        <section class="guide__section" aria-labelledby="btn-sleep-fit">
-          <h2 id="btn-sleep-fit" class="guide__section-title">Sleep fit test btn</h2>
-          <p class="guide__section-note">Default → Hover / Active</p>
-          <div class="guide__row">
-            <button type="button" class="btn btn-sleep-fit">
-              <span>BUTTON</span>
-              <span class="btn-sleep-fit__arrow" aria-hidden="true">↗</span>
-            </button>
+        <section class="guide__section" aria-labelledby="base-color">
+          <h2 id="base-color" class="guide__section-title">Base Color</h2>
+          <p class="guide__section-desc">Dark &amp; White base UI colors.</p>
+          <div class="guide-color-list">
+            <article class="guide-color-card">
+              <div class="guide-color-card__swatch" style="background-color: var(--color-text-dark)" aria-hidden="true"></div>
+              <div class="guide-color-card__body">
+                <p class="guide-color-card__name">Text/Dark</p>
+                <p class="guide-color-card__hex">#333333</p>
+              </div>
+            </article>
+            <article class="guide-color-card">
+              <div class="guide-color-card__swatch" style="background-color: var(--color-grey-600)" aria-hidden="true"></div>
+              <div class="guide-color-card__body">
+                <p class="guide-color-card__name">Grey/600</p>
+                <p class="guide-color-card__hex">#747883</p>
+              </div>
+            </article>
+            <article class="guide-color-card">
+              <div class="guide-color-card__swatch" style="background-color: var(--color-grey-500)" aria-hidden="true"></div>
+              <div class="guide-color-card__body">
+                <p class="guide-color-card__name">Grey/500</p>
+                <p class="guide-color-card__hex">#9DA1AC</p>
+              </div>
+            </article>
+            <article class="guide-color-card">
+              <div class="guide-color-card__swatch" style="background-color: var(--color-grey-400)" aria-hidden="true"></div>
+              <div class="guide-color-card__body">
+                <p class="guide-color-card__name">Grey/400</p>
+                <p class="guide-color-card__hex">#B8BCC4</p>
+              </div>
+            </article>
+            <article class="guide-color-card">
+              <div class="guide-color-card__swatch" style="background-color: var(--color-grey-300)" aria-hidden="true"></div>
+              <div class="guide-color-card__body">
+                <p class="guide-color-card__name">Grey/300</p>
+                <p class="guide-color-card__hex">#D2D5DA</p>
+              </div>
+            </article>
+            <article class="guide-color-card">
+              <div class="guide-color-card__swatch" style="background-color: var(--color-grey-200)" aria-hidden="true"></div>
+              <div class="guide-color-card__body">
+                <p class="guide-color-card__name">Grey/200</p>
+                <p class="guide-color-card__hex">#E6E7EB</p>
+              </div>
+            </article>
+            <article class="guide-color-card">
+              <div class="guide-color-card__swatch" style="background-color: var(--color-grey-100)" aria-hidden="true"></div>
+              <div class="guide-color-card__body">
+                <p class="guide-color-card__name">Grey/100</p>
+                <p class="guide-color-card__hex">#F3F4F6</p>
+              </div>
+            </article>
+            <article class="guide-color-card">
+              <div class="guide-color-card__swatch" style="background-color: var(--color-grey-50)" aria-hidden="true"></div>
+              <div class="guide-color-card__body">
+                <p class="guide-color-card__name">Grey/50</p>
+                <p class="guide-color-card__hex">#FBFCFE</p>
+              </div>
+            </article>
+            <article class="guide-color-card">
+              <div class="guide-color-card__swatch guide-color-card__swatch--bordered" style="background-color: var(--color-white)" aria-hidden="true"></div>
+              <div class="guide-color-card__body">
+                <p class="guide-color-card__name">White</p>
+                <p class="guide-color-card__hex">#FFFFFF</p>
+              </div>
+            </article>
           </div>
         </section>
 
-        <section class="guide__section" aria-labelledby="btn-tap">
-          <h2 id="btn-tap" class="guide__section-title">Tap btn</h2>
-          <p class="guide__section-note">3개 일렬 · gap 12px · Default → Hover / Active</p>
-          <div class="guide__row">
-            <div class="btn-tap-group">
-              <button type="button" class="btn btn-tap">BUTTON</button>
-              <button type="button" class="btn btn-tap">BUTTON</button>
-              <button type="button" class="btn btn-tap">BUTTON</button>
+        <section class="guide__section" aria-labelledby="primary-color">
+          <h2 id="primary-color" class="guide__section-title">Primary Color</h2>
+          <p class="guide__section-desc">
+            The primary colour is ultimately your ‘staple’ Brand colour, it is used across all
+            elements of a UI including buttons, borders, fills and many other areas. The primary
+            colour will define the entire look of the UI.
+          </p>
+          <div class="guide-color-list">
+            <article class="guide-color-card">
+              <div class="guide-color-card__swatch" style="background-color: var(--color-brand-dark)" aria-hidden="true"></div>
+              <div class="guide-color-card__body">
+                <p class="guide-color-card__name">Brand/Dark</p>
+                <p class="guide-color-card__hex">#322A23</p>
+              </div>
+            </article>
+            <article class="guide-color-card">
+              <div class="guide-color-card__swatch" style="background-color: var(--color-brand-point)" aria-hidden="true"></div>
+              <div class="guide-color-card__body">
+                <p class="guide-color-card__name">Brand/Point</p>
+                <p class="guide-color-card__hex">#A68E72</p>
+              </div>
+            </article>
+            <article class="guide-color-card">
+              <div class="guide-color-card__swatch" style="background-color: var(--color-brand-light-1)" aria-hidden="true"></div>
+              <div class="guide-color-card__body">
+                <p class="guide-color-card__name">Brand/light-1</p>
+                <p class="guide-color-card__hex">#F0EDE4</p>
+              </div>
+            </article>
+            <article class="guide-color-card">
+              <div class="guide-color-card__swatch" style="background-color: var(--color-brand-light-2)" aria-hidden="true"></div>
+              <div class="guide-color-card__body">
+                <p class="guide-color-card__name">Brand/light-2</p>
+                <p class="guide-color-card__hex">#F9F7F3</p>
+              </div>
+            </article>
+            <article class="guide-color-card">
+              <div class="guide-color-card__swatch" style="background-color: var(--color-brand-light-3)" aria-hidden="true"></div>
+              <div class="guide-color-card__body">
+                <p class="guide-color-card__name">Brand/light-3</p>
+                <p class="guide-color-card__hex">#F6F3F2</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="guide__section" aria-labelledby="error-color">
+          <h2 id="error-color" class="guide__section-title">Error Color</h2>
+          <p class="guide__section-desc">
+            Red is associated with errors or critical actions, often used for delete buttons,
+            error messages, or alerts. Its bold, striking appearance immediately grabs attention,
+            signaling urgency and guiding users to areas that require immediate action.
+          </p>
+          <div class="guide-color-list">
+            <article class="guide-color-card">
+              <div class="guide-color-card__swatch" style="background-color: var(--color-error-300)" aria-hidden="true"></div>
+              <div class="guide-color-card__body">
+                <p class="guide-color-card__name">Error / 300</p>
+                <p class="guide-color-card__hex">#DC2626</p>
+              </div>
+            </article>
+            <article class="guide-color-card">
+              <div class="guide-color-card__swatch" style="background-color: var(--color-error-400)" aria-hidden="true"></div>
+              <div class="guide-color-card__body">
+                <p class="guide-color-card__name">Error / 400</p>
+                <p class="guide-color-card__hex">#991B1B</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="guide__section" aria-labelledby="typography">
+          <h2 id="typography" class="guide__section-title">Typography</h2>
+          <p class="guide__section-desc">
+            common.css에 정의된 Paperlogy / Suit 타이포그래피 스케일입니다.
+            Suit Bold는 font-weight 600(Semibold)을 사용합니다.
+          </p>
+
+          <div class="guide__group" aria-labelledby="typography-pc">
+            <h3 id="typography-pc" class="guide__group-title">PC (1024px+)</h3>
+            <p class="guide__section-note">현재 적용 중인 스케일입니다.</p>
+            <div class="guide-type-list">
+              <div class="guide-type-item">
+                <p class="guide-type-item__meta">Extra Large — Paperlogy ExtraBold 64 · .text-extra-large</p>
+                <p class="guide-type-item__sample text-extra-large">Better balance.</p>
+              </div>
+              <div class="guide-type-item">
+                <p class="guide-type-item__meta">Extra Large — Suit ExtraBold 64 · .text-extra-large-suit</p>
+                <p class="guide-type-item__sample text-extra-large-suit">Better balance.</p>
+              </div>
+              <div class="guide-type-item">
+                <p class="guide-type-item__meta">Hero-title — Paperlogy Bold 50 · .text-hero-title</p>
+                <p class="guide-type-item__sample text-hero-title">Hero Title</p>
+              </div>
+              <div class="guide-type-item">
+                <p class="guide-type-item__meta">Title01 — Paperlogy Semibold 40 · .text-title-01</p>
+                <p class="guide-type-item__sample text-title-01">Title 01</p>
+              </div>
+              <div class="guide-type-item">
+                <p class="guide-type-item__meta">Title02 — Suit Medium 40 · .text-title-02</p>
+                <p class="guide-type-item__sample text-title-02">Title 02</p>
+              </div>
+              <div class="guide-type-item">
+                <p class="guide-type-item__meta">Title03 — Suit Semibold 40 · .text-title-03</p>
+                <p class="guide-type-item__sample text-title-03">Title 03</p>
+              </div>
+              <div class="guide-type-item">
+                <p class="guide-type-item__meta">Subtitle01 — Paperlogy Bold 36 · .text-subtitle-01</p>
+                <p class="guide-type-item__sample text-subtitle-01">Subtitle 01</p>
+              </div>
+              <div class="guide-type-item">
+                <p class="guide-type-item__meta">Subtitle02 — Suit Bold 36 (weight 600) · .text-subtitle-02</p>
+                <p class="guide-type-item__sample text-subtitle-02">Subtitle 02</p>
+              </div>
+              <div class="guide-type-item">
+                <p class="guide-type-item__meta">Subtitle03 — Suit Bold 28 (weight 600) · .text-subtitle-03</p>
+                <p class="guide-type-item__sample text-subtitle-03">Subtitle 03</p>
+              </div>
+              <div class="guide-type-item">
+                <p class="guide-type-item__meta">Body01 — Suit Regular 24 · .text-body-01</p>
+                <p class="guide-type-item__sample text-body-01">Body text sample 01</p>
+              </div>
+              <div class="guide-type-item">
+                <p class="guide-type-item__meta">Body02 — Suit Regular 22 · .text-body-02</p>
+                <p class="guide-type-item__sample text-body-02">Body text sample 02</p>
+              </div>
+              <div class="guide-type-item">
+                <p class="guide-type-item__meta">P-Body02 — Paperlogy Regular 22 · .text-p-body-02</p>
+                <p class="guide-type-item__sample text-p-body-02">Body text sample P02</p>
+              </div>
+              <div class="guide-type-item">
+                <p class="guide-type-item__meta">Body03 — Suit Regular 20 · .text-body-03</p>
+                <p class="guide-type-item__sample text-body-03">Body text sample 03</p>
+              </div>
+              <div class="guide-type-item">
+                <p class="guide-type-item__meta">P-Body03 — Paperlogy Regular 20 · .text-p-body-03</p>
+                <p class="guide-type-item__sample text-p-body-03">Body text sample P03</p>
+              </div>
+              <div class="guide-type-item">
+                <p class="guide-type-item__meta">Body04 — Suit Regular 18 · .text-body-04</p>
+                <p class="guide-type-item__sample text-body-04">Body text sample 04</p>
+              </div>
+              <div class="guide-type-item">
+                <p class="guide-type-item__meta">Body05 — Suit Regular 16 · .text-body-05</p>
+                <p class="guide-type-item__sample text-body-05">Body text sample 05</p>
+              </div>
+              <div class="guide-type-item">
+                <p class="guide-type-item__meta">Footer — Suit Regular 16 · .text-footer</p>
+                <p class="guide-type-item__sample text-footer">Footer text sample</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="guide__group" aria-labelledby="typography-tablet">
+            <h3 id="typography-tablet" class="guide__group-title">Tablet (768–1023px)</h3>
+            <p class="guide__section-note">font-size 추후 추가 예정 · common.css `@media (min-width: 48rem)` 영역</p>
+            <div class="guide-type-placeholder">
+              <p class="guide-type-placeholder__text">Tablet typography tokens — TBD</p>
+            </div>
+          </div>
+
+          <div class="guide__group" aria-labelledby="typography-mobile">
+            <h3 id="typography-mobile" class="guide__group-title">Mobile (320–767px)</h3>
+            <p class="guide__section-note">font-size 추후 추가 예정 · common.css `:root` mobile 영역</p>
+            <div class="guide-type-placeholder">
+              <p class="guide-type-placeholder__text">Mobile typography tokens — TBD</p>
             </div>
           </div>
         </section>
 
-        <section class="guide__section" aria-labelledby="btn-cta">
-          <h2 id="btn-cta" class="guide__section-title">CTA btn</h2>
-          <p class="guide__section-note">Default → Hover / Active</p>
-          <div class="guide__row">
-            <button type="button" class="btn btn-cta">
-              <span>BUTTON</span>
-              <span class="btn-cta__arrow" aria-hidden="true">&gt;</span>
-            </button>
-          </div>
-        </section>
+        <section class="guide__section" aria-labelledby="buttons">
+          <h2 id="buttons" class="guide__section-title">Buttons</h2>
+          <p class="guide__section-note">마우스를 올리거나 클릭해 상태를 확인해 주세요.</p>
 
-        <section class="guide__section" aria-labelledby="btn-product-ctg">
-          <h2 id="btn-product-ctg" class="guide__section-title">Product ctg btn</h2>
-          <p class="guide__section-note">이미지 영역 200×114 · gap 4px · Default → Hover / Active</p>
-          <div class="guide__row">
-            <button type="button" class="btn btn-product-ctg">
-              <span class="btn-product-ctg__media" aria-hidden="true">
-                <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5" />
-                  <circle cx="14" cy="16" r="2.5" fill="currentColor" />
-                  <path
-                    d="M8 28L16 20L21 25L26 19L32 28H8Z"
-                    fill="currentColor"
-                    opacity="0.45"
-                  />
-                </svg>
-              </span>
-              <span>BUTTON</span>
-            </button>
+          <div class="guide__group" aria-labelledby="btn-large">
+            <h3 id="btn-large" class="guide__group-title">Btn Large</h3>
+            <p class="guide__section-note">Default → Hover / Active · padding 12×36</p>
+            <div class="guide__row">
+              <button type="button" class="btn btn-large">
+                <span>BUTTON</span>
+                <span class="btn-large__arrow" aria-hidden="true"></span>
+              </button>
+            </div>
           </div>
-        </section>
 
-        <section class="guide__section" aria-labelledby="btn-test-before">
-          <h2 id="btn-test-before" class="guide__section-title">Test before btn</h2>
-          <p class="guide__section-note">Default → Hover / Active</p>
-          <div class="guide__row">
-            <button type="button" class="btn btn-test-before">BUTTON</button>
+          <div class="guide__group" aria-labelledby="btn-medium">
+            <h3 id="btn-medium" class="guide__group-title">Btn Medium</h3>
+            <p class="guide__section-note">Default → Hover / Active · padding 12×36</p>
+            <div class="guide__row">
+              <button type="button" class="btn btn-medium">
+                <span>BUTTON</span>
+                <span class="btn-medium__arrow" aria-hidden="true">&gt;</span>
+              </button>
+            </div>
           </div>
-        </section>
 
-        <section class="guide__section" aria-labelledby="btn-test-next">
-          <h2 id="btn-test-next" class="guide__section-title">Test next btn</h2>
-          <p class="guide__section-note">Default → Hover / Active · Disabled</p>
-          <div class="guide__row">
-            <button type="button" class="btn btn-test-next">BUTTON</button>
-            <button type="button" class="btn btn-test-next" disabled>BUTTON</button>
+          <div class="guide__group" aria-labelledby="btn-small">
+            <h3 id="btn-small" class="guide__group-title">Btn Small</h3>
+            <p class="guide__section-note">Default → Hover / Active · Disabled · padding 12×36</p>
+            <div class="guide__row">
+              <button type="button" class="btn btn-small">BUTTON</button>
+              <button type="button" class="btn btn-small-next">BUTTON</button>
+              <button type="button" class="btn btn-small-next" disabled>BUTTON</button>
+            </div>
+          </div>
+
+          <div class="guide__group" aria-labelledby="btn-tab">
+            <h3 id="btn-tab" class="guide__group-title">Tab btn</h3>
+            <p class="guide__section-note">탭 버튼 · product category 포함 · Default → Hover / Active</p>
+            <div class="guide__row">
+              <div class="btn-tab-group">
+                <button type="button" class="btn btn-tab">BUTTON</button>
+                <button type="button" class="btn btn-tab">BUTTON</button>
+                <button type="button" class="btn btn-tab">BUTTON</button>
+              </div>
+              <button type="button" class="btn btn-tab-ctg">
+                <span class="btn-tab-ctg__media" aria-hidden="true">
+                  <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5" />
+                    <circle cx="14" cy="16" r="2.5" fill="currentColor" />
+                    <path
+                      d="M8 28L16 20L21 25L26 19L32 28H8Z"
+                      fill="currentColor"
+                      opacity="0.45"
+                    />
+                  </svg>
+                </span>
+                <span>BUTTON</span>
+              </button>
+            </div>
           </div>
         </section>
 
@@ -295,6 +527,71 @@
                 </svg>
               </div>
               <h3 class="card-event__title">TITLE</h3>
+            </article>
+          </div>
+        </section>
+
+        <section class="guide__section" aria-labelledby="popup-news">
+          <h2 id="popup-news" class="guide__section-title">News popup</h2>
+          <p class="guide__section-note">padding 40px · 이미지 945×392 · 타이틀/이미지/본문 gap 20px</p>
+          <div class="guide__row guide__row--start">
+            <article class="popup-news">
+              <button type="button" class="popup-news__close" aria-label="닫기">×</button>
+              <div class="popup-news__inner">
+                <header class="popup-news__header">
+                  <h3 class="popup-news__title">News Title</h3>
+                  <p class="popup-news__date">2026. 08. 12</p>
+                </header>
+                <div class="popup-news__media" aria-hidden="true">
+                  <svg class="popup__placeholder-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5" />
+                    <circle cx="14" cy="16" r="2.5" fill="currentColor" />
+                    <path d="M8 28L16 20L21 25L26 19L32 28H8Z" fill="currentColor" opacity="0.45" />
+                  </svg>
+                </div>
+                <div class="popup-news__body">
+                  <p class="popup-news__text">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore
+                    et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                    aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                    cillum dolore eu fugiat nulla pariatur.
+                  </p>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="guide__section" aria-labelledby="popup-event">
+          <h2 id="popup-event" class="guide__section-title">Event popup</h2>
+          <p class="guide__section-note">padding 40px · 이미지 479×548 · 이미지/본문 gap 40px</p>
+          <div class="guide__row guide__row--start">
+            <article class="popup-event">
+              <button type="button" class="popup-event__close" aria-label="닫기">×</button>
+              <div class="popup-event__inner">
+                <header class="popup-event__header">
+                  <h3 class="popup-event__title">Event Title</h3>
+                  <p class="popup-event__date">2026. 08. 12</p>
+                </header>
+                <div class="popup-event__content">
+                  <div class="popup-event__media" aria-hidden="true">
+                    <svg class="popup__placeholder-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5" />
+                      <circle cx="14" cy="16" r="2.5" fill="currentColor" />
+                      <path d="M8 28L16 20L21 25L26 19L32 28H8Z" fill="currentColor" opacity="0.45" />
+                    </svg>
+                  </div>
+                  <div class="popup-event__body">
+                    <p class="popup-event__body-title">Event Body Title</p>
+                    <p class="popup-event__body-text">
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
+                      labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+                      nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit
+                      esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </article>
           </div>
         </section>

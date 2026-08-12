@@ -10,6 +10,9 @@
   --font-suit: 'Suit', sans-serif;
   --font-paperlogy: 'Paperozi', sans-serif;
 
+  /* Suit weights — Bold 스펙은 font-weight 600 (Semibold) */
+  --fw-suit-bold: 600;
+
   /* Base Color */
   --color-text-dark: #333333;
   --color-grey-600: #747883;
@@ -43,7 +46,9 @@
   --grid-gutter: 1.25rem; /* 20px */
   --grid-margin: 1.25rem; /* 20px */
 
-  /* Typography — PC scale (tablet/mobile TBD) */
+  /* Typography — Mobile (320–767) TBD
+     확정 전까지 임시로 PC 스케일을 사용합니다.
+     모바일 값이 정해지면 아래를 교체하고, PC 값은 min-width: 64rem 블록으로 옮깁니다. */
   --fs-extra-large: 4rem; /* 64px */
   --fs-hero-title: 3.125rem; /* 50px */
   --fs-title: 2.5rem; /* 40px */
@@ -63,6 +68,20 @@
     --grid-columns: 6;
     --grid-gutter: 1.25rem;
     --grid-margin: 1.25rem;
+
+    /* Typography — Tablet (768–1023) TBD
+    --fs-extra-large: ;
+    --fs-hero-title: ;
+    --fs-title: ;
+    --fs-subtitle-lg: ;
+    --fs-subtitle-md: ;
+    --fs-body-01: ;
+    --fs-body-02: ;
+    --fs-body-03: ;
+    --fs-body-04: ;
+    --fs-body-05: ;
+    --fs-footer: ;
+    */
   }
 }
 
@@ -72,6 +91,19 @@
     --grid-columns: 12;
     --grid-gutter: 1.25rem;
     --grid-margin: 7.5rem; /* 120px */
+
+    /* Typography — PC (1024+) */
+    --fs-extra-large: 4rem; /* 64px */
+    --fs-hero-title: 3.125rem; /* 50px */
+    --fs-title: 2.5rem; /* 40px */
+    --fs-subtitle-lg: 2.25rem; /* 36px */
+    --fs-subtitle-md: 1.75rem; /* 28px */
+    --fs-body-01: 1.5rem; /* 24px */
+    --fs-body-02: 1.375rem; /* 22px */
+    --fs-body-03: 1.25rem; /* 20px */
+    --fs-body-04: 1.125rem; /* 18px */
+    --fs-body-05: 1rem; /* 16px */
+    --fs-footer: 1rem; /* 16px */
   }
 }
 
@@ -156,10 +188,10 @@ a {
   font-size: var(--fs-hero-title);
 }
 
-/* Title01 — Paperlogy Bold 40 */
+/* Title01 — Paperlogy Semibold 40 */
 .text-title-01 {
   font-family: var(--font-paperlogy);
-  font-weight: 700;
+  font-weight: 600;
   font-size: var(--fs-title);
 }
 
@@ -187,14 +219,14 @@ a {
 /* Subtitle02 — Suit Bold 36 */
 .text-subtitle-02 {
   font-family: var(--font-suit);
-  font-weight: 700;
+  font-weight: var(--fw-suit-bold);
   font-size: var(--fs-subtitle-lg);
 }
 
 /* Subtitle03 — Suit Bold 28 */
 .text-subtitle-03 {
   font-family: var(--font-suit);
-  font-weight: 700;
+  font-weight: var(--fw-suit-bold);
   font-size: var(--fs-subtitle-md);
 }
 

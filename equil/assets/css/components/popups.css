@@ -1,0 +1,188 @@
+/* ========================================
+   Popups — News / Event
+   ======================================== */
+
+/* ---------- Modal layer (actual pages) ---------- */
+.popup-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  box-sizing: border-box;
+}
+
+.popup-layer.is-open {
+  display: flex;
+}
+
+.popup-layer__dim {
+  position: absolute;
+  inset: 0;
+  background-color: #000;
+  opacity: 0.2;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.popup-layer__dialog {
+  position: relative;
+  z-index: 1;
+  max-height: 100%;
+  overflow: auto;
+}
+
+body.is-popup-open {
+  overflow: hidden;
+}
+
+/* ---------- Popup panels ---------- */
+.popup-news,
+.popup-event {
+  position: relative;
+  box-sizing: border-box;
+  padding: 2.5rem; /* 40px */
+  border-radius: 1.25rem; /* 20px */
+  background-color: var(--color-white);
+}
+
+.popup-news__close,
+.popup-event__close {
+  position: absolute;
+  top: 2.5rem; /* 40px */
+  right: 2.5rem;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-family: var(--font-suit);
+  font-weight: 400;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--color-text-dark);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.popup-news__inner,
+.popup-event__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem; /* 20px */
+}
+
+.popup-news__header,
+.popup-event__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem; /* 12px */
+  padding-bottom: 0.625rem; /* 10px */
+  border-bottom: 0.0625rem solid var(--color-grey-300); /* 1px grey-3 */
+}
+
+.popup-news__title,
+.popup-event__title {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: var(--fw-suit-bold);
+  font-size: 1.75rem; /* 28px */
+  color: var(--color-text-dark);
+}
+
+.popup-news__date,
+.popup-event__date {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: var(--fw-suit-bold);
+  font-size: 1rem; /* 16px */
+  color: var(--color-grey-300);
+}
+
+.popup-news__media {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 59.0625rem; /* 945px */
+  height: 24.5rem; /* 392px */
+  flex-shrink: 0;
+  overflow: hidden;
+  background-color: var(--color-grey-100);
+}
+
+.popup-news__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.popup-news__body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem; /* 20px */
+  width: 59.0625rem; /* 945px — 이미지와 동일 너비 */
+}
+
+.popup-news__text {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: 400;
+  font-size: 1.125rem; /* 18px */
+  color: var(--color-text-dark);
+  line-height: 1.5;
+}
+
+/* ---------- Event popup ---------- */
+.popup-event__content {
+  display: flex;
+  align-items: flex-start;
+  gap: 2.5rem; /* 40px */
+}
+
+.popup-event__media {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 29.9375rem; /* 479px */
+  height: 34.25rem; /* 548px */
+  flex-shrink: 0;
+  background-color: var(--color-grey-100);
+}
+
+.popup-event__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.popup-event__body-title {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-suit);
+  font-weight: var(--fw-suit-bold);
+  font-size: 1.125rem; /* 18px */
+  color: var(--color-text-dark);
+}
+
+.popup-event__body-text {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: 400;
+  font-size: 1.125rem; /* 18px */
+  color: var(--color-text-dark);
+  line-height: 1.5;
+}
+
+.popup-news__media .popup__placeholder-icon,
+.popup-event__media .popup__placeholder-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--color-grey-400);
+}

@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="../../assets/css/common.css">
   <link rel="stylesheet" href="../../assets/css/header.css">
   <link rel="stylesheet" href="../../assets/css/footer.css">
+  <link rel="stylesheet" href="../../assets/css/components/popups.css">
   <link rel="stylesheet" href="../../assets/css/pages/community/news.css">
 </head>
 
@@ -126,14 +127,106 @@
 
   <main>
     <section class="news-hero">
-      <div class="container">
+      <div class="container news-hero__container">
+        <h1 class="news-hero__title text-title-01">News Room</h1>
       </div>
     </section>
+
     <section class="news-list">
-      <div class="container">
+      <div class="container news-list__container">
+        <ul class="news-list__list">
+          <li class="news-list__item">
+            <a
+              class="news-list__link"
+              href="#"
+              data-popup-open="popup-news-layer"
+              data-news-id="01"
+            >
+              <p class="news-list__number">01</p>
+              <div class="news-list__media">
+                <div class="news-list__image-frame">
+                  <img
+                    class="news-list__image"
+                    src="../../assets/images/community/news/news1.webp"
+                    alt=""
+                  />
+                </div>
+              </div>
+              <div class="news-list__content">
+                <p class="news-list__title">EQUIL, 브랜드 공식 런칭… 새로운 수면 경험을 제안</p>
+                <p class="news-list__date">2026.08.01</p>
+              </div>
+            </a>
+          </li>
+          <li class="news-list__item">
+            <a
+              class="news-list__link"
+              href="#"
+              data-popup-open="popup-news-layer"
+              data-news-id="02"
+            >
+              <p class="news-list__number">02</p>
+              <div class="news-list__media">
+                <div class="news-list__image-frame">
+                  <img
+                    class="news-list__image"
+                    src="../../assets/images/community/news/news2.webp"
+                    alt=""
+                  />
+                </div>
+              </div>
+              <div class="news-list__content">
+                <p class="news-list__title">EQUIL, Sleep Fit Test 서비스 정식 오픈</p>
+                <p class="news-list__date">2026.08.04</p>
+              </div>
+            </a>
+          </li>
+          <li class="news-list__item">
+            <a
+              class="news-list__link"
+              href="#"
+              data-popup-open="popup-news-layer"
+              data-news-id="03"
+            >
+              <p class="news-list__number">03</p>
+              <div class="news-list__media">
+                <div class="news-list__image-frame">
+                  <img
+                    class="news-list__image"
+                    src="../../assets/images/community/news/news3.webp"
+                    alt=""
+                  />
+                </div>
+              </div>
+              <div class="news-list__content">
+                <p class="news-list__title">성수 팝업스토어 오픈… 프리미엄 수면 체험 공간 운영</p>
+                <p class="news-list__date">2026.09.01</p>
+              </div>
+            </a>
+          </li>
+        </ul>
       </div>
     </section>
   </main>
+
+  <div class="popup-layer" id="popup-news-layer" aria-hidden="true">
+    <button type="button" class="popup-layer__dim" data-popup-close aria-label="닫기"></button>
+    <div class="popup-layer__dialog" role="dialog" aria-modal="true" aria-labelledby="popup-news-title">
+      <article class="popup-news">
+        <button type="button" class="popup-news__close" data-popup-close aria-label="닫기">×</button>
+        <div class="popup-news__inner">
+          <header class="popup-news__header">
+            <h2 id="popup-news-title" class="popup-news__title"></h2>
+            <p class="popup-news__date"></p>
+          </header>
+          <div class="popup-news__media">
+            <img class="popup-news__image" src="" alt="" />
+          </div>
+          <div class="popup-news__body"></div>
+        </div>
+      </article>
+    </div>
+  </div>
 
   <footer class="site-footer">
     <div class="site-footer__inner">
@@ -164,6 +257,8 @@
   </footer>
 
   <script src="../../assets/js/common.js"></script>
+  <script src="../../assets/js/popup.js"></script>
+  <script src="../../assets/js/pages/community/news.js"></script>
 </body>
 
 </html>
