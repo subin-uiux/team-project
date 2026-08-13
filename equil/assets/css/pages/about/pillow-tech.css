@@ -362,7 +362,7 @@
 
 .pillow-tech-zones__callout--left {
   left: 22%;
-  top: 70%;
+  top: 75%;
 }
 
 .pillow-tech-zones__callout-dot {
@@ -382,9 +382,14 @@
   position: absolute;
   left: 0;
   width: 1px;
-  height: 12.5rem; /* 200px */
+  height: 12.5rem; /* 200px — center */
   background-color: var(--color-brand-dark);
   will-change: transform;
+}
+
+.pillow-tech-zones__callout--left .pillow-tech-zones__callout-line,
+.pillow-tech-zones__callout--right .pillow-tech-zones__callout-line {
+  height: 9.375rem; /* 150px */
 }
 
 .pillow-tech-zones__callout--up .pillow-tech-zones__callout-line {
@@ -416,7 +421,18 @@
 }
 
 .pillow-tech-zones__callout--down .pillow-tech-zones__callout-text {
+  /* dot radius 10 + line 200 + gap 10 */
   top: calc(0.625rem + 12.5rem + 0.625rem);
+}
+
+.pillow-tech-zones__callout--right.pillow-tech-zones__callout--up .pillow-tech-zones__callout-text {
+  /* dot radius 10 + line 150 + gap 10 */
+  bottom: calc(0.625rem + 9.375rem + 0.625rem);
+}
+
+.pillow-tech-zones__callout--left.pillow-tech-zones__callout--down .pillow-tech-zones__callout-text {
+  /* dot radius 10 + line 150 + gap 10 */
+  top: calc(0.625rem + 9.375rem + 0.625rem);
 }
 
 .pillow-tech-zones__callout-name,

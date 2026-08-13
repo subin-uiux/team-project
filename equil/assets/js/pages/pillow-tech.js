@@ -100,7 +100,7 @@
     if (!features.length || !hotspot) return;
 
     const LAST_INDEX = features.length - 1;
-    const COOLDOWN_MS = 2500;
+    const COOLDOWN_MS = 1000;
     const ENTRY_LOCK_MS = 1000;
     const TRANSITION_DURATION = 1.2;
     const FADE_OUT_DURATION = TRANSITION_DURATION * 0.55;
@@ -272,47 +272,33 @@
 
     activateFeature(0, false);
 
-    const releasePinForNaturalScroll = (deltaY) => {
-      if (!pinTrigger) return;
-
-      pinTrigger.kill(true);
-      pinTrigger = null;
-      ScrollTrigger.refresh();
-
-      requestAnimationFrame(() => {
-        window.scrollTo(0, Math.max(0, section.offsetTop + deltaY));
-      });
-    };
-
     const onWheel = (event) => {
       if (!pinTrigger || !pinTrigger.isActive) return;
 
       const goingDown = event.deltaY > 0;
 
-      // 섹션 진입 직후 1초간 스크롤 차단
+      // 섹션 진입 직후 대기
       if (isEntryLocked()) {
         event.preventDefault();
         return;
       }
 
-      // 전환 중에는 섹션 이탈·다음 전환 모두 차단
+      // 전환 중에는 이탈·다음 전환 차단
       if (isTransitioning) {
         event.preventDefault();
         return;
       }
 
-      // 마지막(하단)에서 아래 스크롤 → 쿨다운 이후에만 pin 해제
+      // 03에서 아래 스크롤 → 쿨다운 후 자연 스크롤로 다음 섹션
       if (goingDown && currentIndex === LAST_INDEX) {
-        event.preventDefault();
-        if (isInCooldown()) return;
-        releasePinForNaturalScroll(event.deltaY);
+        if (isInCooldown()) {
+          event.preventDefault();
+        }
         return;
       }
 
-      // 첫 항목에서 위 스크롤 → pin 해제 후 이전 섹션으로 자연 스크롤
+      // 01에서 위 스크롤 → 자연 스크롤로 이전 섹션
       if (!goingDown && currentIndex === 0) {
-        event.preventDefault();
-        releasePinForNaturalScroll(event.deltaY);
         return;
       }
 
@@ -326,13 +312,21 @@
     pinTrigger = ScrollTrigger.create({
       trigger: section,
       start: 'top top',
-      end: '+=100%',
+      end: '+=300%',
       pin: true,
       pinSpacing: true,
       anticipatePin: 1,
       invalidateOnRefresh: true,
-      onEnter: startEntryLock,
-      onEnterBack: startEntryLock,
+      onEnter: () => {
+        // 위에서 진입 / 첫 진입 → 01 기준 1-2-3
+        activateFeature(0, false);
+        startEntryLock();
+      },
+      onEnterBack: () => {
+        // 아래에서 재진입 → 03 기준 3-2-1
+        activateFeature(LAST_INDEX, false);
+        startEntryLock();
+      },
     });
 
     window.addEventListener('wheel', onWheel, { passive: false });
