@@ -12,6 +12,7 @@
   white-space: nowrap;
   appearance: none;
   -webkit-appearance: none;
+  transition: all 0.2s ease;
 }
 
 /* ---------- Btn Large (ex. sleep-fit) ---------- */
@@ -179,13 +180,10 @@
 }
 
 .btn-tab {
-  padding: 0.5rem 0.875rem;
-  /* 8px 14px */
-  border-radius: 2.5rem;
-  /* 40px */
-  border: 0.0625rem solid var(--color-brand-dark);
-  /* 1px */
-  background-color: var(--color-white);
+  padding: 0.5rem 0.875rem; /* 8px 14px */
+  border-radius: 2.5rem; /* 40px */
+  border: 0.0625rem solid var(--color-brand-dark); /* 1px */
+  background-color: transparent;
   font-family: var(--font-paperlogy);
   font-weight: 500;
   font-size: 1.125rem;
@@ -193,9 +191,26 @@
   color: var(--color-brand-dark);
 }
 
+/* Hover — grey-100 */
 .btn-tab:hover,
-.btn-tab:active {
+.btn-tab.is-hover {
+  background-color: var(--color-grey-100);
+  border-color: var(--color-brand-dark);
+  color: var(--color-brand-dark);
+}
+
+/* Click / selected — brand/dark */
+.btn-tab:active,
+.btn-tab.is-active {
   background-color: var(--color-brand-dark);
+  border-color: var(--color-brand-dark);
+  color: var(--color-white);
+}
+
+/* 선택된 탭은 hover 시에도 click 상태 유지 */
+.btn-tab.is-active:hover {
+  background-color: var(--color-brand-dark);
+  border-color: var(--color-brand-dark);
   color: var(--color-white);
 }
 

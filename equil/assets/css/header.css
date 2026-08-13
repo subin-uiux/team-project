@@ -137,9 +137,9 @@
   background-color: var(--color-brand-light-2);
 }
 
-.site-header:has(.site-header__link:hover) .site-header__mega,
+.site-header:has(.site-header__nav:hover) .site-header__mega,
 .site-header:has(.site-header__mega:hover) .site-header__mega,
-.site-header:has(.site-header__link:focus-visible) .site-header__mega {
+.site-header:has(.site-header__nav:focus-within) .site-header__mega {
   grid-template-rows: 1fr;
 }
 
@@ -235,9 +235,9 @@
     display: flex;
   }
 
-  .site-header:has(.site-header__link:hover) .site-header__mega,
+  .site-header:has(.site-header__nav:hover) .site-header__mega,
   .site-header:has(.site-header__mega:hover) .site-header__mega,
-  .site-header:has(.site-header__link:focus-visible) .site-header__mega {
+  .site-header:has(.site-header__nav:focus-within) .site-header__mega {
     grid-template-rows: 0fr;
   }
 
@@ -387,9 +387,9 @@
     transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  body:has(.site-header:has(.site-header__link:hover)) .site-header__dim,
+  body:has(.site-header:has(.site-header__nav:hover)) .site-header__dim,
   body:has(.site-header:has(.site-header__mega:hover)) .site-header__dim,
-  body:has(.site-header:has(.site-header__link:focus-visible)) .site-header__dim,
+  body:has(.site-header:has(.site-header__nav:focus-within)) .site-header__dim,
   body.is-mega-open .site-header__dim {
     opacity: 0.2;
     pointer-events: auto;
