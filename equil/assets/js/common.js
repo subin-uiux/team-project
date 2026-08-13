@@ -146,7 +146,7 @@
   }
 
   const mega = header.querySelector('.site-header__mega');
-  const navLinks = header.querySelectorAll('.site-header__link');
+  const nav = header.querySelector('.site-header__nav');
   const megaMq = window.matchMedia('(min-width: 64rem)');
 
   const setMegaOpen = (isOpen) => {
@@ -162,10 +162,10 @@
     setMegaOpen(false);
   };
 
-  navLinks.forEach((link) => {
-    link.addEventListener('mouseenter', openMega);
-    link.addEventListener('focus', openMega);
-  });
+  if (nav) {
+    nav.addEventListener('mouseenter', openMega);
+    nav.addEventListener('focusin', openMega);
+  }
 
   if (mega) {
     mega.addEventListener('mouseenter', openMega);

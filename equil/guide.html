@@ -408,10 +408,26 @@
 
           <div class="guide__group" aria-labelledby="btn-tab">
             <h3 id="btn-tab" class="guide__group-title">Tab btn</h3>
-            <p class="guide__section-note">탭 버튼 · product category 포함 · Default → Hover / Active</p>
+            <p class="guide__section-note">
+              padding·font 동일 · 컬러만 변경 · Default → Hover(grey-100) → Click/is-active(dark)
+            </p>
+            <div class="guide__row guide__row--start">
+              <div class="guide-btn-state">
+                <p class="guide-btn-state__label">Default</p>
+                <button type="button" class="btn btn-tab">BUTTON</button>
+              </div>
+              <div class="guide-btn-state">
+                <p class="guide-btn-state__label">Hover</p>
+                <button type="button" class="btn btn-tab is-hover">BUTTON</button>
+              </div>
+              <div class="guide-btn-state">
+                <p class="guide-btn-state__label">Click</p>
+                <button type="button" class="btn btn-tab is-active">BUTTON</button>
+              </div>
+            </div>
             <div class="guide__row">
               <div class="btn-tab-group">
-                <button type="button" class="btn btn-tab">BUTTON</button>
+                <button type="button" class="btn btn-tab is-active">BUTTON</button>
                 <button type="button" class="btn btn-tab">BUTTON</button>
                 <button type="button" class="btn btn-tab">BUTTON</button>
               </div>

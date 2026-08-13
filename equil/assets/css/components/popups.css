@@ -124,7 +124,7 @@ body.is-popup-open {
 .popup-event__date {
   margin: 0;
   font-family: var(--font-suit);
-  font-weight: var(--fw-suit-bold);
+  font-weight: 500;
   font-size: 1rem; /* 16px */
   color: var(--color-grey-300);
 }
