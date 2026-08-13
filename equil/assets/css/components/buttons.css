@@ -48,8 +48,6 @@
   background-color: var(--color-brand-light-1);
   color: var(--color-brand-dark);
 }
-<<<<<<< HEAD
-
 
 /* ---------- Btn Medium (ex. cta) ---------- */
 .btn-medium {
@@ -66,61 +64,6 @@
   line-height: 130%;
   color: var(--color-brand-dark);
 }
-=======
-
-/* ---------- Btn Medium (ex. cta) ---------- */
-.btn-medium {
-  gap: 0.5rem;
-  padding: 0.75rem 2.25rem;
-  /* 12px 36px */
-  border-radius: 6.25rem;
-  /* 100px */
-  background-color: var(--color-brand-light-1);
-  font-family: var(--font-suit);
-  font-weight: 600;
-  font-size: 1.875rem;
-  /* 30px */
-  color: var(--color-brand-dark);
-}
-
-/* ---------- Tap btn ---------- */
-.btn-tap-group {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  /* 12px */
-}
-
-.btn-tap {
-  padding: 0.5rem 0.875rem;
-  /* 8px 14px */
-  border-radius: 2.5rem;
-  /* 40px */
-  border: 0.0625rem solid var(--color-brand-dark);
-  /* 1px */
-  background-color: var(--color-white);
-  font-family: var(--font-paperlogy);
-  font-weight: 500;
-  font-size: 1.125rem;
-  /* 18px */
-  color: var(--color-brand-dark);
-}
-
-.btn-tap:hover,
-.btn-tap:active {
-  background-color: var(--color-brand-dark);
-  color: var(--color-white);
-}
-
-.btn-tap.is-selected,
-.btn-tap.is-selected:hover,
-.btn-tap.is-selected:active {
-  background-color: var(--color-brand-dark);
-  color: var(--color-white);
-}
-
->>>>>>> parent of 25b4412 (Revert "Merge branch 'main' into inseo")
-
 
 .btn-medium__arrow {
   flex-shrink: 0;

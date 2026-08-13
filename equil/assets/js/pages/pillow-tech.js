@@ -1,4 +1,4 @@
-(() => {
+﻿(() => {
   const SLEEP_POSITION_IMAGES = [
     '../../assets/images/about/pillow-tech/pillow-tech-sleep-position_img01.webp',
     '../../assets/images/about/pillow-tech/pillow-tech-sleep-position_img02.webp',
@@ -61,7 +61,7 @@
     const activateTab = (index) => {
       tabs.forEach((tab, tabIndex) => {
         const isActive = tabIndex === index;
-        tab.classList.toggle('is-selected', isActive);
+        tab.classList.toggle('is-active', isActive);
         tab.setAttribute('aria-selected', String(isActive));
       });
 
@@ -94,9 +94,9 @@
     if (!section) return;
 
     const features = Array.from(
-      section.querySelectorAll('.pillow-tech-structure__feature')
+      section.querySelectorAll('.scroll-feature__feature')
     );
-    const hotspot = section.querySelector('.pillow-tech-structure__hotspot');
+    const hotspot = section.querySelector('.scroll-feature__hotspot');
     if (!features.length || !hotspot) return;
 
     const LAST_INDEX = features.length - 1;
@@ -129,16 +129,16 @@
       const prevFeature = features[prevIndex];
       const nextFeature = features[index];
       const prevIndicator = prevFeature?.querySelector(
-        '.pillow-tech-structure__indicator'
+        '.scroll-feature__indicator'
       );
       const prevDesc = prevFeature?.querySelector(
-        '.pillow-tech-structure__feature-desc'
+        '.scroll-feature__feature-desc'
       );
       const nextIndicator = nextFeature.querySelector(
-        '.pillow-tech-structure__indicator'
+        '.scroll-feature__indicator'
       );
       const nextDesc = nextFeature.querySelector(
-        '.pillow-tech-structure__feature-desc'
+        '.scroll-feature__feature-desc'
       );
       const pos = HOTSPOT_POSITIONS[index];
 
@@ -148,10 +148,10 @@
           feature.classList.toggle('is-active', isActive);
 
           const indicator = feature.querySelector(
-            '.pillow-tech-structure__indicator'
+            '.scroll-feature__indicator'
           );
           const desc = feature.querySelector(
-            '.pillow-tech-structure__feature-desc'
+            '.scroll-feature__feature-desc'
           );
 
           if (indicator) gsap.set(indicator, { opacity: isActive ? 1 : 0 });
@@ -289,7 +289,7 @@
         return;
       }
 
-      // 03에서 아래 스크롤 → 쿨다운 후 자연 스크롤로 다음 섹션
+      // 마지막 특징에서 아래 스크롤: 쿨다운 후 자연 스크롤로 다음 섹션
       if (goingDown && currentIndex === LAST_INDEX) {
         if (isInCooldown()) {
           event.preventDefault();
@@ -297,7 +297,7 @@
         return;
       }
 
-      // 01에서 위 스크롤 → 자연 스크롤로 이전 섹션
+      // 첫 특징에서 위 스크롤: 자연 스크롤로 이전 섹션
       if (!goingDown && currentIndex === 0) {
         return;
       }
@@ -312,7 +312,7 @@
     pinTrigger = ScrollTrigger.create({
       trigger: section,
       start: 'top top',
-      end: '+=300%',
+      end: '+=100%',
       pin: true,
       pinSpacing: true,
       anticipatePin: 1,
@@ -323,7 +323,7 @@
         startEntryLock();
       },
       onEnterBack: () => {
-        // 아래에서 재진입 → 03 기준 3-2-1
+        // 아래에서 재진입 → 마지막 기준 역순
         activateFeature(LAST_INDEX, false);
         startEntryLock();
       },
@@ -472,7 +472,7 @@
         const stagger =
           FADE_UP_DURATION / Math.max(item.chars.length * 2.5, 1);
 
-        // 이전 텍스트 애니메이션 60% 지점에서 다음 특징 시작
+        // 이전 텍스트 애니메이션 60% 지점에서 다음 콜아웃 시작
         const startPos =
           index === 0
             ? 0

@@ -1,0 +1,316 @@
+/* ========================================
+   bedding-tech-hero
+   ======================================== */
+
+.bedding-tech-hero {
+  position: relative;
+  width: 100%;
+}
+
+.bedding-tech-hero__frame {
+  position: relative;
+  width: 100%;
+  height: 437px;
+  overflow: hidden;
+}
+
+.bedding-tech-hero__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  transform: scale(1);
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.bedding-tech-hero__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-color: #000;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.bedding-tech-hero__container {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bedding-tech-hero__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem; /* 14px */
+  text-align: center;
+  opacity: 0;
+}
+
+.bedding-tech-hero__title,
+.bedding-tech-hero__desc {
+  margin: 0;
+  color: #fff;
+  line-height: 150%;
+}
+
+/* ========================================
+   bedding-tech-design
+   ======================================== */
+
+.bedding-tech-design {
+  position: relative;
+  width: 100%;
+  height: 67.5rem; /* 1080px */
+}
+
+.bedding-tech-design__frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.bedding-tech-design__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+}
+
+.bedding-tech-design__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-color: #000;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.bedding-tech-design__container {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  padding-top: 9.375rem; /* 150px */
+}
+
+.bedding-tech-design__content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.bedding-tech-design__title {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: var(--fw-suit-bold); /* 600 */
+  font-size: var(--fs-title); /* 40px */
+  line-height: 130%;
+  color: var(--color-white);
+}
+
+.bedding-tech-design__body {
+  margin-top: 1.875rem; /* 30px */
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem; /* 10px */
+  width: 100%;
+}
+
+.bedding-tech-design__desc {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: 400;
+  font-size: var(--fs-body-02); /* 22px */
+  line-height: 150%;
+  color: var(--color-white);
+  white-space: nowrap;
+}
+
+.bedding-tech-design__char {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+/* ========================================
+   bedding-tech-process
+   ======================================== */
+
+.bedding-tech-process {
+  width: 100%;
+  height: 100vh;
+  background-color: var(--color-white);
+}
+
+/* ========================================
+   bedding-tech-wool
+   ======================================== */
+
+.bedding-tech-wool {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background-color: var(--color-brand-light-3);
+}
+
+.bedding-tech-wool__stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bedding-tech-wool__brand {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0rem; /* 6px */
+}
+
+.bedding-tech-wool__brand-part {
+  margin: 0;
+  font-family: var(--font-paperlogy);
+  font-weight: 900;
+  font-size: 7.5rem; /* 120px */
+  line-height: 1;
+  letter-spacing: 0.1em;
+  color: var(--color-brand-dark);
+  will-change: transform;
+}
+
+.bedding-tech-wool__image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+  width: 86.75rem; /* 1388px */
+  max-width: none;
+  height: auto;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.bedding-tech-wool__title {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 3;
+  margin: 0;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-suit);
+  font-weight: var(--fw-suit-bold); /* 600 */
+  font-size: 5rem; /* 80px */
+  line-height: 130%;
+  color: var(--color-brand-dark);
+  text-align: center;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.bedding-tech-wool__char {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+/* ========================================
+   bedding-tech-seasonal
+   (ANDLAB m5 영감 — EQUIL 톤)
+   ======================================== */
+
+.bedding-tech-seasonal {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 var(--grid-margin) 1.875rem; /* 30px */
+  background-color: var(--color-brand-light-3);
+}
+
+.bedding-tech-seasonal__stage {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.bedding-tech-seasonal__heading {
+  align-items: flex-start;
+  text-align: left;
+  max-width: 46.875rem; /* 750px */
+}
+
+.bedding-tech-seasonal__cards {
+  position: relative;
+  margin-top: 3.125rem; /* 50px */
+  display: flex;
+  gap: 0.9375rem; /* 15px */
+}
+
+.bedding-tech-seasonal__card {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 33.3333%;
+  height: 65vh;
+  padding: 1.875rem; /* 30px */
+  overflow: hidden;
+  background-color: var(--color-brand-light-2);
+}
+
+.bedding-tech-seasonal__media {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  will-change: top;
+}
+
+.bedding-tech-seasonal__image {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+}
+
+.bedding-tech-seasonal__title {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: 600;
+  font-size: 1.75rem; /* 28px */
+  line-height: 130%;
+  letter-spacing: -0.02em;
+  color: var(--color-brand-dark);
+}
+
+.bedding-tech-seasonal__desc {
+  position: relative;
+  z-index: 1;
+  margin: 0.9375rem 0 0; /* 15px */
+  font-family: var(--font-suit);
+  font-weight: 400;
+  font-size: 0.9375rem; /* 15px */
+  line-height: 150%;
+  color: var(--color-brand-dark);
+}
