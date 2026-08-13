@@ -42,3 +42,345 @@
   text-align: center;
   color: var(--color-brand-light-2);
 }
+
+/* ========================================
+   brand-story-name
+   ======================================== */
+
+.brand-story-name {
+  position: relative;
+}
+
+.brand-story-name__pin {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background-color: var(--color-brand-light-1);
+}
+
+.brand-story-name__layer--base {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand-story-name__title {
+  margin: 0;
+  font-family: var(--font-paperlogy);
+  font-weight: 900;
+  font-size: clamp(2.5rem, 6.25vw, 7.5rem); /* ~40–120px */
+  letter-spacing: 0.1em; /* 10% */
+  color: var(--color-text-dark);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.brand-story-name__circle {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-brand-dark);
+  clip-path: circle(0px at 50% 50%);
+  will-change: clip-path;
+}
+
+.brand-story-name__circle-content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding-inline: clamp(1.25rem, 3.125vw, 3.75rem); /* 20–60px — 로고가 밖으로 나가지 않도록 */
+  box-sizing: border-box;
+}
+
+.brand-story-name__row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: visible;
+}
+
+.brand-story-name__eq,
+.brand-story-name__uil {
+  flex: 0 0 auto;
+  font-family: var(--font-paperlogy);
+  font-weight: 900;
+  font-size: clamp(2.5rem, 6.25vw, 7.5rem); /* 120px */
+  letter-spacing: 0.1em; /* 10% */
+  line-height: 1.2;
+  padding-bottom: 0.12em; /* Q 디센더 잘림 방지 */
+  color: #fff;
+  white-space: nowrap;
+  will-change: opacity;
+}
+
+.brand-story-name__message {
+  flex: 0 1 auto;
+  width: 0;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+  overflow-x: hidden;
+  overflow-y: visible;
+  font-family: var(--font-suit);
+  font-weight: 700;
+  font-size: clamp(1.25rem, 2.6vw, 3.125rem); /* 50px */
+  line-height: 1.4;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  will-change: width, margin;
+}
+
+.brand-story-name__message-inner {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.brand-story-name__message-part {
+  display: inline;
+  opacity: 0;
+  will-change: opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-story-name__circle {
+    clip-path: circle(150vmax at 50% 50%);
+  }
+
+  .brand-story-name__eq,
+  .brand-story-name__uil {
+    opacity: 0;
+  }
+
+  .brand-story-name__message {
+    width: auto;
+    margin-inline: 1.5rem;
+  }
+
+  .brand-story-name__message-part {
+    opacity: 1;
+  }
+}
+
+/* ========================================
+   brand-story-philosophy
+   ======================================== */
+
+.brand-story-philosophy {
+  padding-top: 7.5rem; /* 120px */
+  padding-bottom: 7.5rem; /* 120px */
+}
+
+.brand-story-philosophy__container {
+  display: flex;
+  flex-direction: column;
+  gap: 3.75rem; /* 60px — heading ↔ grid */
+}
+
+.brand-story-philosophy__heading {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.brand-story-philosophy__list {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 51.9375rem)); /* 831px */
+  grid-template-rows: repeat(2, 16.25rem); /* 260px */
+  gap: 1.25rem; /* 20px */
+  justify-content: center;
+  width: 100%;
+  max-width: 105rem; /* 1680px */
+  margin: 0;
+  margin-inline: auto;
+  padding: 0;
+  list-style: none;
+}
+
+.brand-story-philosophy__item {
+  position: relative;
+  min-width: 0;
+  z-index: 1;
+}
+
+.brand-story-philosophy__card {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #000;
+  transform-origin: center center;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.brand-story-philosophy__item:nth-child(1) .brand-story-philosophy__card {
+  transform-origin: top left;
+}
+
+.brand-story-philosophy__item:nth-child(2) .brand-story-philosophy__card {
+  transform-origin: top right;
+}
+
+.brand-story-philosophy__item:nth-child(3) .brand-story-philosophy__card {
+  transform-origin: bottom left;
+}
+
+.brand-story-philosophy__item:nth-child(4) .brand-story-philosophy__card {
+  transform-origin: bottom right;
+}
+
+.brand-story-philosophy__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.brand-story-philosophy__dim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-color: #000;
+  pointer-events: none;
+}
+
+.brand-story-philosophy__dim--40 {
+  opacity: 0.4;
+}
+
+.brand-story-philosophy__dim--20 {
+  opacity: 0.2;
+}
+
+.brand-story-philosophy__dim--hover {
+  opacity: 0;
+  transition: opacity 0.45s ease;
+}
+
+.brand-story-philosophy__label {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  letter-spacing: 0.02em; /* 2% */
+  color: #fff;
+  text-align: center;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+.brand-story-philosophy__detail {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem; /* 12px */
+  padding: 1.25rem;
+  box-sizing: border-box;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(0.75rem);
+  transform-origin: center center;
+  transition:
+    opacity 0.4s ease 0.08s,
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.08s;
+}
+
+.brand-story-philosophy__detail-title {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: 700;
+  font-size: 1.75rem; /* 28px */
+  line-height: 1;
+  color: #fff;
+  text-align: center;
+}
+
+.brand-story-philosophy__detail-text {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: 400;
+  font-size: 1.5rem; /* 24px */
+  line-height: 1.3; /* 130% */
+  letter-spacing: 0.02em; /* 2% */
+  color: #fff;
+  text-align: center;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .brand-story-philosophy__item:hover {
+    z-index: 10;
+  }
+
+  /* list 전체(2열+gap × 2행+gap)로 확대: 831→1682, 260→540 */
+  .brand-story-philosophy__item:hover .brand-story-philosophy__card {
+    transform: scale(
+      calc((2 * 51.9375rem + 1.25rem) / 51.9375rem),
+      calc((2 * 16.25rem + 1.25rem) / 16.25rem)
+    );
+  }
+
+  .brand-story-philosophy__item:hover .brand-story-philosophy__dim--hover {
+    opacity: 0.35;
+  }
+
+  .brand-story-philosophy__item:hover .brand-story-philosophy__label {
+    opacity: 0;
+  }
+
+  /* 카드 scale을 상쇄해 문구 크기는 디자인 스펙 유지 */
+  .brand-story-philosophy__item:hover .brand-story-philosophy__detail {
+    opacity: 1;
+    transform: scale(
+      calc(51.9375rem / (2 * 51.9375rem + 1.25rem)),
+      calc(16.25rem / (2 * 16.25rem + 1.25rem))
+    );
+  }
+}
+
+/* ========================================
+   brand-story-end
+   ======================================== */
+
+.brand-story-end {
+  width: 100%;
+}
+
+.brand-story-end__media {
+  width: 100%;
+  height: 25rem; /* 400px */
+  overflow: hidden;
+}
+
+.brand-story-end__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+}
