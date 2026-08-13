@@ -84,12 +84,10 @@
   };
 
   const HOTSPOT_POSITIONS = [
-    { left: '32%', top: '62%' }, /* 01 경추 지지 곡선 — 좌측 볼록 */
-    { left: '60%', top: '75%' }, /* 02 머리 안착 존 — 중앙 홈 */
-    { left: '90%', top: '58%' }, /* 03 압력 분산 구조 — 우측 볼록 */
+    { left: '32%', top: '62%' },
+    { left: '60%', top: '75%' },
+    { left: '90%', top: '58%' },
   ];
-
-  const STRUCTURE_TRANSITION_DURATION = 0.75;
 
   const initPillowTechStructure = () => {
     const section = document.querySelector('.pillow-tech-structure');
@@ -101,266 +99,458 @@
     const hotspot = section.querySelector('.pillow-tech-structure__hotspot');
     if (!features.length || !hotspot) return;
 
-    const LAST_FEATURE_INDEX = features.length - 1;
+    const LAST_INDEX = features.length - 1;
+    const COOLDOWN_MS = 2500;
+    const ENTRY_LOCK_MS = 1000;
+    const TRANSITION_DURATION = 1.2;
+    const FADE_OUT_DURATION = TRANSITION_DURATION * 0.55;
     let currentIndex = 0;
-    let isLocked = false;
-    let isAnimating = false;
     let pinTrigger = null;
+    let lastSwitchTime = 0;
+    let entryLockUntil = 0;
+    let isTransitioning = false;
     let transitionTl = null;
 
-    const nextSection = document.querySelector('.pillow-tech-zones');
+    const isInCooldown = () =>
+      lastSwitchTime > 0 && Date.now() - lastSwitchTime < COOLDOWN_MS;
 
-    const getNextSectionTop = () => {
-      if (!nextSection) return 0;
-      return nextSection.getBoundingClientRect().top + window.pageYOffset;
+    const isEntryLocked = () => Date.now() < entryLockUntil;
+
+    const startEntryLock = () => {
+      entryLockUntil = Date.now() + ENTRY_LOCK_MS;
     };
 
-    const unlockAndGoNext = () => {
-      isLocked = false;
-      isAnimating = false;
+    const activateFeature = (index, animate = true) => {
+      if (index === currentIndex && animate) return;
 
-      if (pinTrigger) {
-        pinTrigger.kill(true);
-        pinTrigger = null;
-      }
+      const prevIndex = currentIndex;
+      currentIndex = index;
 
-      ScrollTrigger.refresh();
-      if (nextSection) {
-        window.scrollTo(0, getNextSectionTop());
-      }
-    };
+      const prevFeature = features[prevIndex];
+      const nextFeature = features[index];
+      const prevIndicator = prevFeature?.querySelector(
+        '.pillow-tech-structure__indicator'
+      );
+      const prevDesc = prevFeature?.querySelector(
+        '.pillow-tech-structure__feature-desc'
+      );
+      const nextIndicator = nextFeature.querySelector(
+        '.pillow-tech-structure__indicator'
+      );
+      const nextDesc = nextFeature.querySelector(
+        '.pillow-tech-structure__feature-desc'
+      );
+      const pos = HOTSPOT_POSITIONS[index];
 
-    const getFeatureElements = (feature) => ({
-      indicator: feature.querySelector('.pillow-tech-structure__indicator'),
-      desc: feature.querySelector('.pillow-tech-structure__feature-desc'),
-    });
+      if (!animate) {
+        features.forEach((feature, i) => {
+          const isActive = i === index;
+          feature.classList.toggle('is-active', isActive);
 
-    const setHotspotPosition = (index, { animate = false } = {}) => {
-      const position = HOTSPOT_POSITIONS[index];
-      if (!position) return;
+          const indicator = feature.querySelector(
+            '.pillow-tech-structure__indicator'
+          );
+          const desc = feature.querySelector(
+            '.pillow-tech-structure__feature-desc'
+          );
 
-      if (animate) {
-        gsap.to(hotspot, {
-          left: position.left,
-          top: position.top,
-          opacity: 1,
-          duration: STRUCTURE_TRANSITION_DURATION,
-          ease: 'power2.inOut',
+          if (indicator) gsap.set(indicator, { opacity: isActive ? 1 : 0 });
+          if (desc) {
+            desc.hidden = !isActive;
+            gsap.set(desc, { opacity: isActive ? 1 : 0, y: 0 });
+          }
         });
+
+        if (pos) gsap.set(hotspot, { left: pos.left, top: pos.top });
+        lastSwitchTime = 0;
+        isTransitioning = false;
         return;
       }
 
-      gsap.set(hotspot, {
-        left: position.left,
-        top: position.top,
-        opacity: 1,
-      });
-    };
-
-    const applyFeatureState = (index, { animate = false, unlockOnComplete = null } = {}) => {
       if (transitionTl) {
         transitionTl.kill();
         transitionTl = null;
       }
 
-      if (!animate || index === currentIndex) {
-        isAnimating = false;
-        currentIndex = index;
-
-        features.forEach((feature, featureIndex) => {
-          const isActive = featureIndex === index;
-          const { indicator, desc } = getFeatureElements(feature);
-
-          feature.classList.toggle('is-active', isActive);
-
-          if (indicator) {
-            gsap.set(indicator, { opacity: isActive ? 1 : 0 });
-          }
-
-          if (desc && !desc.textContent.trim()) return;
-
-          if (desc) {
-            desc.hidden = !isActive;
-            gsap.set(desc, {
-              opacity: isActive ? 1 : 0,
-              y: 0,
-              clearProps: 'transform',
-            });
-          }
-        });
-
-        setHotspotPosition(index);
-        return;
-      }
-
-      isAnimating = true;
-      const prevIndex = currentIndex;
-      const prevFeature = features[prevIndex];
-      const nextFeature = features[nextIndex];
-      const prevEls = getFeatureElements(prevFeature);
-      const nextEls = getFeatureElements(nextFeature);
-
-      features.forEach((feature, featureIndex) => {
-        feature.classList.toggle('is-active', featureIndex === index);
-      });
+      isTransitioning = true;
 
       transitionTl = gsap.timeline({
-        defaults: { ease: 'power2.inOut' },
         onComplete: () => {
-          currentIndex = index;
-          isAnimating = false;
+          isTransitioning = false;
           transitionTl = null;
-
-          if (prevEls.desc) {
-            prevEls.desc.hidden = true;
-            gsap.set(prevEls.desc, { clearProps: 'transform' });
-          }
-
-          if (typeof unlockOnComplete === 'function') {
-            unlockOnComplete();
-          }
+          lastSwitchTime = Date.now();
         },
       });
 
-      if (prevEls.indicator) {
-        transitionTl.to(
-          prevEls.indicator,
-          { opacity: 0, duration: STRUCTURE_TRANSITION_DURATION * 0.45, ease: 'power2.in' },
-          0
-        );
+      // 1) 이전 항목 종료
+      if (prevFeature && prevIndex !== index) {
+        prevFeature.classList.remove('is-active');
+
+        if (prevIndicator) {
+          transitionTl.to(
+            prevIndicator,
+            {
+              opacity: 0,
+              duration: FADE_OUT_DURATION,
+              ease: 'power2.in',
+            },
+            0
+          );
+        }
+
+        if (prevDesc) {
+          transitionTl.to(
+            prevDesc,
+            {
+              opacity: 0,
+              y: -8,
+              duration: FADE_OUT_DURATION,
+              ease: 'power2.in',
+              onComplete: () => {
+                prevDesc.hidden = true;
+                gsap.set(prevDesc, { y: 0 });
+              },
+            },
+            0
+          );
+        }
+
+        if (!prevIndicator && !prevDesc) {
+          transitionTl.to({}, { duration: FADE_OUT_DURATION });
+        }
       }
 
-      if (nextEls.indicator) {
-        gsap.set(nextEls.indicator, { opacity: 0 });
-        transitionTl.to(
-          nextEls.indicator,
-          { opacity: 1, duration: STRUCTURE_TRANSITION_DURATION * 0.55, ease: 'power2.out' },
-          STRUCTURE_TRANSITION_DURATION * 0.25
-        );
-      }
+      // 2) 이전 종료 후 새 항목 시작
+      transitionTl.add(() => {
+        features.forEach((feature, i) => {
+          feature.classList.toggle('is-active', i === index);
+        });
 
-      setHotspotPosition(index, { animate: true });
+        if (nextDesc) {
+          nextDesc.hidden = false;
+        }
+      });
 
-      if (prevEls.desc && prevEls.desc.textContent.trim()) {
-        transitionTl.to(
-          prevEls.desc,
-          {
-            opacity: 0,
-            y: -10,
-            duration: STRUCTURE_TRANSITION_DURATION * 0.45,
-            ease: 'power2.in',
-          },
-          0
-        );
-      }
-
-      if (nextEls.desc && nextEls.desc.textContent.trim()) {
-        nextEls.desc.hidden = false;
-        gsap.set(nextEls.desc, { opacity: 0, y: 14 });
-
-        transitionTl.to(
-          nextEls.desc,
+      if (nextDesc) {
+        transitionTl.fromTo(
+          nextDesc,
+          { opacity: 0, y: 12 },
           {
             opacity: 1,
             y: 0,
-            duration: STRUCTURE_TRANSITION_DURATION * 0.6,
+            duration: TRANSITION_DURATION,
+            ease: 'power2.out',
+          }
+        );
+      }
+
+      if (nextIndicator) {
+        transitionTl.to(
+          nextIndicator,
+          {
+            opacity: 1,
+            duration: TRANSITION_DURATION,
             ease: 'power2.out',
           },
-          STRUCTURE_TRANSITION_DURATION * 0.3
+          nextDesc ? '<' : '>'
+        );
+      }
+
+      if (pos) {
+        transitionTl.to(
+          hotspot,
+          {
+            left: pos.left,
+            top: pos.top,
+            duration: TRANSITION_DURATION,
+            ease: 'power2.inOut',
+          },
+          nextDesc || nextIndicator ? '<' : '>'
         );
       }
     };
 
-    const activate = (startIndex) => {
-      isLocked = true;
-      applyFeatureState(startIndex);
-    };
+    activateFeature(0, false);
 
-    const deactivate = () => {
-      isLocked = false;
-      isAnimating = false;
-      if (transitionTl) {
-        transitionTl.kill();
-        transitionTl = null;
-      }
-    };
+    const releasePinForNaturalScroll = (deltaY) => {
+      if (!pinTrigger) return;
 
-    const finishForward = () => {
-      isLocked = false;
-    };
+      pinTrigger.kill(true);
+      pinTrigger = null;
+      ScrollTrigger.refresh();
 
-    const finishBackward = () => {
-      isLocked = false;
+      requestAnimationFrame(() => {
+        window.scrollTo(0, Math.max(0, section.offsetTop + deltaY));
+      });
     };
 
     const onWheel = (event) => {
-      if (!pinTrigger) return;
+      if (!pinTrigger || !pinTrigger.isActive) return;
 
-      if (isAnimating) {
+      const goingDown = event.deltaY > 0;
+
+      // 섹션 진입 직후 1초간 스크롤 차단
+      if (isEntryLocked()) {
         event.preventDefault();
         return;
       }
 
-      if (!isLocked) return;
-
-      const goingDown = event.deltaY > 0;
-
-      if (goingDown && currentIndex === LAST_FEATURE_INDEX) {
-        finishForward();
+      // 전환 중에는 섹션 이탈·다음 전환 모두 차단
+      if (isTransitioning) {
+        event.preventDefault();
         return;
       }
 
+      // 마지막(하단)에서 아래 스크롤 → 쿨다운 이후에만 pin 해제
+      if (goingDown && currentIndex === LAST_INDEX) {
+        event.preventDefault();
+        if (isInCooldown()) return;
+        releasePinForNaturalScroll(event.deltaY);
+        return;
+      }
+
+      // 첫 항목에서 위 스크롤 → pin 해제 후 이전 섹션으로 자연 스크롤
       if (!goingDown && currentIndex === 0) {
-        finishBackward();
+        event.preventDefault();
+        releasePinForNaturalScroll(event.deltaY);
         return;
       }
 
       event.preventDefault();
 
-      if (goingDown) {
-        const nextIndex = currentIndex + 1;
-        applyFeatureState(nextIndex, {
-          animate: true,
-          unlockOnComplete: nextIndex === LAST_FEATURE_INDEX ? unlockAndGoNext : null,
-        });
-        return;
-      }
+      if (isInCooldown()) return;
 
-      applyFeatureState(currentIndex - 1, { animate: true });
+      activateFeature(goingDown ? currentIndex + 1 : currentIndex - 1);
     };
-
-    features.forEach((feature, featureIndex) => {
-      const { indicator, desc } = getFeatureElements(feature);
-      const isActive = featureIndex === 0;
-
-      feature.classList.toggle('is-active', isActive);
-
-      if (indicator) {
-        gsap.set(indicator, { opacity: isActive ? 1 : 0 });
-      }
-
-      if (desc && desc.textContent.trim()) {
-        desc.hidden = !isActive;
-        gsap.set(desc, { opacity: isActive ? 1 : 0, y: 0 });
-      }
-    });
-
-    setHotspotPosition(0);
 
     pinTrigger = ScrollTrigger.create({
       trigger: section,
       start: 'top top',
       end: '+=100%',
       pin: true,
+      pinSpacing: true,
       anticipatePin: 1,
       invalidateOnRefresh: true,
-      onEnter: () => activate(0),
-      onEnterBack: () => activate(LAST_FEATURE_INDEX),
-      onLeave: deactivate,
-      onLeaveBack: deactivate,
+      onEnter: startEntryLock,
+      onEnterBack: startEntryLock,
     });
 
-    section.addEventListener('wheel', onWheel, { passive: false });
+    window.addEventListener('wheel', onWheel, { passive: false });
+  };
+
+  const initPillowTechZones = () => {
+    const section = document.querySelector('.pillow-tech-zones');
+    if (!section) return;
+
+    const pillowIn = section.querySelector('.pillow-tech-zones__pillow-in');
+    const callouts = Array.from(
+      section.querySelectorAll('.pillow-tech-zones__callout')
+    );
+    if (!pillowIn || callouts.length !== 3) return;
+
+    const FADE_UP_DURATION = 1.26;
+    const IMAGE_FADE_DURATION = 1.6;
+    const AFTER_IMAGE_DELAY = 1.2;
+    const AFTER_CALLOUTS_HOLD = 2;
+    const LEAVE_GRACE_MS = 500;
+    const NEXT_CALLOUT_AT = 0.6; // 이전 텍스트 60% 지점
+    const DOT_DURATION = 0.45;
+    const LINE_DURATION = 0.75;
+
+    let sequenceStarted = false;
+    let canLeave = false;
+    let hasCompleted = false;
+    let leaveEnabledAt = 0;
+    let pinTrigger = null;
+    let calloutTl = null;
+    let imageTween = null;
+    let delayCall = null;
+    let holdCall = null;
+
+    const splitChars = (element) => {
+      const walk = (node) => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const chars = Array.from(node.textContent);
+          const fragment = document.createDocumentFragment();
+
+          chars.forEach((char) => {
+            if (/^\s$/.test(char)) {
+              fragment.appendChild(document.createTextNode(char));
+              return;
+            }
+
+            const span = document.createElement('span');
+            span.className = 'pillow-tech-zones__char';
+            span.textContent = char;
+            fragment.appendChild(span);
+          });
+
+          node.parentNode.replaceChild(fragment, node);
+          return;
+        }
+
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          Array.from(node.childNodes).forEach(walk);
+        }
+      };
+
+      Array.from(element.childNodes).forEach(walk);
+      return Array.from(element.querySelectorAll('.pillow-tech-zones__char'));
+    };
+
+    const calloutData = callouts.map((callout) => {
+      const name = callout.querySelector('.pillow-tech-zones__callout-name');
+      const desc = callout.querySelector('.pillow-tech-zones__callout-desc');
+      const dot = callout.querySelector('.pillow-tech-zones__callout-dot');
+      const line = callout.querySelector('.pillow-tech-zones__callout-line');
+      const chars = [...splitChars(name), ...splitChars(desc)];
+
+      gsap.set(dot, { opacity: 0 });
+      gsap.set(line, { scaleY: 0, xPercent: -50, opacity: 1 });
+      gsap.set(chars, { opacity: 0, y: 40 });
+
+      return { callout, dot, line, chars };
+    });
+
+    const getTextTweenDuration = (chars) => {
+      const stagger = FADE_UP_DURATION / Math.max(chars.length * 2.5, 1);
+      if (chars.length <= 1) return FADE_UP_DURATION;
+      return FADE_UP_DURATION + stagger * (chars.length - 1);
+    };
+
+    const setFinalVisualState = () => {
+      gsap.set(pillowIn, { opacity: 1 });
+      calloutData.forEach(({ dot, line, chars }) => {
+        gsap.set(dot, { opacity: 1 });
+        gsap.set(line, { scaleY: 1, xPercent: -50, opacity: 1 });
+        gsap.set(chars, { opacity: 1, y: 0, clearProps: 'will-change' });
+      });
+    };
+
+    const freezeCompletedState = () => {
+      hasCompleted = true;
+      canLeave = true;
+      leaveEnabledAt = Date.now() + LEAVE_GRACE_MS;
+      setFinalVisualState();
+
+      // grace 후 pin만 해제 — 강제 scrollTo 없이 자연 스크롤로 이어짐
+      gsap.delayedCall(LEAVE_GRACE_MS / 1000, releasePinForNaturalScroll);
+    };
+
+    const startSequence = () => {
+      if (sequenceStarted || hasCompleted) return;
+      sequenceStarted = true;
+
+      imageTween = gsap.to(pillowIn, {
+        opacity: 1,
+        duration: IMAGE_FADE_DURATION,
+        ease: 'none',
+        onComplete: () => {
+          imageTween = null;
+          delayCall = gsap.delayedCall(AFTER_IMAGE_DELAY, playCallouts);
+        },
+      });
+    };
+
+    const playCallouts = () => {
+      delayCall = null;
+
+      if (calloutTl) {
+        calloutTl.kill();
+      }
+
+      calloutData.forEach(({ dot, line, chars }) => {
+        gsap.set(dot, { opacity: 0 });
+        gsap.set(line, { scaleY: 0, xPercent: -50, opacity: 1 });
+        gsap.set(chars, { opacity: 0, y: 40 });
+      });
+
+      calloutTl = gsap.timeline({
+        onComplete: () => {
+          holdCall = gsap.delayedCall(AFTER_CALLOUTS_HOLD, () => {
+            holdCall = null;
+            freezeCompletedState();
+          });
+        },
+      });
+
+      calloutData.forEach((item, index) => {
+        const stagger =
+          FADE_UP_DURATION / Math.max(item.chars.length * 2.5, 1);
+
+        // 이전 텍스트 애니메이션 60% 지점에서 다음 특징 시작
+        const startPos =
+          index === 0
+            ? 0
+            : `-=${
+                getTextTweenDuration(calloutData[index - 1].chars) *
+                (1 - NEXT_CALLOUT_AT)
+              }`;
+
+        calloutTl.to(
+          item.dot,
+          {
+            opacity: 1,
+            duration: DOT_DURATION,
+            ease: 'power2.out',
+          },
+          startPos
+        );
+
+        calloutTl.to(item.line, {
+          scaleY: 1,
+          duration: LINE_DURATION,
+          ease: 'power2.out',
+        });
+
+        calloutTl.to(item.chars, {
+          opacity: 1,
+          y: 0,
+          duration: FADE_UP_DURATION,
+          ease: 'power3.out',
+          stagger: item.chars.length > 1 ? stagger : 0,
+          onComplete: () => {
+            gsap.set(item.chars, { clearProps: 'will-change' });
+          },
+        });
+      });
+    };
+
+    const onWheel = (event) => {
+      if (!pinTrigger || !pinTrigger.isActive) return;
+      event.preventDefault();
+    };
+
+    const releasePinForNaturalScroll = () => {
+      if (!pinTrigger) return;
+
+      setFinalVisualState();
+      pinTrigger.kill(true);
+      pinTrigger = null;
+      ScrollTrigger.refresh();
+      window.scrollTo(0, section.offsetTop);
+      window.removeEventListener('wheel', onWheel);
+    };
+
+    gsap.set(pillowIn, { opacity: 0 });
+
+    pinTrigger = ScrollTrigger.create({
+      trigger: section,
+      start: 'top top',
+      end: '+=100%',
+      pin: true,
+      pinSpacing: true,
+      anticipatePin: 1,
+      invalidateOnRefresh: true,
+      onEnter: startSequence,
+      onEnterBack: () => {
+        if (hasCompleted) {
+          setFinalVisualState();
+        }
+      },
+    });
+
+    window.addEventListener('wheel', onWheel, { passive: false });
   };
 
   const start = () => {
@@ -368,6 +558,7 @@
       initPillowTechHero();
       initPillowTechSleepPosition();
       initPillowTechStructure();
+      initPillowTechZones();
       ScrollTrigger.refresh();
     };
 
