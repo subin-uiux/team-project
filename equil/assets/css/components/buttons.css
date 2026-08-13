@@ -12,18 +12,24 @@
   white-space: nowrap;
   appearance: none;
   -webkit-appearance: none;
+  transition: all 0.2s ease;
 }
 
 /* ---------- Btn Large (ex. sleep-fit) ---------- */
 .btn-large {
-  gap: 1.125rem; /* 18px */
-  padding: 0.75rem 2.25rem; /* 12px 36px */
-  border-radius: 3.125rem; /* 50px */
+  gap: 1.125rem;
+  /* 18px */
+  padding: 0.75rem 2.25rem;
+  /* 12px 36px */
+  border-radius: 3.125rem;
+  /* 50px */
   background-color: var(--color-brand-point);
   font-family: var(--font-paperlogy);
   font-weight: 700;
-  font-size: 1.5rem; /* 24px */
-  letter-spacing: 0.1em; /* 10% */
+  font-size: 1.5rem;
+  /* 24px */
+  letter-spacing: 0.1em;
+  /* 10% */
   color: var(--color-white);
 }
 
@@ -42,6 +48,7 @@
   background-color: var(--color-brand-light-1);
   color: var(--color-brand-dark);
 }
+<<<<<<< HEAD
 
 
 /* ---------- Btn Medium (ex. cta) ---------- */
@@ -58,6 +65,60 @@
   /* 30px */
   color: var(--color-brand-dark);
 }
+=======
+
+/* ---------- Btn Medium (ex. cta) ---------- */
+.btn-medium {
+  gap: 0.5rem;
+  padding: 0.75rem 2.25rem;
+  /* 12px 36px */
+  border-radius: 6.25rem;
+  /* 100px */
+  background-color: var(--color-brand-light-1);
+  font-family: var(--font-suit);
+  font-weight: 600;
+  font-size: 1.875rem;
+  /* 30px */
+  color: var(--color-brand-dark);
+}
+
+/* ---------- Tap btn ---------- */
+.btn-tap-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  /* 12px */
+}
+
+.btn-tap {
+  padding: 0.5rem 0.875rem;
+  /* 8px 14px */
+  border-radius: 2.5rem;
+  /* 40px */
+  border: 0.0625rem solid var(--color-brand-dark);
+  /* 1px */
+  background-color: var(--color-white);
+  font-family: var(--font-paperlogy);
+  font-weight: 500;
+  font-size: 1.125rem;
+  /* 18px */
+  color: var(--color-brand-dark);
+}
+
+.btn-tap:hover,
+.btn-tap:active {
+  background-color: var(--color-brand-dark);
+  color: var(--color-white);
+}
+
+.btn-tap.is-selected,
+.btn-tap.is-selected:hover,
+.btn-tap.is-selected:active {
+  background-color: var(--color-brand-dark);
+  color: var(--color-white);
+}
+
+>>>>>>> parent of 25b4412 (Revert "Merge branch 'main' into inseo")
 
 
 .btn-medium__arrow {
@@ -73,13 +134,16 @@
 
 /* ---------- Btn Small (ex. test-before / test-next) ---------- */
 .btn-small {
-  padding: 0.75rem 2.25rem; /* 12px 36px */
-  border-radius: 1.25rem; /* 20px */
+  padding: 0.75rem 2.25rem;
+  /* 12px 36px */
+  border-radius: 1.25rem;
+  /* 20px */
   border: 0.0625rem solid var(--color-brand-dark);
   background-color: var(--color-white);
   font-family: var(--font-suit);
   font-weight: 400;
-  font-size: 1.25rem; /* 20px */
+  font-size: 1.25rem;
+  /* 20px */
   color: var(--color-brand-dark);
 }
 
@@ -90,14 +154,18 @@
 }
 
 .btn-small-next {
-  padding: 0.75rem 2.25rem; /* 12px 36px */
-  border-radius: 1.25rem; /* 20px */
+  padding: 0.75rem 2.25rem;
+  /* 12px 36px */
+  border-radius: 1.25rem;
+  /* 20px */
   border: 0.0625rem solid var(--color-brand-dark);
   background-color: var(--color-brand-dark);
   font-family: var(--font-suit);
   font-weight: 400;
-  font-size: 1.25rem; /* 20px */
-  color: var(--color-white); /* 디자인 기준: dark 배경 위 흰색 텍스트 */
+  font-size: 1.25rem;
+  /* 20px */
+  color: var(--color-white);
+  /* 디자인 기준: dark 배경 위 흰색 텍스트 */
 }
 
 .btn-small-next:hover,
@@ -127,36 +195,60 @@
 .btn-tab-group {
   display: inline-flex;
   align-items: center;
-  gap: 0.75rem; /* 12px */
+  gap: 0.75rem;
+  /* 12px */
 }
 
 .btn-tab {
   padding: 0.5rem 0.875rem; /* 8px 14px */
   border-radius: 2.5rem; /* 40px */
   border: 0.0625rem solid var(--color-brand-dark); /* 1px */
-  background-color: var(--color-white);
+  background-color: transparent;
   font-family: var(--font-paperlogy);
   font-weight: 500;
-  font-size: 1.125rem; /* 18px */
+  font-size: 1.125rem;
+  /* 18px */
   color: var(--color-brand-dark);
 }
 
+/* Hover — grey-100 */
 .btn-tab:hover,
-.btn-tab:active {
+.btn-tab.is-hover {
+  background-color: var(--color-grey-100);
+  border-color: var(--color-brand-dark);
+  color: var(--color-brand-dark);
+}
+
+/* Click / selected — brand/dark */
+.btn-tab:active,
+.btn-tab.is-active {
   background-color: var(--color-brand-dark);
+  border-color: var(--color-brand-dark);
+  color: var(--color-white);
+}
+
+/* 선택된 탭은 hover 시에도 click 상태 유지 */
+.btn-tab.is-active:hover {
+  background-color: var(--color-brand-dark);
+  border-color: var(--color-brand-dark);
   color: var(--color-white);
 }
 
 .btn-tab-ctg {
   flex-direction: column;
-  gap: 0.25rem; /* 4px */
-  padding: 1.25rem 3.75rem; /* 20px 60px */
-  border-radius: 6.25rem; /* 100px */
-  border: 0.0625rem solid transparent; /* layout shift 방지 */
+  gap: 0.25rem;
+  /* 4px */
+  padding: 1.25rem 3.75rem;
+  /* 20px 60px */
+  border-radius: 6.25rem;
+  /* 100px */
+  border: 0.0625rem solid transparent;
+  /* layout shift 방지 */
   background-color: #f9f9f9;
   font-family: var(--font-paperlogy);
   font-weight: 400;
-  font-size: 1.25rem; /* 20px */
+  font-size: 1.25rem;
+  /* 20px */
   color: var(--color-text-dark);
   white-space: normal;
 }
@@ -165,14 +257,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 12.5rem; /* 200px */
-  height: 7.125rem; /* 114px */
+  width: 12.5rem;
+  /* 200px */
+  height: 7.125rem;
+  /* 114px */
   background-color: var(--color-grey-100);
   color: var(--color-grey-400);
 }
 
 .btn-tab-ctg__media svg {
-  width: 2.5rem; /* 40px */
+  width: 2.5rem;
+  /* 40px */
   height: 2.5rem;
 }
 

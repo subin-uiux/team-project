@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="../../assets/css/header.css">
   <link rel="stylesheet" href="../../assets/css/footer.css">
   <link rel="stylesheet" href="../../assets/css/components/buttons.css">
+  <link rel="stylesheet" href="../../assets/css/components/cards.css">
   <link rel="stylesheet" href="../../assets/css/components/popups.css">
   <link rel="stylesheet" href="../../assets/css/pages/community/events.css">
 </head>
@@ -126,15 +127,100 @@
   </header>
 
   <main>
-    <section class="events-hero">
-      <div class="container">
+    <section class="event-hero">
+      <div class="container event-hero__container">
+        <h1 class="event-hero__title text-title-01">Event</h1>
+        <div class="event-hero__media">
+          <img
+            class="event-hero__image"
+            src="../../assets/images/community/events/event-hero-img.webp"
+            alt=""
+          />
+        </div>
       </div>
     </section>
-    <section class="events-list">
-      <div class="container">
-        <button type="button" class="btn btn-small" data-popup-open="popup-event-layer">
-          Event 팝업 열기
-        </button>
+
+    <section class="event-list">
+      <div class="container event-list__container">
+        <div class="btn-tab-group event-list__tabs" role="tablist" aria-label="이벤트 필터">
+          <button
+            type="button"
+            class="btn btn-tab is-active"
+            role="tab"
+            aria-selected="true"
+            data-event-filter="all"
+          >
+            전체
+          </button>
+          <button
+            type="button"
+            class="btn btn-tab"
+            role="tab"
+            aria-selected="false"
+            data-event-filter="ongoing"
+          >
+            진행 중
+          </button>
+          <button
+            type="button"
+            class="btn btn-tab"
+            role="tab"
+            aria-selected="false"
+            data-event-filter="ended"
+          >
+            종료
+          </button>
+        </div>
+
+        <ul class="event-list__list">
+          <li class="event-list__item" data-event-status="ongoing">
+            <a
+              class="card card-event"
+              href="#"
+              data-popup-open="popup-event-layer"
+              data-event-id="01"
+            >
+              <div class="card-event__media">
+                <img
+                  class="card-event__image"
+                  src="../../assets/images/community/events/event1.webp"
+                  alt=""
+                />
+              </div>
+              <h2 class="card-event__title">Sleep Fit Test 체험 이벤트</h2>
+            </a>
+          </li>
+          <li class="event-list__item" data-event-status="ongoing">
+            <a
+              class="card card-event"
+              href="#"
+              data-popup-open="popup-event-layer"
+              data-event-id="02"
+            >
+              <div class="card-event__media">
+                <img
+                  class="card-event__image"
+                  src="../../assets/images/community/events/event2.webp"
+                  alt=""
+                />
+              </div>
+              <h2 class="card-event__title">OPENING EVENT</h2>
+            </a>
+          </li>
+          <li class="event-list__item" data-event-status="ended">
+            <article class="card card-event card-event--ended" aria-disabled="true">
+              <div class="card-event__media">
+                <img
+                  class="card-event__image"
+                  src="../../assets/images/community/events/event3.webp"
+                  alt=""
+                />
+                <p class="card-event__status">이미 종료된 이벤트 입니다.</p>
+              </div>
+              <h2 class="card-event__title">2026년 웨딩멤버스 이벤트</h2>
+            </article>
+          </li>
+        </ul>
       </div>
     </section>
   </main>
@@ -146,26 +232,14 @@
         <button type="button" class="popup-event__close" data-popup-close aria-label="닫기">×</button>
         <div class="popup-event__inner">
           <header class="popup-event__header">
-            <h2 id="popup-event-title" class="popup-event__title">Event Title</h2>
-            <p class="popup-event__date">2026. 08. 12</p>
+            <h2 id="popup-event-title" class="popup-event__title"></h2>
+            <p class="popup-event__date"></p>
           </header>
           <div class="popup-event__content">
-            <div class="popup-event__media" aria-hidden="true">
-              <svg class="popup__placeholder-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5" />
-                <circle cx="14" cy="16" r="2.5" fill="currentColor" />
-                <path d="M8 28L16 20L21 25L26 19L32 28H8Z" fill="currentColor" opacity="0.45" />
-              </svg>
+            <div class="popup-event__media">
+              <img class="popup-event__image" src="" alt="" />
             </div>
-            <div class="popup-event__body">
-              <p class="popup-event__body-title">Event Body Title</p>
-              <p class="popup-event__body-text">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
-                labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit
-                esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.
-              </p>
-            </div>
+            <div class="popup-event__body"></div>
           </div>
         </div>
       </article>
@@ -202,6 +276,7 @@
 
   <script src="../../assets/js/common.js"></script>
   <script src="../../assets/js/popup.js"></script>
+  <script src="../../assets/js/pages/community/events.js"></script>
 </body>
 
 </html>
