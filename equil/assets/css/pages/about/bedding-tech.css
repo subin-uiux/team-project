@@ -229,41 +229,60 @@
 
 /* ========================================
    bedding-tech-seasonal
+   (ANDLAB m5 영감 — EQUIL 톤)
    ======================================== */
 
 .bedding-tech-seasonal {
+  box-sizing: border-box;
   width: 100%;
-  padding: 9.375rem 0; /* 150px */
-  background-color: var(--color-white);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 var(--grid-margin) 1.875rem; /* 30px */
+  background-color: var(--color-brand-light-3);
+}
+
+.bedding-tech-seasonal__stage {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .bedding-tech-seasonal__heading {
-  align-items: center;
-  text-align: center;
+  align-items: flex-start;
+  text-align: left;
+  max-width: 46.875rem; /* 750px */
 }
 
-.bedding-tech-seasonal__rows {
+.bedding-tech-seasonal__cards {
+  position: relative;
   margin-top: 3.125rem; /* 50px */
   display: flex;
-  flex-direction: column;
-  gap: 1.25rem; /* 20px */
-}
-
-.bedding-tech-seasonal__row {
-  display: flex;
-  gap: 1.25rem; /* 20px */
+  gap: 0.9375rem; /* 15px */
 }
 
 .bedding-tech-seasonal__card {
-  flex: 1;
-  min-width: 0;
-  height: 30.375rem; /* 486px */
-  border-radius: 1.875rem; /* 30px */
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 33.3333%;
+  height: 65vh;
+  padding: 1.875rem; /* 30px */
   overflow: hidden;
+  background-color: var(--color-brand-light-2);
 }
 
-.bedding-tech-seasonal__card--media {
-  line-height: 0;
+.bedding-tech-seasonal__media {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  will-change: top;
 }
 
 .bedding-tech-seasonal__image {
@@ -273,44 +292,25 @@
   object-fit: cover;
 }
 
-.bedding-tech-seasonal__card--text {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 3.75rem; /* 60px */
-  background-color: var(--color-brand-light-2);
-}
-
-.bedding-tech-seasonal__icon {
-  position: absolute;
-  top: 3.75rem; /* 60px */
-  right: 3.75rem; /* 60px */
-  width: 8.25rem; /* 132px */
-  height: 8.25rem;
-  object-fit: contain;
-}
-
-.bedding-tech-seasonal__content {
-  max-width: 43.125rem; /* 690px */
-  width: 100%;
-  text-align: left;
-}
-
 .bedding-tech-seasonal__title {
+  position: relative;
+  z-index: 1;
   margin: 0;
   font-family: var(--font-suit);
   font-weight: 600;
-  font-size: var(--fs-title); /* 40px */
+  font-size: 1.75rem; /* 28px */
   line-height: 130%;
+  letter-spacing: -0.02em;
   color: var(--color-brand-dark);
 }
 
 .bedding-tech-seasonal__desc {
-  margin: 1.5rem 0 0; /* 24px */
+  position: relative;
+  z-index: 1;
+  margin: 0.9375rem 0 0; /* 15px */
   font-family: var(--font-suit);
   font-weight: 400;
-  font-size: var(--fs-body-03); /* 20px */
-  line-height: 130%;
+  font-size: 0.9375rem; /* 15px */
+  line-height: 150%;
   color: var(--color-brand-dark);
 }

@@ -632,12 +632,45 @@
     window.addEventListener('wheel', onWheel, { passive: false });
   };
 
+  const initBeddingTechSeasonal = () => {
+    const section = document.querySelector('.bedding-tech-seasonal');
+    if (!section) return;
+
+    const medias = Array.from(
+      section.querySelectorAll('.bedding-tech-seasonal__media')
+    );
+    if (!medias.length) return;
+
+    gsap.set(medias, { top: '0%' });
+
+    gsap
+      .timeline({
+        defaults: { ease: 'none' },
+        scrollTrigger: {
+          trigger: section,
+          start: 'top top',
+          end: () => `+=${window.innerHeight * 2}`,
+          scrub: true,
+          pin: true,
+          pinSpacing: true,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+        },
+      })
+      .to(medias, {
+        top: '35%',
+        duration: 0.2,
+        stagger: 0.1,
+      });
+  };
+
   const start = () => {
     const init = () => {
       initBeddingTechHero();
       initBeddingTechDesign();
       initBeddingTechProcess();
       initBeddingTechWool();
+      initBeddingTechSeasonal();
       ScrollTrigger.refresh();
     };
 
