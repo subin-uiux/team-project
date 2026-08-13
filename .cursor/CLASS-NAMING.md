@@ -30,9 +30,11 @@ index.html
 
 ```
 brand-story.html
+├ brand-story-hero
 ├ brand-story-name
 ├ brand-story-origin
-└ brand-story-philosophy
+├ brand-story-philosophy
+└ brand-story-end
 ```
 
 ## mattress-tech.html

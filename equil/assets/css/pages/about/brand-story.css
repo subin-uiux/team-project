@@ -1,0 +1,44 @@
+/* ========================================
+   brand-story-hero
+   ======================================== */
+
+.brand-story-hero {
+  width: 100%;
+}
+
+.brand-story-hero__media {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%; /* design 1920px */
+  height: 25rem; /* 400px */
+  overflow: hidden;
+}
+
+.brand-story-hero__image {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+}
+
+.brand-story-hero__dim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-color: #000;
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.brand-story-hero__title {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  text-align: center;
+  color: var(--color-brand-light-2);
+}
