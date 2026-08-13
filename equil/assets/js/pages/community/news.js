@@ -58,8 +58,5 @@
     bodyEl.innerHTML = data.paragraphs
       .map((text) => `<p class="popup-news__text">${text}</p>`)
       .join('');
-
-    const scrollEl = document.querySelector('.popup-news__inner');
-    if (scrollEl) scrollEl.scrollTop = 0;
   };
 })();

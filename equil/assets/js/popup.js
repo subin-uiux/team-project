@@ -5,7 +5,6 @@
   const openLayer = (layer) => {
     layer.classList.add('is-open');
     layer.setAttribute('aria-hidden', 'false');
-    document.documentElement.classList.add('is-popup-open');
     document.body.classList.add('is-popup-open');
   };
 
@@ -14,7 +13,6 @@
     layer.setAttribute('aria-hidden', 'true');
 
     if (!document.querySelector('.popup-layer.is-open')) {
-      document.documentElement.classList.remove('is-popup-open');
       document.body.classList.remove('is-popup-open');
     }
   };
@@ -38,14 +36,6 @@
         const newsId = trigger.getAttribute('data-news-id');
         if (typeof window.fillNewsPopup === 'function') {
           window.fillNewsPopup(newsId);
-        }
-      }
-
-      if (trigger.hasAttribute('data-event-id')) {
-        event.preventDefault();
-        const eventId = trigger.getAttribute('data-event-id');
-        if (typeof window.fillEventPopup === 'function') {
-          window.fillEventPopup(eventId);
         }
       }
 

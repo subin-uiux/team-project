@@ -192,22 +192,3 @@
   font-size: 0.875rem;
   color: var(--color-grey-500);
 }
-
-.guide-btn-state {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.5rem;
-}
-
-.guide-btn-state__label {
-  margin: 0;
-  font-family: var(--font-suit);
-  font-weight: 400;
-  font-size: 0.875rem;
-  color: var(--color-grey-500);
-}
-
-.guide__row + .guide__row {
-  margin-top: 1.5rem;
-}

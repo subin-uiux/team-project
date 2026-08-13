@@ -117,7 +117,7 @@ events.html
 ```
 store.html
 ├ store-hero
-└ store-map
+└ store-list
 ```
 
 ## sleep-fit-test.html
