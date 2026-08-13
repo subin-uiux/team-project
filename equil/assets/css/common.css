@@ -130,6 +130,7 @@ body {
   font-size: var(--fs-body-05);
   color: var(--color-text-dark);
   background-color: var(--color-white);
+  line-height: 130%;
 }
 
 img,
@@ -193,6 +194,7 @@ a {
   font-family: var(--font-paperlogy);
   font-weight: 600;
   font-size: var(--fs-title);
+  letter-spacing: 0.1em; /* 10% */
 }
 
 /* Title02 — Suit Medium 40 */
@@ -200,6 +202,7 @@ a {
   font-family: var(--font-suit);
   font-weight: 500;
   font-size: var(--fs-title);
+  letter-spacing: 0.1em; /* 10% */
 }
 
 /* Title03 — Suit Semibold 40 */
@@ -207,6 +210,7 @@ a {
   font-family: var(--font-suit);
   font-weight: 600;
   font-size: var(--fs-title);
+  letter-spacing: 0.1em; /* 10% */
 }
 
 /* Subtitle01 — Paperlogy Bold 36 */

@@ -11,6 +11,8 @@
   <link rel="stylesheet" href="../assets/css/common.css">
   <link rel="stylesheet" href="../assets/css/header.css">
   <link rel="stylesheet" href="../assets/css/footer.css">
+  <link rel="stylesheet" href="../assets/css/components/buttons.css">
+  <link rel="stylesheet" href="../assets/css/components/cards.css">
   <link rel="stylesheet" href="../assets/css/pages/product.css">
 </head>
 
@@ -126,11 +128,323 @@
 
   <main>
     <section class="product-hero">
-      <div class="container">
+      <img
+        class="product-hero__image"
+        src="../assets/images/product/product-hero_mattress-bg.webp"
+        alt=""
+        data-product-hero
+      />
+    </section>
+
+    <section class="product-ctg">
+      <div class="product-ctg__inner">
+        <div class="product-ctg__tabs" role="tablist" aria-label="제품 카테고리">
+          <button
+            type="button"
+            class="btn btn-tab-ctg is-active"
+            role="tab"
+            aria-selected="true"
+            data-product-tab="mattress"
+          >
+            <span class="btn-tab-ctg__media">
+              <img
+                src="../assets/images/product/product-list_mattress-ctg.png"
+                alt=""
+              />
+            </span>
+            <span>Mattress</span>
+          </button>
+          <button
+            type="button"
+            class="btn btn-tab-ctg"
+            role="tab"
+            aria-selected="false"
+            data-product-tab="pillow"
+          >
+            <span class="btn-tab-ctg__media">
+              <img
+                src="../assets/images/product/product-list_pillow-ctg.png"
+                alt=""
+              />
+            </span>
+            <span>Pillow</span>
+          </button>
+          <button
+            type="button"
+            class="btn btn-tab-ctg"
+            role="tab"
+            aria-selected="false"
+            data-product-tab="bedding"
+          >
+            <span class="btn-tab-ctg__media">
+              <img
+                src="../assets/images/product/product-list_bedding-ctg.png"
+                alt=""
+              />
+            </span>
+            <span>Bedding</span>
+          </button>
+          <button
+            type="button"
+            class="btn btn-tab-ctg"
+            role="tab"
+            aria-selected="false"
+            data-product-tab="heating-mat"
+          >
+            <span class="btn-tab-ctg__media">
+              <img
+                src="../assets/images/product/product-list_heatingmat-ctg.png"
+                alt=""
+              />
+            </span>
+            <span>Heating Mat</span>
+          </button>
+        </div>
       </div>
     </section>
+
     <section class="product-list">
-      <div class="container">
+      <div class="container product-list__container">
+        <div
+          class="product-list__panel is-active"
+          data-product-panel="mattress"
+          role="tabpanel"
+        >
+          <h2 class="product-list__title text-subtitle-01">Mattress</h2>
+          <ul class="product-list__grid">
+            <li class="product-list__item">
+              <article class="card card-product">
+                <div class="card-product__media">
+                  <img
+                    src="../assets/images/product/product-soft-mattress.webp"
+                    alt=""
+                  />
+                </div>
+                <div class="card-product__body">
+                  <p class="card-product__title">
+                    <span class="card-product__name">Soft-Relief</span> 매트리스
+                  </p>
+                  <p class="card-product__text">
+                    가장 균형 잡힌 표준 높이. <br>
+                    몸을 감싸는 부드러운 지지감으로 가벼운 체형을 위한 포근한 메모리폼 설계 했습니다.
+                  </p>
+                  <p class="card-product__sizes">S / SS / Q / K</p>
+                </div>
+              </article>
+            </li>
+            <li class="product-list__item">
+              <article class="card card-product">
+                <div class="card-product__media">
+                  <img
+                    src="../assets/images/product/product-balance-mattress.webp"
+                    alt=""
+                  />
+                </div>
+                <div class="card-product__body">
+                  <p class="card-product__title">
+                    <span class="card-product__name">Balance-Fit</span> 매트리스
+                  </p>
+                  <p class="card-product__text">
+                    가장 균형 잡힌 지지력을 위해 <br>
+                    편안함과 안정감을 균형 있게 담았습니다.
+                  </p>
+                  <p class="card-product__sizes">S / SS / Q / K</p>
+                </div>
+              </article>
+            </li>
+            <li class="product-list__item">
+              <article class="card card-product">
+                <div class="card-product__media">
+                  <img
+                    src="../assets/images/product/product-firm-mattress.webp"
+                    alt=""
+                  />
+                </div>
+                <div class="card-product__body">
+                  <p class="card-product__title">
+                    <span class="card-product__name">Firm-Support</span> 매트리스
+                  </p>
+                  <p class="card-product__text">
+                    허리를 탄탄하게 지지하기 위해 <br>
+                    안정적인 자세를 위한 고밀도 서포트 폼으로 제작했습니다.
+                  </p>
+                  <p class="card-product__sizes">S / SS / Q / K</p>
+                </div>
+              </article>
+            </li>
+          </ul>
+        </div>
+
+        <div
+          class="product-list__panel"
+          data-product-panel="pillow"
+          role="tabpanel"
+          hidden
+        >
+          <h2 class="product-list__title text-subtitle-01">Pillow</h2>
+          <ul class="product-list__grid">
+            <li class="product-list__item">
+              <article class="card card-product">
+                <div class="card-product__media">
+                  <img
+                    src="../assets/images/product/product-low-pillow.webp"
+                    alt=""
+                  />
+                </div>
+                <div class="card-product__body">
+                  <p class="card-product__title">
+                    <span class="card-product__name">Cervical Pillow - Low</span>
+                  </p>
+                  <p class="card-product__text">
+                    낮고 부드러운 목 지지. <br />
+                    목과 어깨의 높이 차이가 적은 체형을 위해 낮게 설계된 경추형 베개입니다.
+                  </p>
+                </div>
+              </article>
+            </li>
+            <li class="product-list__item">
+              <article class="card card-product">
+                <div class="card-product__media">
+                  <img
+                    src="../assets/images/product/product-medium-pillow.webp"
+                    alt=""
+                  />
+                </div>
+                <div class="card-product__body">
+                  <p class="card-product__title">
+                    <span class="card-product__name">Cervical Pillow - Medium</span>
+                  </p>
+                  <p class="card-product__text">
+                    가장 균형 잡힌 표준 높이. <br />
+                    목과 머리를 안정적으로 받쳐 다양한 수면 자세에 편안하게 대응합니다.
+                  </p>
+                </div>
+              </article>
+            </li>
+            <li class="product-list__item">
+              <article class="card card-product">
+                <div class="card-product__media">
+                  <img
+                    src="../assets/images/product/product-high-pillow.webp"
+                    alt=""
+                  />
+                </div>
+                <div class="card-product__body">
+                  <p class="card-product__title">
+                    <span class="card-product__name">Cervical Pillow - High</span>
+                  </p>
+                  <p class="card-product__text">
+                    높고 안정적인 경추 지지. <br />
+                    어깨가 넓거나 높은 베개가 필요한 체형을 탄탄하게 받쳐줍니다.
+                  </p>
+                </div>
+              </article>
+            </li>
+          </ul>
+        </div>
+
+        <div
+          class="product-list__panel"
+          data-product-panel="bedding"
+          role="tabpanel"
+          hidden
+        >
+          <h2 class="product-list__title text-subtitle-01">Bedding</h2>
+          <ul class="product-list__grid">
+            <li class="product-list__item">
+              <article class="card card-product">
+                <div class="card-product__media">
+                  <img
+                    src="../assets/images/product/product-summer-bedding.webp"
+                    alt=""
+                  />
+                </div>
+                <div class="card-product__body">
+                  <p class="card-product__title">
+                    <span class="card-product__name">Wool Air</span> 이불 (여름용)
+                  </p>
+                  <p class="card-product__text">
+                    가볍고 시원한 수면을 위해 <br>
+                    얇은 양모층과 통기성 중심 설계된 여름용 시즌 이불입니다.
+                  </p>
+                  <p class="card-product__sizes">S / SS / Q / K</p>
+                </div>
+              </article>
+            </li>
+            <li class="product-list__item">
+              <article class="card card-product">
+                <div class="card-product__media">
+                  <img
+                    src="../assets/images/product/product-winter-bedding.webp"
+                    alt=""
+                  />
+                </div>
+                <div class="card-product__body">
+                  <p class="card-product__title">
+                    <span class="card-product__name">Wool Winter</span> 이불 (겨울용)
+                  </p>
+                  <p class="card-product__text">
+                    풍성한 양모 충전으로 한겨울에도 <br>
+                    깊고 따뜻한 보온력으로 설계된 겨울용 시즌 이불입니다.
+                  </p>
+                  <p class="card-product__sizes">S / SS / Q / K</p>
+                </div>
+              </article>
+            </li>
+            <li class="product-list__item">
+              <article class="card card-product">
+                <div class="card-product__media">
+                  <img
+                    src="../assets/images/product/product-all-bedding.webp"
+                    alt=""
+                  />
+                </div>
+                <div class="card-product__body">
+                  <p class="card-product__title">
+                    <span class="card-product__name">Wool Comfort</span> 이불 (사계절용)
+                  </p>
+                  <p class="card-product__text">
+                    사계절 내내 편안한 온도로<br>
+                    프리미엄 양모와 부드러운 충전재의 균형으로
+                    설계된 올시즌 이불입니다.
+                  </p>
+                  <p class="card-product__sizes">S / SS / Q / K</p>
+                </div>
+              </article>
+            </li>
+          </ul>
+        </div>
+
+        <div
+          class="product-list__panel"
+          data-product-panel="heating-mat"
+          role="tabpanel"
+          hidden
+        >
+          <h2 class="product-list__title text-subtitle-01">Heating Mat</h2>
+          <ul class="product-list__grid">
+            <li class="product-list__item">
+              <article class="card card-product">
+                <div class="card-product__media">
+                  <img
+                    src="../assets/images/product/product-heating-mat.webp"
+                    alt=""
+                  />
+                </div>
+                <div class="card-product__body">
+                  <p class="card-product__title">
+                    <span class="card-product__name">Balance Heating Mat</span>
+                  </p>
+                  <p class="card-product__text">
+                    신체 부위에 따라 온도를 세밀하게 조절하여<br />
+                    과도한 열감 없이 편안한 수면 환경을 유지합니다.
+                  </p>
+                  <p class="card-product__sizes">S / SS / Q / K</p>
+                </div>
+              </article>
+            </li>
+          </ul>
+        </div>
       </div>
     </section>
   </main>
@@ -164,5 +478,7 @@
   </footer>
 
   <script src="../assets/js/common.js"></script>
+  <script src="../assets/js/pages/product.js"></script>
 </body>
+
 </html>

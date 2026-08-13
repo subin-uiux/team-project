@@ -203,6 +203,8 @@
 
 /* ---------- product-card ---------- */
 .card-product {
+  display: flex;
+  flex-direction: column;
   width: 51.875rem; /* 830px */
 }
 
@@ -213,6 +215,7 @@
   width: 51.875rem; /* 830px */
   height: 23.5625rem; /* 377px */
   margin-bottom: 1rem; /* 16px */
+  overflow: hidden;
   background-color: var(--color-brand-light-3);
 }
 
@@ -224,26 +227,53 @@
 
 .card-product__body {
   display: flex;
+  flex: 1;
   flex-direction: column;
-  gap: 1.5rem; /* 24px */
-  padding-block: 2.875rem; /* 46px */
+  gap: 1.25rem;
+  padding-block: 1.875rem; /* 30px */
   border-top: 0.0625rem solid var(--color-grey-300); /* #D2D5DA */
   border-bottom: 0.0625rem solid var(--color-grey-300);
   text-align: left;
 }
 
 .card-product__title {
-  font-family: var(--font-paperlogy);
-  font-weight: 400;
-  font-size: 1.125rem; /* 18px */
-  color: var(--color-text-dark); /* #333 */
-}
-
-.card-product__text {
+  margin: 0;
   font-family: var(--font-suit);
   font-weight: 400;
   font-size: 1.125rem; /* 18px */
+  letter-spacing: 0.1em; /* 10% */
+  color: var(--color-text-dark); /* #333 */
+}
+
+.card-product__name {
+  font-family: var(--font-paperlogy);
+  font-weight: 600; /* Semibold */
+  font-size: 1.125rem; /* 18px */
+}
+
+.card-product__text {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: 400;
+  font-size: 1.125rem; /* 18px */
+  line-height: 1.5;
   color: #737373;
+}
+
+.card-product__sizes {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  margin: 0;
+  padding: 0.375rem 0.875rem; /* 6px 14px */
+  border-radius: 6.25rem; /* pill */
+  background-color: var(--color-grey-400);
+  font-family: var(--font-paperlogy);
+  font-weight: 500; /* Medium */
+  font-size: 0.875rem; /* 14px */
+  letter-spacing: 0.1em; /* 10% */
+  color: var(--color-white);
 }
 
 /* ---------- event-card ---------- */

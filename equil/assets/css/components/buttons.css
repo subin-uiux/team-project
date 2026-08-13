@@ -61,6 +61,7 @@
   font-weight: 600;
   font-size: 1.875rem;
   /* 30px */
+  line-height: 130%;
   color: var(--color-brand-dark);
 }
 
@@ -72,8 +73,7 @@
 
 .btn-medium:hover,
 .btn-medium:active {
-  background-color: var(--color-brand-dark);
-  color: var(--color-brand-light-1);
+  opacity: 0.8;
 }
 
 /* ---------- Btn Small (ex. test-before / test-next) ---------- */

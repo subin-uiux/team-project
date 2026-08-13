@@ -1,0 +1,13 @@
+---
+description: Keep user-edited CSS/code values as-is without asking to save
+alwaysApply: true
+---
+
+# User Edit Persistence
+
+When the user edits CSS or other code in the IDE (gap, padding, colors, etc.):
+
+- Treat their current file values as the source of truth
+- Do not ask for a separate “save” confirmation
+- Do not revert their manual changes when continuing work
+- If they say they changed something, read the file and keep those values

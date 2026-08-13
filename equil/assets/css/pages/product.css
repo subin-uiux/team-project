@@ -1,0 +1,96 @@
+/* ========================================
+   product-hero
+   ======================================== */
+
+.product-hero {
+  width: 100%;
+  height: 37.5rem; /* 600px */
+  overflow: hidden;
+}
+
+.product-hero__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+}
+
+/* ========================================
+   product-ctg
+   ======================================== */
+
+.product-ctg__inner {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 105rem; /* 1680px */
+  margin-inline: auto;
+  padding: 4.375rem 7.5rem; /* 70px 120px */
+  border-bottom: 0.0625rem solid var(--color-grey-300); /* 1px */
+}
+
+.product-ctg__tabs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4.0625rem; /* 65px */
+}
+
+.product-ctg .btn-tab-ctg.is-active {
+  border-color: var(--color-brand-dark);
+}
+
+.product-ctg .btn-tab-ctg__media {
+  overflow: hidden;
+  background-color: transparent;
+}
+
+.product-ctg .btn-tab-ctg__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* ========================================
+   product-list
+   ======================================== */
+
+.product-list {
+  padding-top: 8.75rem; /* 140px — ctg ↔ title */
+  padding-bottom: 5rem; /* 80px */
+}
+
+.product-list__panel:not(.is-active) {
+  display: none;
+}
+
+.product-list__title {
+  margin: 0 0 7.5rem; /* 120px — title ↔ cards */
+  letter-spacing: 0.1em; /* 10% */
+  text-align: center;
+  color: var(--color-text-dark);
+}
+
+.product-list__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2rem 1.25rem; /* row 32px / column 20px */
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.product-list__item {
+  display: flex;
+}
+
+.product-list__item .card-product,
+.product-list__item .card-product__media {
+  width: 100%;
+}
+
+.product-list__item .card-product {
+  flex: 1;
+}
