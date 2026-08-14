@@ -7,13 +7,28 @@
     if (!fill) return;
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      fill.style.clipPath = 'inset(0% 0% 0% 0%)';
+      fill.style.webkitMaskImage = 'none';
+      fill.style.maskImage = 'none';
       return;
     }
 
+    /* feather: 채움 경계 안티앨리어싱 (글자 윤곽 깨짐 완화) */
+    const FEATHER = 2.5;
+
     const setFillProgress = (progress) => {
-      const bottom = Math.max(0, (1 - progress) * 100);
-      fill.style.clipPath = `inset(0% 0% ${bottom}% 0%)`;
+      const p = Math.max(0, Math.min(1, progress));
+
+      if (p >= 1) {
+        fill.style.webkitMaskImage = 'none';
+        fill.style.maskImage = 'none';
+        return;
+      }
+
+      const pct = p * 100;
+      const solidEnd = Math.max(0, pct - FEATHER);
+      const mask = `linear-gradient(to bottom, #000 0%, #000 ${solidEnd}%, transparent ${Math.max(pct, solidEnd)}%)`;
+      fill.style.webkitMaskImage = mask;
+      fill.style.maskImage = mask;
     };
 
     setFillProgress(0);

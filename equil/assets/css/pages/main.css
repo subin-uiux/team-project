@@ -53,6 +53,8 @@
   letter-spacing: 0.1em; /* 10% */
   line-height: 1.4;
   text-align: center;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
 }
 
 .main-hero__stroke,
@@ -64,6 +66,7 @@
   color: transparent;
   -webkit-text-fill-color: transparent;
   -webkit-text-stroke: 0.0625rem var(--color-brand-light-2); /* 1px */
+  paint-order: stroke fill;
 }
 
 .main-hero__fill {
@@ -74,9 +77,19 @@
   left: 0;
   color: var(--color-brand-light-2);
   -webkit-text-fill-color: var(--color-brand-light-2);
+  /* stroke와 동일 윤곽 유지 + 가장자리 이중 렌더 완화 */
   -webkit-text-stroke: 0.0625rem var(--color-brand-light-2);
-  clip-path: inset(0% 0% 100% 0%);
+  paint-order: stroke fill;
   pointer-events: none;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  /* clip-path 하드 컷 대신 mask로 부드러운 채움 경계 */
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 0%, transparent 0%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 0%, transparent 0%);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -85,7 +98,8 @@
   }
 
   .main-hero__fill {
-    clip-path: inset(0% 0% 0% 0%);
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 }
 
@@ -156,13 +170,15 @@
   font-family: var(--font-suit);
   font-weight: var(--fw-suit-bold);
   font-size: var(--fs-title); /* 40px */
+  line-height: 1.3;
 }
 
 .main-problem__title {
-  margin-top: 1.25rem; /* 20px */
+  margin-top: 1.1rem; /* 20px */
   font-family: var(--font-suit);
   font-weight: var(--fw-suit-bold);
   font-size: var(--fs-title); /* 40px */
+  line-height: 1.3;
 }
 
 .main-problem__desc {
@@ -170,4 +186,5 @@
   font-family: var(--font-suit);
   font-weight: 400;
   font-size: var(--fs-body-02); /* 22px */
+  line-height: 1.3;
 }
