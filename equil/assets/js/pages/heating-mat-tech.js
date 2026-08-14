@@ -580,9 +580,21 @@
       entryLockUntil = Date.now() + ENTRY_LOCK_MS;
     };
 
+    const getTrackStep = () => sticky?.clientWidth || window.innerWidth;
+
     const getTrackOffset = (index) => {
-      const step = window.innerWidth * 0.5;
+      const step = getTrackStep() * 0.5;
       return (0.5 - index) * step;
+    };
+
+    const syncTrackLayout = (animate = false) => {
+      const step = getTrackStep() * 0.5;
+
+      slides.forEach((slide) => {
+        slide.style.width = `${step}px`;
+      });
+
+      updateTrackPosition(currentIndex, animate);
     };
 
     const updateTrackPosition = (index, animate = true) => {
@@ -664,6 +676,7 @@
 
     setActiveCopy(0);
     updateIntroFrame(0);
+    syncTrackLayout(false);
     updateSlideState(0, false);
 
     if (prevEl) {
@@ -755,14 +768,14 @@
       },
       onRefresh: () => {
         updateIntroFrame(introComplete ? 1 : 0);
-        updateTrackPosition(currentIndex, false);
+        syncTrackLayout(false);
       },
     });
 
     window.addEventListener('wheel', onWheel, { passive: false });
     window.addEventListener('resize', () => {
       updateIntroFrame(introComplete ? 1 : 0);
-      updateTrackPosition(currentIndex, false);
+      syncTrackLayout(false);
     });
   };
 

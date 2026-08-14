@@ -215,9 +215,15 @@
    heating-mat-tech-technology
    ======================================== */
 
+html {
+  overflow-x: clip;
+}
+
 .heating-mat-tech-technology {
+  position: relative;
   width: 100%;
-  overflow-x: hidden;
+  max-width: 100%;
+  overflow: hidden;
   background-color: var(--color-white);
   --heating-mat-tech-technology-circle-active: 37.5rem; /* 600px */
   --heating-mat-tech-technology-circle-inactive: 25rem; /* 400px */
@@ -230,15 +236,24 @@
 
 .heating-mat-tech-technology__stage {
   position: relative;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .heating-mat-tech-technology__sticky {
   position: sticky;
   top: 0;
+  width: 100%;
+  max-width: 100%;
   height: 100vh;
-  overflow-x: hidden;
-  overflow-y: hidden;
+  overflow: hidden;
   background-color: var(--color-white);
+}
+
+.heating-mat-tech-technology .pin-spacer {
+  max-width: 100% !important;
+  overflow: hidden;
 }
 
 .heating-mat-tech-technology__intro {
@@ -363,6 +378,7 @@
   align-items: center;
   justify-content: center;
   width: var(--heating-mat-tech-technology-track-step);
+  max-width: none;
   height: 100%;
 }
 
@@ -489,4 +505,136 @@
   font-size: var(--fs-body-03); /* 20px */
   line-height: 150%;
   color: var(--color-brand-dark);
+}
+
+
+/* ========================================
+   heating-mat-tech-certification
+   ======================================== */
+
+.heating-mat-tech-certification {
+  width: 100%;
+  height: 67.5rem; /* 1080px */
+  display: flex;
+  align-items: center;
+  background-color: var(--color-brand-light-2);
+}
+
+.heating-mat-tech-certification__container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3.125rem; /* 50px */
+}
+
+.heating-mat-tech-certification__heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.625rem; /* 10px */
+  text-align: center;
+}
+
+.heating-mat-tech-certification__sub-title {
+  margin: 0;
+  padding: 0 1.25rem; /* 0 20px */
+  border-radius: 1.875rem; /* 30px */
+  font-family: var(--font-suit);
+  font-weight: 900; /* Heavy */
+  font-size: var(--fs-body-03); /* 20px */
+  line-height: 150%;
+  color: var(--color-white);
+  background-color: var(--color-brand-point);
+}
+
+.heating-mat-tech-certification__title {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: var(--fw-suit-bold); /* 600 — Semibold */
+  font-size: var(--fs-title); /* 40px */
+  line-height: 150%;
+  color: var(--color-brand-dark);
+}
+
+.heating-mat-tech-certification__certificates {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0;
+}
+
+.heating-mat-tech-certification__certificate {
+  display: block;
+  width: 16.4375rem; /* 263px */
+  height: auto;
+  max-width: none;
+  outline: 1px solid rgba(0, 0, 0, 0.1);
+  outline-offset: -1px;
+}
+
+.heating-mat-tech-certification__items {
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  column-gap: 2.5rem; /* 40px */
+  row-gap: 1.25rem; /* 20px */
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.heating-mat-tech-certification__item {
+  display: flex;
+  align-items: center;
+}
+
+.heating-mat-tech-certification__card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem; /* 10px — check ↔ text */
+  width: 26.5625rem; /* 425px */
+  padding: 1rem 1.25rem; /* 16px 20px */
+  border-radius: 0.625rem; /* 10px */
+  background-color: var(--color-white);
+  box-sizing: border-box;
+}
+
+.heating-mat-tech-certification__check {
+  display: block;
+  width: 2.25rem; /* 36px */
+  height: 2.25rem;
+  flex-shrink: 0;
+}
+
+.heating-mat-tech-certification__card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem; /* 6px — title ↔ desc */
+  min-width: 0;
+}
+
+.heating-mat-tech-certification__card-title {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: var(--fw-suit-bold); /* 600 */
+  font-size: var(--fs-body-02); /* 22px */
+  line-height: 130%;
+  color: var(--color-brand-dark);
+}
+
+.heating-mat-tech-certification__card-desc {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: 500; /* Medium */
+  font-size: var(--fs-body-03); /* 20px */
+  line-height: 130%;
+  color: var(--color-brand-dark);
+}
+
+.heating-mat-tech-certification__verified {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 7.5rem; /* 120px */
+  height: 7.5rem;
+  margin-left: -1.5625rem; /* -25px overlap */
+  flex-shrink: 0;
 }
