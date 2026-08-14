@@ -779,12 +779,164 @@
     });
   };
 
+  const initHeatingMatTechController = () => {
+    const section = document.querySelector('.heating-mat-tech-controller');
+    if (!section) return;
+
+    const title = section.querySelector('.heating-mat-tech-controller__title');
+    const desc = section.querySelector('.heating-mat-tech-controller__desc');
+    const callouts = Array.from(
+      section.querySelectorAll('.heating-mat-tech-controller__callout')
+    );
+    if (!title || !desc || !callouts.length) return;
+
+    const charClass = 'heating-mat-tech-controller__char';
+    const headingChars = [
+      ...splitTextChars(title, charClass),
+      ...splitTextChars(desc, charClass),
+    ];
+    if (!headingChars.length) return;
+
+    const headingStagger =
+      FADE_UP_DURATION / Math.max(headingChars.length * 2.5, 1);
+
+    const DOT_DURATION = 0.4;
+    const LINE_DURATION = 0.7;
+    const CONTENT_DURATION = 0.9;
+    const CALLOUT_DURATION = DOT_DURATION + LINE_DURATION + CONTENT_DURATION;
+    const NEXT_CALLOUT_AT = 0.4;
+
+    let sequenceTl = null;
+    let hasPlayed = false;
+
+    const calloutData = callouts.map((callout) => {
+      const dot = callout.querySelector(
+        '.heating-mat-tech-controller__callout-dot'
+      );
+      const line = callout.querySelector(
+        '.heating-mat-tech-controller__callout-line'
+      );
+      const content = callout.querySelector(
+        '.heating-mat-tech-controller__callout-content'
+      );
+      const isLeft = callout.classList.contains(
+        'heating-mat-tech-controller__callout--left'
+      );
+
+      gsap.set(dot, { opacity: 0 });
+      gsap.set(line, {
+        scaleX: 0,
+        yPercent: -50,
+        transformOrigin: isLeft ? 'right center' : 'left center',
+      });
+      gsap.set(content, { opacity: 0, y: 40 });
+
+      return { dot, line, content };
+    });
+
+    const setFinalVisualState = () => {
+      gsap.set(headingChars, { opacity: 1, y: 0, clearProps: 'will-change' });
+      calloutData.forEach(({ dot, line, content }) => {
+        gsap.set(dot, { opacity: 1 });
+        gsap.set(line, { scaleX: 1, yPercent: -50 });
+        gsap.set(content, { opacity: 1, y: 0 });
+      });
+    };
+
+    const playSequence = () => {
+      if (hasPlayed) return;
+      hasPlayed = true;
+
+      sequenceTl = gsap.timeline({
+        delay: 1,
+        onComplete: () => {
+          gsap.set(headingChars, { clearProps: 'will-change' });
+        },
+      });
+
+      sequenceTl.to(headingChars, {
+        opacity: 1,
+        y: 0,
+        duration: FADE_UP_DURATION,
+        ease: 'power3.out',
+        stagger: headingChars.length > 1 ? headingStagger : 0,
+      });
+
+      const calloutStart = FADE_UP_DURATION * NEXT_CALLOUT_AT;
+
+      calloutData.forEach((item, index) => {
+        const start =
+          calloutStart + index * CALLOUT_DURATION * NEXT_CALLOUT_AT;
+
+        sequenceTl.to(
+          item.dot,
+          {
+            opacity: 1,
+            duration: DOT_DURATION,
+            ease: 'power2.out',
+          },
+          start
+        );
+
+        sequenceTl.to(
+          item.line,
+          {
+            scaleX: 1,
+            yPercent: -50,
+            duration: LINE_DURATION,
+            ease: 'power2.out',
+          },
+          start + DOT_DURATION
+        );
+
+        sequenceTl.to(
+          item.content,
+          {
+            opacity: 1,
+            y: 0,
+            duration: CONTENT_DURATION,
+            ease: 'power3.out',
+          },
+          start + DOT_DURATION + LINE_DURATION
+        );
+      });
+    };
+
+    const showFinalState = () => {
+      if (sequenceTl) {
+        sequenceTl.kill();
+        sequenceTl = null;
+      }
+
+      setFinalVisualState();
+      hasPlayed = true;
+    };
+
+    gsap.set(headingChars, { opacity: 0, y: 40 });
+
+    ScrollTrigger.create({
+      trigger: section,
+      start: 'top 80%',
+      once: true,
+      onEnter: playSequence,
+    });
+
+    ScrollTrigger.create({
+      trigger: section,
+      start: 'top bottom',
+      onEnterBack: () => {
+        if (hasPlayed) showFinalState();
+      },
+    });
+  };
+
   const start = () => {
     const init = () => {
       initHeatingMatTechHero();
       initHeatingMatTechProductOverview();
       initHeatingMatTechProduct();
       initHeatingMatTechTechnology();
+      initHeatingMatTechController();
       ScrollTrigger.refresh();
     };
 
