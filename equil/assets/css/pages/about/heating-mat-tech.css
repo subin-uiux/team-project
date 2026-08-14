@@ -644,3 +644,233 @@ html {
   margin-left: -1.5625rem; /* -25px overlap */
   flex-shrink: 0;
 }
+
+
+/* ========================================
+   heating-mat-tech-controller
+   점 위치는 이미지(299×715) 기준 % — 아래 변수만 조정
+   ======================================== */
+
+.heating-mat-tech-controller {
+  width: 100%;
+  height: 67.5rem; /* 1080px */
+  display: flex;
+  align-items: center;
+  overflow: visible;
+  background-color: var(--color-white);
+  --heating-mat-tech-controller-dot-size: 0.9375rem; /* 15px */
+  --heating-mat-tech-controller-line: 7.5rem; /* 120px */
+  --heating-mat-tech-controller-line-dial: 12.5rem; /* 200px */
+  --heating-mat-tech-controller-line-gap: 0.625rem; /* 10px */
+  /* 디밍기능 — 화면 좌측 */
+  --heating-mat-tech-controller-dimming-x: 16%;
+  --heating-mat-tech-controller-dimming-y: 16%;
+  /* 자가진단 — 화면 우측 */
+  --heating-mat-tech-controller-diagnosis-x: 84%;
+  --heating-mat-tech-controller-diagnosis-y: 26%;
+  /* 온도 조절 다이얼 — 다이얼 우측 */
+  --heating-mat-tech-controller-dial-x: 84%;
+  --heating-mat-tech-controller-dial-y: 56%;
+  /* 영역 설정 버튼 — AREA 중앙 */
+  --heating-mat-tech-controller-area-x: 26%;
+  --heating-mat-tech-controller-area-y: 70%;
+  /* 타이머 설정 버튼 — TIMER 중앙 */
+  --heating-mat-tech-controller-timer-x: 76%;
+  --heating-mat-tech-controller-timer-y: 77%;
+}
+
+.heating-mat-tech-controller__container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3.125rem; /* 50px */
+}
+
+.heating-mat-tech-controller__heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.625rem; /* 10px */
+  text-align: center;
+}
+
+.heating-mat-tech-controller__title {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: 600; /* Semibold */
+  font-size: var(--fs-title); /* 40px */
+  line-height: 150%;
+  color: var(--color-brand-dark);
+}
+
+.heating-mat-tech-controller__desc {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: 400; /* Regular */
+  font-size: var(--fs-body-02); /* 22px */
+  line-height: 150%;
+  color: var(--color-brand-dark);
+}
+
+.heating-mat-tech-controller__char {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+.heating-mat-tech-controller__media {
+  position: relative;
+  width: auto;
+  height: 44.6875rem; /* 715px */
+}
+
+.heating-mat-tech-controller__image {
+  display: block;
+  height: 44.6875rem; /* 715px */
+  width: auto;
+  max-width: none;
+}
+
+.heating-mat-tech-controller__callout {
+  position: absolute;
+  z-index: 2;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.heating-mat-tech-controller__callout--dimming {
+  left: var(--heating-mat-tech-controller-dimming-x);
+  top: var(--heating-mat-tech-controller-dimming-y);
+}
+
+.heating-mat-tech-controller__callout--diagnosis {
+  left: var(--heating-mat-tech-controller-diagnosis-x);
+  top: var(--heating-mat-tech-controller-diagnosis-y);
+}
+
+.heating-mat-tech-controller__callout--dial {
+  left: var(--heating-mat-tech-controller-dial-x);
+  top: var(--heating-mat-tech-controller-dial-y);
+}
+
+.heating-mat-tech-controller__callout--area {
+  left: var(--heating-mat-tech-controller-area-x);
+  top: var(--heating-mat-tech-controller-area-y);
+}
+
+.heating-mat-tech-controller__callout--timer {
+  left: var(--heating-mat-tech-controller-timer-x);
+  top: var(--heating-mat-tech-controller-timer-y);
+}
+
+.heating-mat-tech-controller__callout-dot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--heating-mat-tech-controller-dot-size);
+  height: var(--heating-mat-tech-controller-dot-size);
+  border-radius: 50%;
+  background-color: var(--color-brand-dark);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+}
+
+.heating-mat-tech-controller__callout-line {
+  position: absolute;
+  top: 0;
+  height: 2px;
+  width: var(--heating-mat-tech-controller-line);
+  background-color: var(--color-brand-dark);
+  transform: translateY(-50%);
+  will-change: transform;
+}
+
+.heating-mat-tech-controller__callout--dial .heating-mat-tech-controller__callout-line {
+  width: var(--heating-mat-tech-controller-line-dial);
+}
+
+.heating-mat-tech-controller__callout--left .heating-mat-tech-controller__callout-line {
+  right: calc(var(--heating-mat-tech-controller-dot-size) / 2);
+  transform-origin: right center;
+}
+
+.heating-mat-tech-controller__callout--right .heating-mat-tech-controller__callout-line {
+  left: calc(var(--heating-mat-tech-controller-dot-size) / 2);
+  transform-origin: left center;
+}
+
+.heating-mat-tech-controller__callout-content {
+  position: absolute;
+  /* 특징 버튼(약 40px) 세로 중앙 = 점·선 기준 */
+  top: -1.25rem; /* -20px */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4375rem; /* 7px */
+  /* 선↔특징 간격 10px 기준 = 버튼 폭 200px */
+  width: 12.5rem; /* 200px */
+  opacity: 0;
+}
+
+.heating-mat-tech-controller__callout--left .heating-mat-tech-controller__callout-content {
+  right: calc(
+    var(--heating-mat-tech-controller-dot-size) / 2
+    + var(--heating-mat-tech-controller-line)
+    + var(--heating-mat-tech-controller-line-gap)
+  );
+}
+
+.heating-mat-tech-controller__callout--right .heating-mat-tech-controller__callout-content {
+  left: calc(
+    var(--heating-mat-tech-controller-dot-size) / 2
+    + var(--heating-mat-tech-controller-line)
+    + var(--heating-mat-tech-controller-line-gap)
+  );
+}
+
+.heating-mat-tech-controller__callout--dial .heating-mat-tech-controller__callout-content {
+  left: calc(
+    var(--heating-mat-tech-controller-dot-size) / 2
+    + var(--heating-mat-tech-controller-line-dial)
+    + var(--heating-mat-tech-controller-line-gap)
+  );
+}
+
+.heating-mat-tech-controller__callout-label {
+  box-sizing: border-box;
+  width: 12.5rem; /* 200px */
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0.4375rem 0; /* 7px 0 */
+  border-radius: 1.875rem; /* 30px */
+  font-family: var(--font-suit);
+  font-weight: 500; /* Medium */
+  font-size: var(--fs-body-03); /* 20px */
+  line-height: 130%;
+  text-align: center;
+  color: var(--color-white);
+  background-color: var(--color-brand-dark);
+}
+
+.heating-mat-tech-controller__callout-desc {
+  margin: 0;
+  width: max-content;
+  max-width: 16.5rem; /* 264px */
+  font-family: var(--font-suit);
+  font-weight: 400;
+  font-size: var(--fs-body-05); /* 16px */
+  line-height: 150%;
+  text-align: center;
+  color: var(--color-brand-dark);
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+
+/* ========================================
+   heating-mat-tech-danger
+   ======================================== */
+
+.heating-mat-tech-danger {
+  width: 100%;
+}
