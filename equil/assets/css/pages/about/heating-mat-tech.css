@@ -89,7 +89,6 @@
 .heating-mat-tech-problem__card {
   position: relative;
   height: 14.5625rem; /* 233px */
-  border-radius: 1.875rem; /* 30px */
   overflow: hidden;
 }
 
@@ -312,9 +311,17 @@ html {
   pointer-events: none;
 }
 
-.heating-mat-tech-technology__copy {
+.heating-mat-tech-technology__copy-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
   width: var(--heating-mat-tech-technology-features-width);
   max-width: 100%;
+}
+
+.heating-mat-tech-technology__copy {
+  flex: 0 1 auto;
+  min-width: 0;
   pointer-events: none;
 }
 
@@ -416,11 +423,10 @@ html {
 }
 
 .heating-mat-tech-technology__controls {
-  position: absolute;
-  top: calc(50% - 3.75rem + 19.5rem); /* below 600px circle */
-  left: calc(50% + 6.25rem);
+  position: relative;
   z-index: 3;
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   gap: 1rem; /* 16px */
   opacity: 0;
