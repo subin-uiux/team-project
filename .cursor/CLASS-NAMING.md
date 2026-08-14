@@ -85,6 +85,7 @@ bedding-tech.html
 heating-mat-tech.html
 ├ heating-mat-tech-hero
 ├ heating-mat-tech-problem
+├ heating-mat-tech-product-overview
 ├ heating-mat-tech-product
 ├ heating-mat-tech-technology
 ├ heating-mat-tech-certification
