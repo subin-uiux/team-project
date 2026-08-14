@@ -69,6 +69,13 @@
   justify-content: center;
 }
 
+.brand-story-name__intro {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .brand-story-name__title {
   margin: 0;
   font-family: var(--font-paperlogy);
@@ -78,6 +85,42 @@
   color: var(--color-text-dark);
   text-align: center;
   white-space: nowrap;
+  will-change: transform;
+}
+
+.brand-story-name__title-lead,
+.brand-story-name__title-equil,
+.brand-story-name__title-tail {
+  display: inline;
+}
+
+.brand-story-name__layer--base .brand-story-name__title-lead,
+.brand-story-name__layer--base .brand-story-name__title-tail,
+.brand-story-name__caption {
+  will-change: opacity;
+}
+
+/* 타이틀 정중앙 기준 — 한글은 그 아래 */
+.brand-story-name__caption {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem; /* 20px */
+  margin: 5rem 0 0; /* 24px below title */
+  transform: translateX(-50%);
+  font-family: var(--font-suit);
+  font-weight: 400;
+  font-size: 2rem; /* 32px */
+  color: var(--color-text-dark);
+  white-space: nowrap;
+}
+
+.brand-story-name__caption-word,
+.brand-story-name__caption-dot {
+  flex-shrink: 0;
 }
 
 .brand-story-name__circle {
@@ -99,11 +142,36 @@
   justify-content: center;
   width: 100%;
   height: 100%;
-  padding-inline: clamp(1.25rem, 3.125vw, 3.75rem); /* 20–60px — 로고가 밖으로 나가지 않도록 */
+  padding-inline: clamp(1.25rem, 3.125vw, 3.75rem); /* 20–60px */
   box-sizing: border-box;
 }
 
+.brand-story-name__invert-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.brand-story-name__title--invert {
+  color: transparent;
+}
+
+.brand-story-name__title--invert .brand-story-name__title-lead,
+.brand-story-name__title--invert .brand-story-name__title-tail {
+  color: transparent;
+}
+
+.brand-story-name__title--invert .brand-story-name__title-equil {
+  color: #fff; /* 원 안 글자색으로 EQUIL만 반전 */
+}
+
 .brand-story-name__row {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -159,6 +227,10 @@
 @media (prefers-reduced-motion: reduce) {
   .brand-story-name__circle {
     clip-path: circle(150vmax at 50% 50%);
+  }
+
+  .brand-story-name__invert-layer {
+    opacity: 0;
   }
 
   .brand-story-name__eq,
