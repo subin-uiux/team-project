@@ -112,7 +112,7 @@
   margin: 5rem 0 0; /* 24px below title */
   transform: translateX(-50%);
   font-family: var(--font-suit);
-  font-weight: 400;
+  font-weight: 500;
   font-size: 2rem; /* 32px */
   color: var(--color-text-dark);
   white-space: nowrap;
