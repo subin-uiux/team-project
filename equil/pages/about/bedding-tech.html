@@ -10,6 +10,11 @@
   <link rel="stylesheet" href="../../assets/css/common.css">
   <link rel="stylesheet" href="../../assets/css/header.css">
   <link rel="stylesheet" href="../../assets/css/footer.css">
+  <link rel="stylesheet" href="../../assets/css/components/scroll-feature.css">
+  <link rel="stylesheet" href="../../assets/css/components/buttons.css">
+  <link rel="stylesheet" href="../../assets/css/components/cards.css">
+  <link rel="stylesheet" href="../../assets/css/components/product-compare.css">
+  <link rel="stylesheet" href="../../assets/css/components/section-cta.css">
   <link rel="stylesheet" href="../../assets/css/pages/about/bedding-tech.css">
 </head>
 
@@ -125,31 +130,297 @@
 
   <main>
     <section class="bedding-tech-hero">
-      <div class="container">
+      <div class="bedding-tech-hero__frame">
+        <img
+          class="bedding-tech-hero__image"
+          src="../../assets/images/about/bedding-tech/bedding-tech-hero_bg.webp"
+          alt=""
+        >
+        <div class="bedding-tech-hero__overlay" aria-hidden="true"></div>
+        <div class="container bedding-tech-hero__container">
+          <div class="bedding-tech-hero__content">
+            <h1 class="bedding-tech-hero__title text-hero-title">Bedding Technical</h1>
+            <p class="bedding-tech-hero__desc text-body-03">
+              계절에 따라 달라지는 온도와 습도를 고려해,<br>
+              언제나 쾌적하고 포근한 잠을 위한 침구를 만들었습니다.
+            </p>
+          </div>
+        </div>
       </div>
     </section>
     <section class="bedding-tech-design">
-      <div class="container">
+      <div class="bedding-tech-design__frame">
+        <img
+          class="bedding-tech-design__image"
+          src="../../assets/images/about/bedding-tech/bedding-tech-design_bg.webp"
+          alt=""
+        >
+        <div class="bedding-tech-design__overlay" aria-hidden="true"></div>
+        <div class="container bedding-tech-design__container">
+          <div class="bedding-tech-design__content">
+            <h2 class="bedding-tech-design__title">
+              잠의 온도를 읽고,<br>
+              계절에 맞는 포근함을 설계하다
+            </h2>
+            <div class="bedding-tech-design__body">
+              <p class="bedding-tech-design__desc">
+                잠자는 동안 우리 몸은 끊임없이 열과 습기를 내보냅니다.
+              </p>
+              <p class="bedding-tech-design__desc">
+                이불 속에 열이 지나치게 머물면 덥고 답답해지고, 온기가 빠르게 사라지면 깊은 잠을 유지하기 어렵습니다.<br>
+                EQUIL은 양모가 지닌 공기 보유력과 습도 조절 특성에 주목했습니다.
+              </p>
+              <p class="bedding-tech-design__desc">
+                여름에는 가볍고 쾌적하게, 겨울에는 따뜻하고 포근하게 사용할 수 있도록 충전량과 퀼팅 구조를 각각 다르게 설계합니다.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
     <section class="bedding-tech-process">
-      <div class="container">
+      <div class="scroll-feature scroll-feature--media-end">
+        <div class="scroll-feature__content">
+          <h2 class="scroll-feature__title scroll-feature__title--ko">
+            좋은 잠은, 좋은 소재를<br>
+            다루는 과정에서 시작됩니다.
+          </h2>
+
+          <div class="scroll-feature__features">
+            <article class="scroll-feature__feature is-active" data-index="0">
+              <div class="scroll-feature__feature-row">
+                <div class="scroll-feature__indicator" aria-hidden="true"></div>
+                <div class="scroll-feature__feature-inner">
+                  <div class="scroll-feature__feature-heading">
+                    <span class="scroll-feature__feature-number">01</span>
+                    <h3 class="scroll-feature__feature-title">양모 원료 선별</h3>
+                  </div>
+                  <p class="scroll-feature__feature-desc">
+                    양모의 섬유 길이와 굵기, 탄력과 청결 상태를 확인해 침구 충전재에 적합한 원료를 선별합니다.<br>
+                    균일한 양모를 사용해 이불 전체에서 부드러운 촉감과 일정한 볼륨이 유지되도록 합니다.
+                  </p>
+                </div>
+              </div>
+            </article>
+
+            <article class="scroll-feature__feature" data-index="1">
+              <div class="scroll-feature__feature-row">
+                <div class="scroll-feature__indicator" aria-hidden="true"></div>
+                <div class="scroll-feature__feature-inner">
+                  <div class="scroll-feature__feature-heading">
+                    <span class="scroll-feature__feature-number">02</span>
+                    <h3 class="scroll-feature__feature-title">세척 및 이물질 제거</h3>
+                  </div>
+                  <p class="scroll-feature__feature-desc">
+                    선별한 양모에서 먼지와 이물질을 제거하고 침구 충전재에 적합한 상태로 세척합니다.<br>
+                    섬유의 자연스러운 탄성과 공기층은 유지하면서 쾌적하게 사용할 수 있도록 원료를 정돈합니다.
+                  </p>
+                </div>
+              </div>
+            </article>
+
+            <article class="scroll-feature__feature" data-index="2">
+              <div class="scroll-feature__feature-row">
+                <div class="scroll-feature__indicator" aria-hidden="true"></div>
+                <div class="scroll-feature__feature-inner">
+                  <div class="scroll-feature__feature-heading">
+                    <span class="scroll-feature__feature-number">03</span>
+                    <h3 class="scroll-feature__feature-title">양모 섬유 정리</h3>
+                  </div>
+                  <p class="scroll-feature__feature-desc">
+                    세척과 건조를 마친 양모를 섬세하게 풀고 빗질해 섬유의 방향과 밀도를 고르게 정리합니다.<br>
+                    이 과정을 통해 양모 사이에 미세한 공기층이 형성되고, 이불 전체에 균일하게 충전할 수 있는 시트 형태로 가공됩니다.
+                  </p>
+                </div>
+              </div>
+            </article>
+
+            <article class="scroll-feature__feature" data-index="3">
+              <div class="scroll-feature__feature-row">
+                <div class="scroll-feature__indicator" aria-hidden="true"></div>
+                <div class="scroll-feature__feature-inner">
+                  <div class="scroll-feature__feature-heading">
+                    <span class="scroll-feature__feature-number">04</span>
+                    <h3 class="scroll-feature__feature-title">퀄팅 설계</h3>
+                  </div>
+                  <p class="scroll-feature__feature-desc">
+                    퀄팅은 단순한 표면 장식이 아니라 양모의 위치를 안정적으로 유지하는 구조입니다.<br>
+                    계절별 충전량과 이불의 움직임을 고려해 퀄팅의 크기와 간격을 정하고,<br>
+                    사용 중 양모가 한쪽으로 이동하거나 뭉치는 현상을 줄입니다.
+                  </p>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div class="scroll-feature__media">
+          <img
+            class="scroll-feature__image"
+            src="../../assets/images/about/bedding-tech/bedding-tech-process_img01.webp"
+            alt=""
+          >
+        </div>
       </div>
     </section>
     <section class="bedding-tech-wool">
-      <div class="container">
+      <div class="bedding-tech-wool__stage">
+        <div class="bedding-tech-wool__brand" aria-label="EQUIL">
+          <span class="bedding-tech-wool__brand-part bedding-tech-wool__brand-part--eq">BED</span>
+          <span class="bedding-tech-wool__brand-part bedding-tech-wool__brand-part--uil">DING</span>
+        </div>
+        <img
+          class="bedding-tech-wool__image"
+          src="../../assets/images/about/bedding-tech/bedding-tech-wool_bedding.webp"
+          alt=""
+        >
+        <p class="bedding-tech-wool__title">사계절을 함께하는 양모</p>
       </div>
     </section>
     <section class="bedding-tech-seasonal">
-      <div class="container">
+      <div class="bedding-tech-seasonal__stage">
+        <div class="heading-3tier bedding-tech-seasonal__heading">
+          <p class="heading-3tier__sub-title">SEASONAL COMFORT</p>
+          <h2 class="heading-3tier__title">
+            계절이 달라지면, 편안함의 기준도 달라집니다.
+          </h2>
+          <p class="heading-3tier__desc">
+            여름의 쾌적함부터 겨울의 포근함까지.<br>
+            계절에 필요한 기능을 고려한 세 가지 울 레이어를 제안합니다.
+          </p>
+        </div>
+
+        <div class="bedding-tech-seasonal__cards">
+          <article class="bedding-tech-seasonal__card">
+            <div class="bedding-tech-seasonal__media">
+              <img
+                class="bedding-tech-seasonal__image"
+                src="../../assets/images/about/bedding-tech/bedding-tech-seasonal_summer.webp"
+                alt=""
+              >
+            </div>
+            <h3 class="bedding-tech-seasonal__title">SUMMER WOOL</h3>
+            <p class="bedding-tech-seasonal__desc">
+              여름 이불은 양모 충전량을 가볍게 구성하고,
+              얇고 유연한 구조를 적용해 몸을 무겁게 누르지 않도록 설계합니다.
+              양모가 수분 증기를 흡수하고 방출하는 특성을 활용해 에어컨을 사용하는 여름 밤에도
+              과도하게 춥거나 눅눅하지 않은 수면 환경을 고려했습니다.
+            </p>
+          </article>
+
+          <article class="bedding-tech-seasonal__card">
+            <div class="bedding-tech-seasonal__media">
+              <img
+                class="bedding-tech-seasonal__image"
+                src="../../assets/images/about/bedding-tech/bedding-tech-seasonal_winter.webp"
+                alt=""
+              >
+            </div>
+            <h3 class="bedding-tech-seasonal__title">WINTER WOOL</h3>
+            <p class="bedding-tech-seasonal__desc">
+              겨울 양모 이불은 세 제품 중 가장 풍성한 양모 충전량을 적용해
+              충분한 공기층을 형성합니다.
+              촘촘한 퀼팅이 양모를 고르게 잡아주고, 몸을 따라 부드럽게 내려앉는 구조가
+              차가운 외부 공기와의 접촉을 줄여 포근한 수면 환경을 만들어줍니다.
+            </p>
+          </article>
+
+          <article class="bedding-tech-seasonal__card">
+            <div class="bedding-tech-seasonal__media">
+              <img
+                class="bedding-tech-seasonal__image"
+                src="../../assets/images/about/bedding-tech/bedding-tech-seasonal_allSeason.webp"
+                alt=""
+              >
+            </div>
+            <h3 class="bedding-tech-seasonal__title">ALL-SEASON WOOL</h3>
+            <p class="bedding-tech-seasonal__desc">
+              봄·가을 양모 이불은 여름용보다 충분한 충전량을 적용하면서도
+              겨울용처럼 무겁거나 두껍지 않도록 설계합니다.
+              양모의 공기층과 흡습성을 활용해 쌀쌀한 새벽에는 온기를 유지하고,
+              기온이 올라갈 때는 습기가 과도하게 머물지 않도록 보온성과 쾌적함의 균형을 맞춥니다.
+            </p>
+          </article>
+        </div>
       </div>
     </section>
     <section class="bedding-tech-products">
-      <div class="container">
+      <div class="product-compare">
+        <div class="container product-compare__container">
+          <div class="heading-3tier product-compare__heading">
+            <p class="heading-3tier__sub-title">Designed for Every Season</p>
+            <h2 class="heading-3tier__title">
+              시즌에 맞는 양모 이불을 통해<br>
+              당신에게 맞는 제품을 비교해 보세요.
+            </h2>
+          </div>
+
+          <div class="product-compare__cards">
+            <article class="card card-cta-product product-compare__card" tabindex="0">
+              <div class="card-cta-product__media">
+                <img
+                  src="../../assets/images/about/bedding-tech/bedding-tech-products_summer.webp"
+                  alt=""
+                >
+              </div>
+              <div class="card-cta-product__overlay">
+                <p class="card-cta-product__title">SUMMER</p>
+                <p class="card-cta-product__text">
+                  양모 충전량을 낮춰 몸에 부담 없이<br>
+                  가볍게 덮이도록 설계하였습니다
+                </p>
+              </div>
+            </article>
+
+            <article class="card card-cta-product product-compare__card" tabindex="0">
+              <div class="card-cta-product__media">
+                <img
+                  src="../../assets/images/about/bedding-tech/bedding-tech-products_allSeason.webp"
+                  alt=""
+                >
+              </div>
+              <div class="card-cta-product__overlay">
+                <p class="card-cta-product__title">ALL-SEASON WOOL</p>
+                <p class="card-cta-product__text">
+                  양모 섬유 사이의 공기층이 일교차로 인한<br>
+                  온도 변화를 완만하게 받아들이도록 설계합니다
+                </p>
+              </div>
+            </article>
+
+            <article class="card card-cta-product product-compare__card" tabindex="0">
+              <div class="card-cta-product__media">
+                <img
+                  src="../../assets/images/about/bedding-tech/bedding-tech-products_winter.webp"
+                  alt=""
+                >
+              </div>
+              <div class="card-cta-product__overlay">
+                <p class="card-cta-product__title">WINTER</p>
+                <p class="card-cta-product__text">
+                  충분한 양모 충전량을 적용해 몸 주변의<br>
+                  따뜻한 공기가 오래 유지되도록 설계합니다
+                </p>
+              </div>
+            </article>
+          </div>
+        </div>
       </div>
     </section>
     <section class="bedding-tech-cta">
-      <div class="container">
+      <div class="section-cta">
+        <div class="container section-cta__container">
+          <div class="section-cta__content">
+            <h2 class="section-cta__title">당신의 계절에 맞는 이불</h2>
+            <p class="section-cta__desc">
+              온도와 습도, 계절의 변화까지 고려해 각기 다른 편안함으로 설계했습니다
+            </p>
+            <a class="btn btn-medium section-cta__button" href="../product.html">
+              <span>자세히 보기</span>
+              <span class="btn-medium__arrow" aria-hidden="true">&gt;</span>
+            </a>
+          </div>
+        </div>
       </div>
     </section>
   </main>
@@ -183,5 +454,6 @@
   </footer>
 
   <script src="../../assets/js/common.js"></script>
+  <script src="../../assets/js/pages/bedding-tech.js"></script>
 </body>
 </html>

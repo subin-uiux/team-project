@@ -1,0 +1,640 @@
+/* ========================================
+   heating-mat-tech-hero
+   ======================================== */
+
+.heating-mat-tech-hero {
+  position: relative;
+  width: 100%;
+}
+
+.heating-mat-tech-hero__frame {
+  position: relative;
+  width: 100%;
+  height: 437px;
+  overflow: hidden;
+}
+
+.heating-mat-tech-hero__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  transform: scale(1);
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.heating-mat-tech-hero__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-color: #000;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.heating-mat-tech-hero__container {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.heating-mat-tech-hero__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem; /* 14px */
+  text-align: center;
+  opacity: 0;
+}
+
+.heating-mat-tech-hero__title,
+.heating-mat-tech-hero__desc {
+  margin: 0;
+  color: #fff;
+  line-height: 150%;
+}
+
+
+/* ========================================
+   heating-mat-tech-problem
+   ======================================== */
+
+.heating-mat-tech-problem {
+  width: 100%;
+  height: 67.5rem; /* 1080px */
+  display: flex;
+  align-items: center;
+  background-color: var(--color-white);
+}
+
+.heating-mat-tech-problem__container {
+  display: flex;
+  flex-direction: column;
+  gap: 3.125rem; /* 50px */
+}
+
+.heating-mat-tech-problem__cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem; /* 20px */
+  width: 100%;
+}
+
+.heating-mat-tech-problem__card {
+  position: relative;
+  height: 14.5625rem; /* 233px */
+  border-radius: 1.875rem; /* 30px */
+  overflow: hidden;
+}
+
+.heating-mat-tech-problem__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  transform: scale(1);
+  transition: transform 0.5s ease;
+}
+
+.heating-mat-tech-problem__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-color: #000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+.heating-mat-tech-problem__text {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 1.25rem; /* 20px */
+  font-family: var(--font-suit);
+  font-weight: var(--fw-suit-bold); /* 600 — Suit Bold */
+  font-size: var(--fs-body-01); /* 24px */
+  line-height: 130%;
+  text-align: center;
+  color: var(--color-white);
+  opacity: 0;
+  transform: translateY(0.625rem); /* 10px */
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.heating-mat-tech-problem__card:hover .heating-mat-tech-problem__image,
+.heating-mat-tech-problem__card:focus-within .heating-mat-tech-problem__image {
+  transform: scale(1.05);
+}
+
+.heating-mat-tech-problem__card:hover .heating-mat-tech-problem__overlay,
+.heating-mat-tech-problem__card:focus-within .heating-mat-tech-problem__overlay {
+  opacity: 0.4;
+}
+
+.heating-mat-tech-problem__card:hover .heating-mat-tech-problem__text,
+.heating-mat-tech-problem__card:focus-within .heating-mat-tech-problem__text {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+/* ========================================
+   heating-mat-tech-product-overview
+   ======================================== */
+
+.heating-mat-tech-product-overview {
+  width: 100%;
+  height: 100vh;
+  background-color: var(--color-brand-light-2);
+}
+
+.heating-mat-tech-product-overview__container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.heating-mat-tech-product-overview__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.625rem; /* 10px */
+  text-align: center;
+}
+
+.heating-mat-tech-product-overview__title {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: 600; /* Semibold */
+  font-size: var(--fs-title); /* 40px */
+  line-height: 150%;
+  color: var(--color-brand-dark);
+}
+
+.heating-mat-tech-product-overview__desc {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: 400; /* Regular */
+  font-size: var(--fs-body-02); /* 22px */
+  line-height: 150%;
+  color: var(--color-brand-dark);
+}
+
+.heating-mat-tech-product-overview__char {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+
+/* ========================================
+   heating-mat-tech-product
+   ======================================== */
+
+.heating-mat-tech-product {
+  width: 100%;
+  height: 100vh;
+  background-color: var(--color-white);
+}
+
+
+/* ========================================
+   heating-mat-tech-technology
+   ======================================== */
+
+html {
+  overflow-x: clip;
+}
+
+.heating-mat-tech-technology {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  background-color: var(--color-white);
+  --heating-mat-tech-technology-circle-active: 37.5rem; /* 600px */
+  --heating-mat-tech-technology-circle-inactive: 25rem; /* 400px */
+  --heating-mat-tech-technology-circle-offset-y: -3.75rem; /* 60px up */
+  --heating-mat-tech-technology-features-width: calc(
+    5 * 10.9375rem + 4 * 8.125rem
+  ); /* 5×175px + 4×130px */
+  --heating-mat-tech-technology-track-step: 50vw;
+}
+
+.heating-mat-tech-technology__stage {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.heating-mat-tech-technology__sticky {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  max-width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background-color: var(--color-white);
+}
+
+.heating-mat-tech-technology .pin-spacer {
+  max-width: 100% !important;
+  overflow: hidden;
+}
+
+.heating-mat-tech-technology__intro {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.heating-mat-tech-technology__intro-frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  transform-origin: center center;
+  will-change: width, height, top, left;
+}
+
+.heating-mat-tech-technology__intro-image {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+}
+
+.heating-mat-tech-technology__content {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.45s ease, visibility 0.45s ease;
+}
+
+.heating-mat-tech-technology__content.is-visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.heating-mat-tech-technology__inner {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 3.75rem; /* 60px — copy ↔ icons */
+  height: 100%;
+  padding-bottom: 5rem;
+  pointer-events: none;
+}
+
+.heating-mat-tech-technology__copy {
+  width: var(--heating-mat-tech-technology-features-width);
+  max-width: 100%;
+  pointer-events: none;
+}
+
+.heating-mat-tech-technology__copy-item {
+  margin: 0;
+}
+
+.heating-mat-tech-technology__copy-item[hidden] {
+  display: none;
+}
+
+.heating-mat-tech-technology__title {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: var(--fw-suit-bold); /* 600 */
+  font-size: var(--fs-title); /* 40px */
+  line-height: 130%;
+  color: var(--color-brand-dark);
+}
+
+.heating-mat-tech-technology__desc {
+  margin: 1.25rem 0 0; /* 20px */
+  font-family: var(--font-suit);
+  font-weight: 400;
+  font-size: var(--fs-body-01); /* 24px */
+  line-height: 150%;
+  color: var(--color-brand-dark);
+}
+
+.heating-mat-tech-technology__swiper-area {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.heating-mat-tech-technology__content.is-visible .heating-mat-tech-technology__swiper-area {
+  pointer-events: auto;
+}
+
+.heating-mat-tech-technology__swiper {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.heating-mat-tech-technology__swiper .swiper-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: max-content;
+  height: 100%;
+  will-change: transform;
+  transition: transform 0.9s ease;
+}
+
+.heating-mat-tech-technology__swiper .swiper-slide {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: var(--heating-mat-tech-technology-track-step);
+  max-width: none;
+  height: 100%;
+}
+
+.heating-mat-tech-technology__slide-media {
+  width: var(--heating-mat-tech-technology-circle-inactive);
+  height: var(--heating-mat-tech-technology-circle-inactive);
+  border-radius: 50%;
+  overflow: hidden;
+  opacity: 0.5;
+  transform: translateY(var(--heating-mat-tech-technology-circle-offset-y));
+  transition:
+    width 0.9s ease,
+    height 0.9s ease,
+    opacity 0.6s ease;
+}
+
+.heating-mat-tech-technology__swiper .swiper-slide-active .heating-mat-tech-technology__slide-media {
+  width: var(--heating-mat-tech-technology-circle-active);
+  height: var(--heating-mat-tech-technology-circle-active);
+  opacity: 1;
+}
+
+.heating-mat-tech-technology__swiper .swiper-slide-prev .heating-mat-tech-technology__slide-media,
+.heating-mat-tech-technology__swiper .swiper-slide-next .heating-mat-tech-technology__slide-media {
+  width: var(--heating-mat-tech-technology-circle-inactive);
+  height: var(--heating-mat-tech-technology-circle-inactive);
+  opacity: 0.5;
+}
+
+.heating-mat-tech-technology__slide-image {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+}
+
+.heating-mat-tech-technology__controls {
+  position: absolute;
+  top: calc(50% - 3.75rem + 19.5rem); /* below 600px circle */
+  left: calc(50% + 6.25rem);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 1rem; /* 16px */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+  pointer-events: auto;
+}
+
+.heating-mat-tech-technology__content.is-visible .heating-mat-tech-technology__controls {
+  opacity: 1;
+  visibility: visible;
+}
+
+.heating-mat-tech-technology__nav {
+  width: 1.75rem; /* 28px */
+  height: 1.75rem;
+  padding: 0;
+  border: 0;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  cursor: pointer;
+}
+
+.heating-mat-tech-technology__nav--prev {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28' fill='none'%3E%3Cpath d='M17.5 7L10.5 14L17.5 21' stroke='%23322A23' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.heating-mat-tech-technology__nav--next {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28' fill='none'%3E%3Cpath d='M10.5 7L17.5 14L10.5 21' stroke='%23322A23' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.heating-mat-tech-technology__nav.swiper-button-disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.heating-mat-tech-technology__pagination {
+  font-family: var(--font-suit);
+  font-weight: 300;
+  font-size: var(--fs-body-03); /* 20px */
+  line-height: 150%;
+  color: var(--color-grey-400);
+}
+
+.heating-mat-tech-technology__pagination .swiper-pagination-current {
+  color: var(--color-brand-dark);
+}
+
+.heating-mat-tech-technology__features {
+  display: flex;
+  justify-content: center;
+  gap: 8.125rem; /* 130px */
+  width: var(--heating-mat-tech-technology-features-width);
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.heating-mat-tech-technology__feature {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem; /* 16px */
+  width: 10.9375rem; /* 175px */
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.heating-mat-tech-technology__feature-icon {
+  display: block;
+  width: auto;
+  height: 3.75rem; /* 60px */
+  max-width: 100%;
+}
+
+.heating-mat-tech-technology__feature-label {
+  font-family: var(--font-suit);
+  font-weight: 400;
+  font-size: var(--fs-body-03); /* 20px */
+  line-height: 150%;
+  color: var(--color-brand-dark);
+}
+
+
+/* ========================================
+   heating-mat-tech-certification
+   ======================================== */
+
+.heating-mat-tech-certification {
+  width: 100%;
+  height: 67.5rem; /* 1080px */
+  display: flex;
+  align-items: center;
+  background-color: var(--color-brand-light-2);
+}
+
+.heating-mat-tech-certification__container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3.125rem; /* 50px */
+}
+
+.heating-mat-tech-certification__heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.625rem; /* 10px */
+  text-align: center;
+}
+
+.heating-mat-tech-certification__sub-title {
+  margin: 0;
+  padding: 0 1.25rem; /* 0 20px */
+  border-radius: 1.875rem; /* 30px */
+  font-family: var(--font-suit);
+  font-weight: 900; /* Heavy */
+  font-size: var(--fs-body-03); /* 20px */
+  line-height: 150%;
+  color: var(--color-white);
+  background-color: var(--color-brand-point);
+}
+
+.heating-mat-tech-certification__title {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: var(--fw-suit-bold); /* 600 — Semibold */
+  font-size: var(--fs-title); /* 40px */
+  line-height: 150%;
+  color: var(--color-brand-dark);
+}
+
+.heating-mat-tech-certification__certificates {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0;
+}
+
+.heating-mat-tech-certification__certificate {
+  display: block;
+  width: 16.4375rem; /* 263px */
+  height: auto;
+  max-width: none;
+  outline: 1px solid rgba(0, 0, 0, 0.1);
+  outline-offset: -1px;
+}
+
+.heating-mat-tech-certification__items {
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  column-gap: 2.5rem; /* 40px */
+  row-gap: 1.25rem; /* 20px */
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.heating-mat-tech-certification__item {
+  display: flex;
+  align-items: center;
+}
+
+.heating-mat-tech-certification__card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem; /* 10px — check ↔ text */
+  width: 26.5625rem; /* 425px */
+  padding: 1rem 1.25rem; /* 16px 20px */
+  border-radius: 0.625rem; /* 10px */
+  background-color: var(--color-white);
+  box-sizing: border-box;
+}
+
+.heating-mat-tech-certification__check {
+  display: block;
+  width: 2.25rem; /* 36px */
+  height: 2.25rem;
+  flex-shrink: 0;
+}
+
+.heating-mat-tech-certification__card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem; /* 6px — title ↔ desc */
+  min-width: 0;
+}
+
+.heating-mat-tech-certification__card-title {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: var(--fw-suit-bold); /* 600 */
+  font-size: var(--fs-body-02); /* 22px */
+  line-height: 130%;
+  color: var(--color-brand-dark);
+}
+
+.heating-mat-tech-certification__card-desc {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: 500; /* Medium */
+  font-size: var(--fs-body-03); /* 20px */
+  line-height: 130%;
+  color: var(--color-brand-dark);
+}
+
+.heating-mat-tech-certification__verified {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 7.5rem; /* 120px */
+  height: 7.5rem;
+  margin-left: -1.5625rem; /* -25px overlap */
+  flex-shrink: 0;
+}

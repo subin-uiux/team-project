@@ -10,6 +10,8 @@
 |------|----------------|
 | **3단 타이틀** | `heading-3tier`, `heading-3tier__sub-title`, `heading-3tier__title`, `heading-3tier__desc` |
 | **fadeUp** | GSAP 글자 단위 등장 애니메이션 — `(section-block)__char` |
+| **제품 비교** | `product-compare` — 3열 제품 카드 비교 섹션 레이아웃 |
+| **섹션 CTA** | `section-cta` — 하단 CTA 배너 레이아웃 |
 
 ## index.html
 
@@ -62,7 +64,7 @@ pillow-tech.html
 ├ pillow-tech-zones
 ├ pillow-tech-products
 └ pillow-tech-cta
-```
+``` 
 
 ## bedding-tech.html
 
@@ -83,6 +85,7 @@ bedding-tech.html
 heating-mat-tech.html
 ├ heating-mat-tech-hero
 ├ heating-mat-tech-problem
+├ heating-mat-tech-product-overview
 ├ heating-mat-tech-product
 ├ heating-mat-tech-technology
 ├ heating-mat-tech-certification

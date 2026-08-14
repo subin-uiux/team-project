@@ -1,4 +1,4 @@
-(() => {
+﻿(() => {
   const SLEEP_POSITION_IMAGES = [
     '../../assets/images/about/pillow-tech/pillow-tech-sleep-position_img01.webp',
     '../../assets/images/about/pillow-tech/pillow-tech-sleep-position_img02.webp',
@@ -61,7 +61,7 @@
     const activateTab = (index) => {
       tabs.forEach((tab, tabIndex) => {
         const isActive = tabIndex === index;
-        tab.classList.toggle('is-selected', isActive);
+        tab.classList.toggle('is-active', isActive);
         tab.setAttribute('aria-selected', String(isActive));
       });
 
@@ -94,13 +94,13 @@
     if (!section) return;
 
     const features = Array.from(
-      section.querySelectorAll('.pillow-tech-structure__feature')
+      section.querySelectorAll('.scroll-feature__feature')
     );
-    const hotspot = section.querySelector('.pillow-tech-structure__hotspot');
+    const hotspot = section.querySelector('.scroll-feature__hotspot');
     if (!features.length || !hotspot) return;
 
     const LAST_INDEX = features.length - 1;
-    const COOLDOWN_MS = 2500;
+    const COOLDOWN_MS = 1000;
     const ENTRY_LOCK_MS = 1000;
     const TRANSITION_DURATION = 1.2;
     const FADE_OUT_DURATION = TRANSITION_DURATION * 0.55;
@@ -129,16 +129,16 @@
       const prevFeature = features[prevIndex];
       const nextFeature = features[index];
       const prevIndicator = prevFeature?.querySelector(
-        '.pillow-tech-structure__indicator'
+        '.scroll-feature__indicator'
       );
       const prevDesc = prevFeature?.querySelector(
-        '.pillow-tech-structure__feature-desc'
+        '.scroll-feature__feature-desc'
       );
       const nextIndicator = nextFeature.querySelector(
-        '.pillow-tech-structure__indicator'
+        '.scroll-feature__indicator'
       );
       const nextDesc = nextFeature.querySelector(
-        '.pillow-tech-structure__feature-desc'
+        '.scroll-feature__feature-desc'
       );
       const pos = HOTSPOT_POSITIONS[index];
 
@@ -148,10 +148,10 @@
           feature.classList.toggle('is-active', isActive);
 
           const indicator = feature.querySelector(
-            '.pillow-tech-structure__indicator'
+            '.scroll-feature__indicator'
           );
           const desc = feature.querySelector(
-            '.pillow-tech-structure__feature-desc'
+            '.scroll-feature__feature-desc'
           );
 
           if (indicator) gsap.set(indicator, { opacity: isActive ? 1 : 0 });
@@ -272,47 +272,33 @@
 
     activateFeature(0, false);
 
-    const releasePinForNaturalScroll = (deltaY) => {
-      if (!pinTrigger) return;
-
-      pinTrigger.kill(true);
-      pinTrigger = null;
-      ScrollTrigger.refresh();
-
-      requestAnimationFrame(() => {
-        window.scrollTo(0, Math.max(0, section.offsetTop + deltaY));
-      });
-    };
-
     const onWheel = (event) => {
       if (!pinTrigger || !pinTrigger.isActive) return;
 
       const goingDown = event.deltaY > 0;
 
-      // 섹션 진입 직후 1초간 스크롤 차단
+      // 섹션 진입 직후 대기
       if (isEntryLocked()) {
         event.preventDefault();
         return;
       }
 
-      // 전환 중에는 섹션 이탈·다음 전환 모두 차단
+      // 전환 중에는 이탈·다음 전환 차단
       if (isTransitioning) {
         event.preventDefault();
         return;
       }
 
-      // 마지막(하단)에서 아래 스크롤 → 쿨다운 이후에만 pin 해제
+      // 마지막 특징에서 아래 스크롤: 쿨다운 후 자연 스크롤로 다음 섹션
       if (goingDown && currentIndex === LAST_INDEX) {
-        event.preventDefault();
-        if (isInCooldown()) return;
-        releasePinForNaturalScroll(event.deltaY);
+        if (isInCooldown()) {
+          event.preventDefault();
+        }
         return;
       }
 
-      // 첫 항목에서 위 스크롤 → pin 해제 후 이전 섹션으로 자연 스크롤
+      // 첫 특징에서 위 스크롤: 자연 스크롤로 이전 섹션
       if (!goingDown && currentIndex === 0) {
-        event.preventDefault();
-        releasePinForNaturalScroll(event.deltaY);
         return;
       }
 
@@ -331,8 +317,16 @@
       pinSpacing: true,
       anticipatePin: 1,
       invalidateOnRefresh: true,
-      onEnter: startEntryLock,
-      onEnterBack: startEntryLock,
+      onEnter: () => {
+        // 위에서 진입 / 첫 진입 → 01 기준 1-2-3
+        activateFeature(0, false);
+        startEntryLock();
+      },
+      onEnterBack: () => {
+        // 아래에서 재진입 → 마지막 기준 역순
+        activateFeature(LAST_INDEX, false);
+        startEntryLock();
+      },
     });
 
     window.addEventListener('wheel', onWheel, { passive: false });
@@ -478,7 +472,7 @@
         const stagger =
           FADE_UP_DURATION / Math.max(item.chars.length * 2.5, 1);
 
-        // 이전 텍스트 애니메이션 60% 지점에서 다음 특징 시작
+        // 이전 텍스트 애니메이션 60% 지점에서 다음 콜아웃 시작
         const startPos =
           index === 0
             ? 0

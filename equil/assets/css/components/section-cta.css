@@ -1,0 +1,45 @@
+/* ========================================
+   section-cta (페이지 CTA 배너)
+   ======================================== */
+
+.section-cta {
+  width: 100%;
+  height: 35.6875rem; /* 571px */
+  background-color: var(--color-brand-dark);
+}
+
+.section-cta__container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.section-cta__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.section-cta__title {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: var(--fw-suit-bold); /* 600 */
+  font-size: var(--fs-title); /* 40px */
+  line-height: 130%;
+  color: var(--color-white);
+}
+
+.section-cta__desc {
+  margin: 0.625rem 0 0; /* 10px */
+  font-family: var(--font-suit);
+  font-weight: 300;
+  font-size: var(--fs-body-02); /* 22px */
+  line-height: 130%;
+  color: var(--color-brand-light-1);
+}
+
+.section-cta__button {
+  margin-top: 1.875rem; /* 30px */
+}

@@ -56,3 +56,122 @@ alwaysApply: true
 **참고 구현:** `equil/assets/js/pages/mattress-tech.js` — `initMattressTechStructureOverview`
 
 **요청 예시:** "이 타이틀에 fadeUp 넣어주세요" → 위 스펙의 글자 단위 fade-up + ScrollTrigger 1회 재생.
+
+## 스크롤 특징
+
+**용어:** `스크롤 특징` — 좌측 이미지(+핫스팟) / 우측 제목·번호 특징 목록. 스크롤(pin)로 특징이 전환되는 패널.
+
+**공통 Block:** `scroll-feature`  
+**스타일:** `equil/assets/css/components/scroll-feature.css`
+
+**HTML:**
+
+```html
+<section class="페이지명-섹션명">
+  <div class="scroll-feature">
+    <div class="scroll-feature__media">
+      <img class="scroll-feature__image" src="..." alt="">
+      <div class="scroll-feature__hotspot" aria-hidden="true">
+        <span class="scroll-feature__hotspot-ring scroll-feature__hotspot-ring--outer"></span>
+        <span class="scroll-feature__hotspot-ring scroll-feature__hotspot-ring--middle"></span>
+        <span class="scroll-feature__hotspot-ring scroll-feature__hotspot-ring--inner"></span>
+      </div>
+    </div>
+    <div class="scroll-feature__content">
+      <h2 class="scroll-feature__title">SECTION TITLE</h2>
+      <div class="scroll-feature__features">
+        <article class="scroll-feature__feature is-active" data-index="0">
+          <div class="scroll-feature__feature-row">
+            <div class="scroll-feature__indicator" aria-hidden="true"></div>
+            <div class="scroll-feature__feature-inner">
+              <div class="scroll-feature__feature-heading">
+                <span class="scroll-feature__feature-number">01</span>
+                <h3 class="scroll-feature__feature-title">특징 제목</h3>
+              </div>
+              <p class="scroll-feature__feature-desc">특징 설명</p>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+```
+
+- **페이지 section Block**은 유지 (`pillow-tech-structure`, `bedding-tech-process` 등)
+- **내부 UI만** `scroll-feature` 공통 클래스 사용
+- 핫스팟 좌표·특징 문구·이미지는 페이지 JS/콘텐츠로 다르게 둠
+- 이미지 우측 배치: `scroll-feature--media-end`
+- 한글 제목: `scroll-feature__title--ko` (SUIT Bold 40px)
+
+**사용 예:** `pillow-tech-structure`, `bedding-tech-process`  
+**요청 예시:** "`bedding-tech-process`에 스크롤 특징 넣어주세요"
+
+## 제품 비교
+
+**용어:** `제품 비교` — 3단 타이틀 + 3열 `card-cta-product` 비교 레이아웃.
+
+**공통 Block:** `product-compare`  
+**스타일:** `equil/assets/css/components/product-compare.css`
+
+**HTML:**
+
+```html
+<section class="페이지명-products">
+  <div class="product-compare">
+    <div class="container product-compare__container">
+      <div class="heading-3tier product-compare__heading">...</div>
+      <div class="product-compare__cards">
+        <article class="card card-cta-product product-compare__card" tabindex="0">
+          <div class="card-cta-product__media">
+            <img src="..." alt="">
+          </div>
+          <div class="card-cta-product__overlay">
+            <p class="card-cta-product__title">TITLE</p>
+            <p class="card-cta-product__text">본문</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+```
+
+- **페이지 section Block** 유지 (`pillow-tech-products`, `bedding-tech-products` 등)
+- 이미지·문구·CTA 링크는 페이지별로 다르게 둠
+- `cards.css`의 `card-cta-product`와 함께 사용
+
+**사용 예:** `pillow-tech-products`, `bedding-tech-products`  
+**요청 예시:** "`bedding-tech-products`에 제품 비교 넣어주세요"
+
+## 섹션 CTA
+
+**용어:** `섹션 CTA` — 브랜드 다크 배경의 중앙 타이틀·설명·버튼 배너.
+
+**공통 Block:** `section-cta`  
+**스타일:** `equil/assets/css/components/section-cta.css`
+
+**HTML:**
+
+```html
+<section class="페이지명-cta">
+  <div class="section-cta">
+    <div class="container section-cta__container">
+      <div class="section-cta__content">
+        <h2 class="section-cta__title">제목</h2>
+        <p class="section-cta__desc">설명</p>
+        <a class="btn btn-medium section-cta__button" href="...">
+          <span>자세히 보기</span>
+          <span class="btn-medium__arrow" aria-hidden="true">&gt;</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+```
+
+- **페이지 section Block** 유지 (`pillow-tech-cta`, `bedding-tech-cta` 등)
+- 문구·`href`는 페이지별로 다르게 둠
+
+**사용 예:** `pillow-tech-cta`, `bedding-tech-cta`  
+**요청 예시:** "`bedding-tech-cta`에 섹션 CTA 넣어주세요"
