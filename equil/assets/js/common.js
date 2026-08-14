@@ -64,6 +64,114 @@
     window.gsap.registerPlugin(window.ScrollTrigger);
   })();
 
+  const FADE_UP_DURATION = 1.26;
+
+  const splitHeadingChars = (element, charClass) => {
+    const walk = (node) => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const chars = Array.from(node.textContent);
+        const fragment = document.createDocumentFragment();
+
+        chars.forEach((char) => {
+          if (/^\s$/.test(char)) {
+            fragment.appendChild(document.createTextNode(char));
+            return;
+          }
+
+          const span = document.createElement('span');
+          span.className = charClass;
+          span.textContent = char;
+          fragment.appendChild(span);
+        });
+
+        node.parentNode.replaceChild(fragment, node);
+        return;
+      }
+
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        if (node.tagName === 'BR') return;
+        Array.from(node.childNodes).forEach(walk);
+      }
+    };
+
+    Array.from(element.childNodes).forEach(walk);
+    return Array.from(element.querySelectorAll(`.${charClass}`));
+  };
+
+  const initHeading3tierFadeUp = () => {
+    document.querySelectorAll('.heading-3tier').forEach((heading) => {
+      const targets = [
+        heading.querySelector('.heading-3tier__sub-title'),
+        heading.querySelector('.heading-3tier__title'),
+        heading.querySelector('.heading-3tier__desc'),
+      ].filter(Boolean);
+      if (!targets.length) return;
+
+      const charClass = 'heading-3tier__char';
+      const allChars = targets.flatMap((element) =>
+        splitHeadingChars(element, charClass)
+      );
+      if (!allChars.length) return;
+
+      const charStagger =
+        FADE_UP_DURATION / Math.max(allChars.length * 2.5, 1);
+
+      gsap.set(allChars, { opacity: 0, y: 40 });
+
+      gsap.to(allChars, {
+        opacity: 1,
+        y: 0,
+        duration: FADE_UP_DURATION,
+        ease: 'power3.out',
+        stagger: allChars.length > 1 ? charStagger : 0,
+        scrollTrigger: {
+          trigger: heading,
+          start: 'top 90%',
+          once: true,
+        },
+        onComplete: () => {
+          gsap.set(allChars, { clearProps: 'will-change' });
+        },
+      });
+    });
+  };
+
+  const initScrollFeatureTitleFadeUp = () => {
+    document.querySelectorAll('.scroll-feature__title--ko').forEach((title) => {
+      const charClass = 'scroll-feature__char';
+      const chars = splitHeadingChars(title, charClass);
+      if (!chars.length) return;
+
+      const charStagger =
+        FADE_UP_DURATION / Math.max(chars.length * 2.5, 1);
+
+      gsap.set(chars, { opacity: 0, y: 40 });
+
+      gsap.to(chars, {
+        opacity: 1,
+        y: 0,
+        duration: FADE_UP_DURATION,
+        ease: 'power3.out',
+        stagger: chars.length > 1 ? charStagger : 0,
+        scrollTrigger: {
+          trigger: title,
+          start: 'top 50%',
+          once: true,
+        },
+        onComplete: () => {
+          gsap.set(chars, { clearProps: 'will-change' });
+        },
+      });
+    });
+  };
+
+  window.equilLibsReady
+    .then(() => {
+      initHeading3tierFadeUp();
+      initScrollFeatureTitleFadeUp();
+    })
+    .catch(() => {});
+
   const header = document.querySelector('.site-header');
   if (!header) return;
 

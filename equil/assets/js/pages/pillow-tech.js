@@ -58,27 +58,170 @@
     const image = section.querySelector('.pillow-tech-sleep-position__image');
     if (!tabs.length || !panels.length || !image) return;
 
-    const activateTab = (index) => {
+    const TRANSITION_DURATION = 0.75;
+    const FADE_OUT_DURATION = TRANSITION_DURATION * 0.55;
+    const IMAGE_REVEAL_DURATION = 1;
+
+    let currentIndex = 0;
+    let isTransitioning = false;
+    let transitionTl = null;
+    let imageTween = null;
+    let revealImage = null;
+
+    const media = section.querySelector('.pillow-tech-sleep-position__media');
+
+    const cleanupRevealImage = () => {
+      if (revealImage) {
+        revealImage.remove();
+        revealImage = null;
+      }
+    };
+
+    const setImage = (index) => {
+      const nextSrc = SLEEP_POSITION_IMAGES[index];
+      if (!nextSrc || image.getAttribute('src') === nextSrc) return;
+      if (!media) return;
+
+      if (imageTween) {
+        imageTween.kill();
+        imageTween = null;
+      }
+      cleanupRevealImage();
+
+      const nextRevealImage = document.createElement('img');
+      nextRevealImage.className = 'pillow-tech-sleep-position__image-reveal';
+      nextRevealImage.alt = image.alt || '';
+      revealImage = nextRevealImage;
+
+      const startReveal = () => {
+        if (revealImage !== nextRevealImage) return;
+
+        gsap.set(nextRevealImage, { xPercent: 100 });
+        media.appendChild(nextRevealImage);
+
+        imageTween = gsap.to(nextRevealImage, {
+          xPercent: 0,
+          duration: IMAGE_REVEAL_DURATION,
+          ease: 'power2.inOut',
+          onComplete: () => {
+            if (revealImage !== nextRevealImage) return;
+            image.src = nextSrc;
+            cleanupRevealImage();
+            imageTween = null;
+          },
+        });
+      };
+
+      nextRevealImage.src = nextSrc;
+      if (nextRevealImage.complete) {
+        startReveal();
+      } else {
+        nextRevealImage.addEventListener('load', startReveal, { once: true });
+        nextRevealImage.addEventListener('error', startReveal, { once: true });
+      }
+    };
+
+    const activateTab = (index, animate = true) => {
+      if (index === currentIndex) return;
+      if (animate && isTransitioning) return;
+
+      const prevIndex = currentIndex;
+      currentIndex = index;
+
       tabs.forEach((tab, tabIndex) => {
         const isActive = tabIndex === index;
         tab.classList.toggle('is-active', isActive);
         tab.setAttribute('aria-selected', String(isActive));
       });
 
-      panels.forEach((panel, panelIndex) => {
-        const isActive = panelIndex === index;
-        panel.classList.toggle('is-active', isActive);
-        panel.hidden = !isActive;
+      const prevPanel = panels[prevIndex];
+      const nextPanel = panels[index];
+
+      if (!animate) {
+        if (transitionTl) {
+          transitionTl.kill();
+          transitionTl = null;
+        }
+        if (imageTween) {
+          imageTween.kill();
+          imageTween = null;
+        }
+        cleanupRevealImage();
+
+        panels.forEach((panel, panelIndex) => {
+          const isActive = panelIndex === index;
+          panel.classList.toggle('is-active', isActive);
+          panel.hidden = !isActive;
+          gsap.set(panel, { opacity: 1, y: 0, clearProps: 'will-change' });
+        });
+
+        image.src = SLEEP_POSITION_IMAGES[index];
+        gsap.set(image, { opacity: 1 });
+        isTransitioning = false;
+        return;
+      }
+
+      if (transitionTl) {
+        transitionTl.kill();
+        transitionTl = null;
+      }
+
+      isTransitioning = true;
+      setImage(index);
+
+      transitionTl = gsap.timeline({
+        onComplete: () => {
+          isTransitioning = false;
+          transitionTl = null;
+          gsap.set(nextPanel, { clearProps: 'will-change' });
+        },
       });
 
-      image.src = SLEEP_POSITION_IMAGES[index];
+      if (prevPanel && prevIndex !== index) {
+        prevPanel.classList.remove('is-active');
+
+        transitionTl.to(
+          prevPanel,
+          {
+            opacity: 0,
+            y: -8,
+            duration: FADE_OUT_DURATION,
+            ease: 'power2.in',
+            onComplete: () => {
+              prevPanel.hidden = true;
+              gsap.set(prevPanel, { y: 0 });
+            },
+          },
+          0
+        );
+      }
+
+      transitionTl.add(() => {
+        panels.forEach((panel, panelIndex) => {
+          panel.classList.toggle('is-active', panelIndex === index);
+        });
+        nextPanel.hidden = false;
+      });
+
+      transitionTl.fromTo(
+        nextPanel,
+        { opacity: 0, y: 12 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: TRANSITION_DURATION,
+          ease: 'power2.out',
+        }
+      );
     };
+
+    activateTab(0, false);
 
     tabs.forEach((tab) => {
       tab.addEventListener('click', () => {
         const index = Number(tab.dataset.index);
         if (Number.isNaN(index)) return;
-        activateTab(index);
+        activateTab(index, true);
       });
     });
   };
@@ -90,246 +233,10 @@
   ];
 
   const initPillowTechStructure = () => {
-    const section = document.querySelector('.pillow-tech-structure');
-    if (!section) return;
-
-    const features = Array.from(
-      section.querySelectorAll('.scroll-feature__feature')
-    );
-    const hotspot = section.querySelector('.scroll-feature__hotspot');
-    if (!features.length || !hotspot) return;
-
-    const LAST_INDEX = features.length - 1;
-    const COOLDOWN_MS = 1000;
-    const ENTRY_LOCK_MS = 1000;
-    const TRANSITION_DURATION = 1.2;
-    const FADE_OUT_DURATION = TRANSITION_DURATION * 0.55;
-    let currentIndex = 0;
-    let pinTrigger = null;
-    let lastSwitchTime = 0;
-    let entryLockUntil = 0;
-    let isTransitioning = false;
-    let transitionTl = null;
-
-    const isInCooldown = () =>
-      lastSwitchTime > 0 && Date.now() - lastSwitchTime < COOLDOWN_MS;
-
-    const isEntryLocked = () => Date.now() < entryLockUntil;
-
-    const startEntryLock = () => {
-      entryLockUntil = Date.now() + ENTRY_LOCK_MS;
-    };
-
-    const activateFeature = (index, animate = true) => {
-      if (index === currentIndex && animate) return;
-
-      const prevIndex = currentIndex;
-      currentIndex = index;
-
-      const prevFeature = features[prevIndex];
-      const nextFeature = features[index];
-      const prevIndicator = prevFeature?.querySelector(
-        '.scroll-feature__indicator'
-      );
-      const prevDesc = prevFeature?.querySelector(
-        '.scroll-feature__feature-desc'
-      );
-      const nextIndicator = nextFeature.querySelector(
-        '.scroll-feature__indicator'
-      );
-      const nextDesc = nextFeature.querySelector(
-        '.scroll-feature__feature-desc'
-      );
-      const pos = HOTSPOT_POSITIONS[index];
-
-      if (!animate) {
-        features.forEach((feature, i) => {
-          const isActive = i === index;
-          feature.classList.toggle('is-active', isActive);
-
-          const indicator = feature.querySelector(
-            '.scroll-feature__indicator'
-          );
-          const desc = feature.querySelector(
-            '.scroll-feature__feature-desc'
-          );
-
-          if (indicator) gsap.set(indicator, { opacity: isActive ? 1 : 0 });
-          if (desc) {
-            desc.hidden = !isActive;
-            gsap.set(desc, { opacity: isActive ? 1 : 0, y: 0 });
-          }
-        });
-
-        if (pos) gsap.set(hotspot, { left: pos.left, top: pos.top });
-        lastSwitchTime = 0;
-        isTransitioning = false;
-        return;
-      }
-
-      if (transitionTl) {
-        transitionTl.kill();
-        transitionTl = null;
-      }
-
-      isTransitioning = true;
-
-      transitionTl = gsap.timeline({
-        onComplete: () => {
-          isTransitioning = false;
-          transitionTl = null;
-          lastSwitchTime = Date.now();
-        },
-      });
-
-      // 1) 이전 항목 종료
-      if (prevFeature && prevIndex !== index) {
-        prevFeature.classList.remove('is-active');
-
-        if (prevIndicator) {
-          transitionTl.to(
-            prevIndicator,
-            {
-              opacity: 0,
-              duration: FADE_OUT_DURATION,
-              ease: 'power2.in',
-            },
-            0
-          );
-        }
-
-        if (prevDesc) {
-          transitionTl.to(
-            prevDesc,
-            {
-              opacity: 0,
-              y: -8,
-              duration: FADE_OUT_DURATION,
-              ease: 'power2.in',
-              onComplete: () => {
-                prevDesc.hidden = true;
-                gsap.set(prevDesc, { y: 0 });
-              },
-            },
-            0
-          );
-        }
-
-        if (!prevIndicator && !prevDesc) {
-          transitionTl.to({}, { duration: FADE_OUT_DURATION });
-        }
-      }
-
-      // 2) 이전 종료 후 새 항목 시작
-      transitionTl.add(() => {
-        features.forEach((feature, i) => {
-          feature.classList.toggle('is-active', i === index);
-        });
-
-        if (nextDesc) {
-          nextDesc.hidden = false;
-        }
-      });
-
-      if (nextDesc) {
-        transitionTl.fromTo(
-          nextDesc,
-          { opacity: 0, y: 12 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: TRANSITION_DURATION,
-            ease: 'power2.out',
-          }
-        );
-      }
-
-      if (nextIndicator) {
-        transitionTl.to(
-          nextIndicator,
-          {
-            opacity: 1,
-            duration: TRANSITION_DURATION,
-            ease: 'power2.out',
-          },
-          nextDesc ? '<' : '>'
-        );
-      }
-
-      if (pos) {
-        transitionTl.to(
-          hotspot,
-          {
-            left: pos.left,
-            top: pos.top,
-            duration: TRANSITION_DURATION,
-            ease: 'power2.inOut',
-          },
-          nextDesc || nextIndicator ? '<' : '>'
-        );
-      }
-    };
-
-    activateFeature(0, false);
-
-    const onWheel = (event) => {
-      if (!pinTrigger || !pinTrigger.isActive) return;
-
-      const goingDown = event.deltaY > 0;
-
-      // 섹션 진입 직후 대기
-      if (isEntryLocked()) {
-        event.preventDefault();
-        return;
-      }
-
-      // 전환 중에는 이탈·다음 전환 차단
-      if (isTransitioning) {
-        event.preventDefault();
-        return;
-      }
-
-      // 마지막 특징에서 아래 스크롤: 쿨다운 후 자연 스크롤로 다음 섹션
-      if (goingDown && currentIndex === LAST_INDEX) {
-        if (isInCooldown()) {
-          event.preventDefault();
-        }
-        return;
-      }
-
-      // 첫 특징에서 위 스크롤: 자연 스크롤로 이전 섹션
-      if (!goingDown && currentIndex === 0) {
-        return;
-      }
-
-      event.preventDefault();
-
-      if (isInCooldown()) return;
-
-      activateFeature(goingDown ? currentIndex + 1 : currentIndex - 1);
-    };
-
-    pinTrigger = ScrollTrigger.create({
-      trigger: section,
-      start: 'top top',
-      end: '+=100%',
-      pin: true,
-      pinSpacing: true,
-      anticipatePin: 1,
-      invalidateOnRefresh: true,
-      onEnter: () => {
-        // 위에서 진입 / 첫 진입 → 01 기준 1-2-3
-        activateFeature(0, false);
-        startEntryLock();
-      },
-      onEnterBack: () => {
-        // 아래에서 재진입 → 마지막 기준 역순
-        activateFeature(LAST_INDEX, false);
-        startEntryLock();
-      },
+    window.initScrollFeature({
+      sectionSelector: '.pillow-tech-structure',
+      hotspotPositions: HOTSPOT_POSITIONS,
     });
-
-    window.addEventListener('wheel', onWheel, { passive: false });
   };
 
   const initPillowTechZones = () => {

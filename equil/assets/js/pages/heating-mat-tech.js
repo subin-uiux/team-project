@@ -33,6 +33,34 @@
     return Array.from(element.querySelectorAll(`.${charClass}`));
   };
 
+  const initFadeUp = (trigger, elements, charClass) => {
+    const allChars = elements.flatMap((element) =>
+      splitTextChars(element, charClass)
+    );
+    if (!allChars.length) return;
+
+    const charStagger =
+      FADE_UP_DURATION / Math.max(allChars.length * 2.5, 1);
+
+    gsap.set(allChars, { opacity: 0, y: 40 });
+
+    gsap.to(allChars, {
+      opacity: 1,
+      y: 0,
+      duration: FADE_UP_DURATION,
+      ease: 'power3.out',
+      stagger: allChars.length > 1 ? charStagger : 0,
+      scrollTrigger: {
+        trigger,
+        start: 'top 90%',
+        once: true,
+      },
+      onComplete: () => {
+        gsap.set(allChars, { clearProps: 'will-change' });
+      },
+    });
+  };
+
   const initHeatingMatTechHero = () => {
     const hero = document.querySelector('.heating-mat-tech-hero');
     if (!hero) return;
@@ -102,7 +130,6 @@
       hasPlayed = true;
 
       fadeTl = gsap.timeline({
-        delay: 1,
         onComplete: () => {
           isLocked = false;
           gsap.set(allChars, { clearProps: 'will-change' });
@@ -139,7 +166,7 @@
     pinTrigger = ScrollTrigger.create({
       trigger: section,
       start: 'top top',
-      end: '+=50%',
+      end: '+=10%',
       pin: true,
       pinSpacing: true,
       anticipatePin: 1,
@@ -183,259 +210,10 @@
   ];
 
   const initHeatingMatTechProduct = () => {
-    const section = document.querySelector('.heating-mat-tech-product');
-    if (!section) return;
-
-    const features = Array.from(
-      section.querySelectorAll('.scroll-feature__feature')
-    );
-    const image = section.querySelector('.scroll-feature__image');
-    if (!features.length || !image) return;
-
-    const LAST_INDEX = features.length - 1;
-    const COOLDOWN_MS = 1000;
-    const ENTRY_LOCK_MS = 1000;
-    const TRANSITION_DURATION = 1.2;
-    const FADE_OUT_DURATION = TRANSITION_DURATION * 0.55;
-    const IMAGE_FADE_DURATION = 0.45;
-    let currentIndex = 0;
-    let pinTrigger = null;
-    let lastSwitchTime = 0;
-    let entryLockUntil = 0;
-    let isTransitioning = false;
-    let transitionTl = null;
-
-    const isInCooldown = () =>
-      lastSwitchTime > 0 && Date.now() - lastSwitchTime < COOLDOWN_MS;
-
-    const isEntryLocked = () => Date.now() < entryLockUntil;
-
-    const startEntryLock = () => {
-      entryLockUntil = Date.now() + ENTRY_LOCK_MS;
-    };
-
-    const setImage = (index, animate = true) => {
-      const nextSrc = PRODUCT_IMAGES[index];
-      if (!nextSrc || image.getAttribute('src') === nextSrc) return;
-
-      if (!animate) {
-        image.src = nextSrc;
-        gsap.set(image, { opacity: 1 });
-        return;
-      }
-
-      gsap.to(image, {
-        opacity: 0,
-        duration: IMAGE_FADE_DURATION,
-        ease: 'power1.in',
-        onComplete: () => {
-          image.src = nextSrc;
-          gsap.to(image, {
-            opacity: 1,
-            duration: IMAGE_FADE_DURATION,
-            ease: 'power1.out',
-          });
-        },
-      });
-    };
-
-    const activateFeature = (index, animate = true) => {
-      if (index === currentIndex && animate) return;
-
-      const prevIndex = currentIndex;
-      currentIndex = index;
-
-      const prevFeature = features[prevIndex];
-      const nextFeature = features[index];
-      const prevIndicator = prevFeature?.querySelector(
-        '.scroll-feature__indicator'
-      );
-      const prevDesc = prevFeature?.querySelector(
-        '.scroll-feature__feature-desc'
-      );
-      const nextIndicator = nextFeature.querySelector(
-        '.scroll-feature__indicator'
-      );
-      const nextDesc = nextFeature.querySelector(
-        '.scroll-feature__feature-desc'
-      );
-
-      if (!animate) {
-        features.forEach((feature, i) => {
-          const isActive = i === index;
-          feature.classList.toggle('is-active', isActive);
-
-          const indicator = feature.querySelector(
-            '.scroll-feature__indicator'
-          );
-          const desc = feature.querySelector('.scroll-feature__feature-desc');
-
-          if (indicator) gsap.set(indicator, { opacity: isActive ? 1 : 0 });
-          if (desc) {
-            desc.hidden = !isActive;
-            gsap.set(desc, { opacity: isActive ? 1 : 0, y: 0 });
-          }
-        });
-
-        setImage(index, false);
-        lastSwitchTime = 0;
-        isTransitioning = false;
-        return;
-      }
-
-      if (transitionTl) {
-        transitionTl.kill();
-        transitionTl = null;
-      }
-
-      isTransitioning = true;
-      setImage(index, true);
-
-      transitionTl = gsap.timeline({
-        onComplete: () => {
-          isTransitioning = false;
-          transitionTl = null;
-          lastSwitchTime = Date.now();
-        },
-      });
-
-      if (prevFeature && prevIndex !== index) {
-        prevFeature.classList.remove('is-active');
-
-        if (prevIndicator) {
-          transitionTl.to(
-            prevIndicator,
-            {
-              opacity: 0,
-              duration: FADE_OUT_DURATION,
-              ease: 'power2.in',
-            },
-            0
-          );
-        }
-
-        if (prevDesc) {
-          transitionTl.to(
-            prevDesc,
-            {
-              opacity: 0,
-              y: -8,
-              duration: FADE_OUT_DURATION,
-              ease: 'power2.in',
-              onComplete: () => {
-                prevDesc.hidden = true;
-                gsap.set(prevDesc, { y: 0 });
-              },
-            },
-            0
-          );
-        }
-
-        if (!prevIndicator && !prevDesc) {
-          transitionTl.to({}, { duration: FADE_OUT_DURATION });
-        }
-      }
-
-      transitionTl.add(() => {
-        features.forEach((feature, i) => {
-          feature.classList.toggle('is-active', i === index);
-        });
-
-        if (nextDesc) {
-          nextDesc.hidden = false;
-        }
-      });
-
-      if (nextDesc) {
-        transitionTl.fromTo(
-          nextDesc,
-          { opacity: 0, y: 12 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: TRANSITION_DURATION,
-            ease: 'power2.out',
-          }
-        );
-      }
-
-      if (nextIndicator) {
-        transitionTl.to(
-          nextIndicator,
-          {
-            opacity: 1,
-            duration: TRANSITION_DURATION,
-            ease: 'power2.out',
-          },
-          nextDesc ? '<' : '>'
-        );
-      }
-    };
-
-    activateFeature(0, false);
-
-    const isInPinnedZone = () => {
-      const rect = section.getBoundingClientRect();
-      return rect.top <= 1 && rect.bottom >= window.innerHeight;
-    };
-
-    const onWheel = (event) => {
-      if (isInPinnedZone() && isEntryLocked()) {
-        event.preventDefault();
-        return;
-      }
-
-      if (!pinTrigger || !pinTrigger.isActive) return;
-
-      const goingDown = event.deltaY > 0;
-
-      if (isEntryLocked()) {
-        event.preventDefault();
-        return;
-      }
-
-      if (isTransitioning) {
-        event.preventDefault();
-        return;
-      }
-
-      if (goingDown && currentIndex === LAST_INDEX) {
-        if (isInCooldown()) {
-          event.preventDefault();
-        }
-        return;
-      }
-
-      if (!goingDown && currentIndex === 0) {
-        return;
-      }
-
-      event.preventDefault();
-
-      if (isInCooldown()) return;
-
-      activateFeature(goingDown ? currentIndex + 1 : currentIndex - 1);
-    };
-
-    pinTrigger = ScrollTrigger.create({
-      trigger: section,
-      start: 'top top',
-      end: '+=100%',
-      pin: true,
-      pinSpacing: true,
-      anticipatePin: 1,
-      invalidateOnRefresh: true,
-      onEnter: () => {
-        activateFeature(0, false);
-        startEntryLock();
-      },
-      onEnterBack: () => {
-        activateFeature(LAST_INDEX, false);
-        startEntryLock();
-      },
+    window.initScrollFeature({
+      sectionSelector: '.heating-mat-tech-product',
+      images: PRODUCT_IMAGES,
     });
-
-    window.addEventListener('wheel', onWheel, { passive: false });
   };
 
   const initHeatingMatTechTechnology = () => {
@@ -549,6 +327,54 @@
         item.classList.toggle('is-active', isActive);
         item.hidden = !isActive;
       });
+      playCopyItemFadeUp(copyItems[index]);
+    };
+
+    const COPY_CHAR_CLASS = 'heating-mat-tech-technology__char';
+    const copyItemChars = new WeakMap();
+    let copyFadeTl = null;
+
+    const getCopyItemChars = (item) => {
+      if (!item) return [];
+      if (copyItemChars.has(item)) return copyItemChars.get(item);
+
+      const title = item.querySelector('.heating-mat-tech-technology__title');
+      const desc = item.querySelector('.heating-mat-tech-technology__desc');
+      const chars = [
+        ...(title ? splitTextChars(title, COPY_CHAR_CLASS) : []),
+        ...(desc ? splitTextChars(desc, COPY_CHAR_CLASS) : []),
+      ];
+      copyItemChars.set(item, chars);
+      return chars;
+    };
+
+    const playCopyItemFadeUp = (item) => {
+      if (!item || !content.classList.contains('is-visible')) return;
+
+      const chars = getCopyItemChars(item);
+      if (!chars.length) return;
+
+      if (copyFadeTl) {
+        copyFadeTl.kill();
+        copyFadeTl = null;
+      }
+
+      const charStagger =
+        FADE_UP_DURATION / Math.max(chars.length * 2.5, 1);
+
+      gsap.set(chars, { opacity: 0, y: 40, willChange: 'transform, opacity' });
+
+      copyFadeTl = gsap.to(chars, {
+        opacity: 1,
+        y: 0,
+        duration: FADE_UP_DURATION,
+        ease: 'power3.out',
+        stagger: chars.length > 1 ? charStagger : 0,
+        onComplete: () => {
+          gsap.set(chars, { clearProps: 'will-change' });
+          copyFadeTl = null;
+        },
+      });
     };
 
     const setIntroPhase = (progress) => {
@@ -562,8 +388,13 @@
 
       updateIntroFrame(1);
       intro.style.opacity = '0';
+      const wasVisible = content.classList.contains('is-visible');
       content.classList.add('is-visible');
       introComplete = true;
+
+      if (!wasVisible) {
+        playCopyItemFadeUp(copyItems[currentIndex]);
+      }
     };
 
     const getShrinkScroll = () => {
@@ -916,7 +747,7 @@
 
     ScrollTrigger.create({
       trigger: section,
-      start: 'top 80%',
+      start: 'top 90%',
       once: true,
       onEnter: playSequence,
     });
@@ -930,6 +761,29 @@
     });
   };
 
+  const initHeatingMatTechCertification = () => {
+    const title = document.querySelector(
+      '.heating-mat-tech-certification__title'
+    );
+    if (!title) return;
+
+    initFadeUp(title, [title], 'heating-mat-tech-certification__char');
+  };
+
+  const initHeatingMatTechSafety = () => {
+    const heading = document.querySelector(
+      '.heating-mat-tech-safety__heading'
+    );
+    if (!heading) return;
+
+    const title = heading.querySelector('.heating-mat-tech-safety__title');
+    const desc = heading.querySelector('.heating-mat-tech-safety__desc');
+    const targets = [title, desc].filter(Boolean);
+    if (!targets.length) return;
+
+    initFadeUp(heading, targets, 'heating-mat-tech-safety__char');
+  };
+
   const start = () => {
     const init = () => {
       initHeatingMatTechHero();
@@ -937,6 +791,8 @@
       initHeatingMatTechProduct();
       initHeatingMatTechTechnology();
       initHeatingMatTechController();
+      initHeatingMatTechCertification();
+      initHeatingMatTechSafety();
       ScrollTrigger.refresh();
     };
 
