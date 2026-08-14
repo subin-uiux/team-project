@@ -18,7 +18,7 @@
 ```
 index.html
 ├ main-hero
-├ main-problem
+├ main-problem (+ main-problem-nav)
 ├ main-mattress-solution
 ├ main-heating-solution
 ├ main-pillow-solution
