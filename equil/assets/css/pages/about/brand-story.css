@@ -247,6 +247,10 @@
 }
 
 /* ========================================
+   brand-story-origin
+   ======================================== */
+
+/* ========================================
    brand-story-philosophy
    ======================================== */
 
@@ -267,12 +271,10 @@
 }
 
 .brand-story-philosophy__list {
-  position: relative;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 51.9375rem)); /* 831px */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   grid-template-rows: repeat(2, 16.25rem); /* 260px */
   gap: 1.25rem; /* 20px */
-  justify-content: center;
   width: 100%;
   max-width: 105rem; /* 1680px */
   margin: 0;
@@ -284,7 +286,6 @@
 .brand-story-philosophy__item {
   position: relative;
   min-width: 0;
-  z-index: 1;
 }
 
 .brand-story-philosophy__card {
@@ -294,34 +295,18 @@
   height: 100%;
   overflow: hidden;
   background-color: #000;
-  transform-origin: center center;
-  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: transform;
-}
-
-.brand-story-philosophy__item:nth-child(1) .brand-story-philosophy__card {
-  transform-origin: top left;
-}
-
-.brand-story-philosophy__item:nth-child(2) .brand-story-philosophy__card {
-  transform-origin: top right;
-}
-
-.brand-story-philosophy__item:nth-child(3) .brand-story-philosophy__card {
-  transform-origin: bottom left;
-}
-
-.brand-story-philosophy__item:nth-child(4) .brand-story-philosophy__card {
-  transform-origin: bottom right;
 }
 
 .brand-story-philosophy__image {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
   height: 100%;
   max-width: none;
   object-fit: cover;
-  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  transform: scale(1);
+  transition: transform 0.5s ease;
 }
 
 .brand-story-philosophy__dim {
@@ -336,57 +321,56 @@
   opacity: 0.4;
 }
 
-.brand-story-philosophy__dim--20 {
-  opacity: 0.2;
-}
-
-.brand-story-philosophy__dim--hover {
+.brand-story-philosophy__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-color: #000;
   opacity: 0;
-  transition: opacity 0.45s ease;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
 }
 
-.brand-story-philosophy__label {
+.brand-story-philosophy__content {
   position: absolute;
   inset: 0;
   z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem; /* 20px */
+  box-sizing: border-box;
+  text-align: center;
+  pointer-events: none;
+}
+
+.brand-story-philosophy__label {
+  grid-area: 1 / 1;
   margin: 0;
   letter-spacing: 0.02em; /* 2% */
   color: #fff;
   text-align: center;
-  pointer-events: none;
-  transition: opacity 0.35s ease;
+  opacity: 1;
+  transition: opacity 0.5s ease;
 }
 
 .brand-story-philosophy__detail {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
+  grid-area: 1 / 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   gap: 0.75rem; /* 12px */
-  padding: 1.25rem;
-  box-sizing: border-box;
-  text-align: center;
+  margin: 0;
   opacity: 0;
-  pointer-events: none;
-  transform: translateY(0.75rem);
-  transform-origin: center center;
-  transition:
-    opacity 0.4s ease 0.08s,
-    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.08s;
+  transform: translateY(0.625rem); /* 10px */
+  transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
 .brand-story-philosophy__detail-title {
   margin: 0;
   font-family: var(--font-suit);
-  font-weight: 700;
+  font-weight: 600;
   font-size: 1.75rem; /* 28px */
-  line-height: 1;
+  line-height: 1.3;
   color: #fff;
   text-align: center;
 }
@@ -395,42 +379,32 @@
   margin: 0;
   font-family: var(--font-suit);
   font-weight: 400;
-  font-size: 1.5rem; /* 24px */
-  line-height: 1.3; /* 130% */
+  font-size: 1.25rem; /* 20px */
+  line-height: 1.4;
   letter-spacing: 0.02em; /* 2% */
   color: #fff;
   text-align: center;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .brand-story-philosophy__item:hover {
-    z-index: 10;
-  }
+.brand-story-philosophy__card:hover .brand-story-philosophy__image,
+.brand-story-philosophy__card:focus-within .brand-story-philosophy__image {
+  transform: scale(1.05);
+}
 
-  /* list 전체(2열+gap × 2행+gap)로 확대: 831→1682, 260→540 */
-  .brand-story-philosophy__item:hover .brand-story-philosophy__card {
-    transform: scale(
-      calc((2 * 51.9375rem + 1.25rem) / 51.9375rem),
-      calc((2 * 16.25rem + 1.25rem) / 16.25rem)
-    );
-  }
+.brand-story-philosophy__card:hover .brand-story-philosophy__overlay,
+.brand-story-philosophy__card:focus-within .brand-story-philosophy__overlay {
+  opacity: 0.4;
+}
 
-  .brand-story-philosophy__item:hover .brand-story-philosophy__dim--hover {
-    opacity: 0.35;
-  }
+.brand-story-philosophy__card:hover .brand-story-philosophy__label,
+.brand-story-philosophy__card:focus-within .brand-story-philosophy__label {
+  opacity: 0;
+}
 
-  .brand-story-philosophy__item:hover .brand-story-philosophy__label {
-    opacity: 0;
-  }
-
-  /* 카드 scale을 상쇄해 문구 크기는 디자인 스펙 유지 */
-  .brand-story-philosophy__item:hover .brand-story-philosophy__detail {
-    opacity: 1;
-    transform: scale(
-      calc(51.9375rem / (2 * 51.9375rem + 1.25rem)),
-      calc(16.25rem / (2 * 16.25rem + 1.25rem))
-    );
-  }
+.brand-story-philosophy__card:hover .brand-story-philosophy__detail,
+.brand-story-philosophy__card:focus-within .brand-story-philosophy__detail {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* ========================================

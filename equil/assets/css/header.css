@@ -44,10 +44,15 @@
 .site-header__nav {
   display: flex;
   align-items: center;
+  align-self: stretch; /* bar 80px 높이 100% */
+  height: 100%;
   gap: 3.75rem; /* 60px */
 }
 
 .site-header__link {
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
   font-family: var(--font-suit);
   font-weight: var(--fw-suit-bold);
   font-size: 1rem; /* 16px */
@@ -59,6 +64,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  align-self: center; /* CTA는 버튼 높이 유지, nav 세로 중앙 */
   padding: 0.625rem 1.25rem; /* 10px 20px */
   border-radius: 1.875rem; /* 30px */
   background-color: var(--color-brand-point);
