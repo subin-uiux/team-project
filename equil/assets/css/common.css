@@ -329,3 +329,8 @@ a {
   line-height: 130%;
   color: var(--color-brand-dark);
 }
+
+.heading-3tier__char {
+  display: inline-block;
+  will-change: transform, opacity;
+}

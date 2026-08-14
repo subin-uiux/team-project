@@ -14,6 +14,8 @@
 
   if (!tabs.length || !panels.length) return;
 
+  const CATEGORY_IDS = ['mattress', 'pillow', 'bedding', 'heating-mat'];
+
   const setActiveTab = (tabId) => {
     tabs.forEach((tab) => {
       const isActive = tab.getAttribute('data-product-tab') === tabId;
@@ -39,4 +41,10 @@
       setActiveTab(tabId);
     });
   });
+
+  const params = new URLSearchParams(window.location.search);
+  const requested = params.get('category');
+  if (requested && CATEGORY_IDS.includes(requested)) {
+    setActiveTab(requested);
+  }
 })();

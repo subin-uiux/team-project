@@ -83,6 +83,11 @@
   letter-spacing: normal;
 }
 
+.scroll-feature__char {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
 /* 이미지 우측 40% */
 .scroll-feature--media-end {
   gap: 0;
@@ -134,7 +139,7 @@
   font-size: var(--fs-subtitle-md); /* 28px */
   line-height: 130%;
   color: var(--color-grey-200);
-  transition: color 1.2s ease;
+  transition: color 1s ease;
 }
 
 .scroll-feature__feature-title {

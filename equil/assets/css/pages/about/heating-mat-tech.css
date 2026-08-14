@@ -333,6 +333,11 @@ html {
   display: none;
 }
 
+.heating-mat-tech-technology__char {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
 .heating-mat-tech-technology__title {
   margin: 0;
   font-family: var(--font-suit);
@@ -560,6 +565,11 @@ html {
   font-size: var(--fs-title); /* 40px */
   line-height: 150%;
   color: var(--color-brand-dark);
+}
+
+.heating-mat-tech-certification__char {
+  display: inline-block;
+  will-change: transform, opacity;
 }
 
 .heating-mat-tech-certification__certificates {
@@ -868,9 +878,171 @@ html {
 
 
 /* ========================================
-   heating-mat-tech-danger
+   heating-mat-tech-safety
    ======================================== */
 
-.heating-mat-tech-danger {
+.heating-mat-tech-safety {
   width: 100%;
+  height: 67.5rem; /* 1080px */
+  display: flex;
+  align-items: center;
+  background-color: var(--color-brand-light-2);
+}
+
+.heating-mat-tech-safety__container {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 3.125rem; /* 50px */
+}
+
+.heating-mat-tech-safety__heading {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.625rem; /* 10px */
+  text-align: left;
+}
+
+.heating-mat-tech-safety__char {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+.heating-mat-tech-safety__title {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: 600; /* Semibold */
+  font-size: var(--fs-title); /* 40px */
+  line-height: 150%;
+  color: var(--color-brand-dark);
+}
+
+.heating-mat-tech-safety__title-point {
+  color: var(--color-brand-point);
+}
+
+.heating-mat-tech-safety__desc {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: 400; /* Regular */
+  font-size: var(--fs-body-02); /* 22px */
+  line-height: 150%;
+  color: var(--color-brand-dark);
+}
+
+.heating-mat-tech-safety__flow {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem; /* 40px */
+  width: 100%;
+}
+
+.heating-mat-tech-safety__card {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem; /* 20px */
+  min-width: 0;
+  height: 36.1875rem; /* 579px */
+  border-radius: 6.25rem; /* 100px */
+  background-color: var(--color-white);
+  text-align: center;
+}
+
+.heating-mat-tech-safety__media {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.heating-mat-tech-safety__image {
+  display: block;
+  height: auto;
+  max-width: none;
+}
+
+.heating-mat-tech-safety__image--mat {
+  width: 12.6875rem; /* 203px */
+}
+
+.heating-mat-tech-safety__image--controller {
+  width: 16.375rem; /* 262px */
+}
+
+.heating-mat-tech-safety__icon-danger {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: 2.5rem; /* 40px */
+  width: auto;
+  transform: translate(-50%, -50%);
+}
+
+.heating-mat-tech-safety__card-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.625rem; /* 10px */
+}
+
+.heating-mat-tech-safety__card-title {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: 600; /* Semibold */
+  font-size: var(--fs-body-01); /* 24px */
+  line-height: 150%;
+  color: var(--color-brand-dark);
+}
+
+.heating-mat-tech-safety__card-desc {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: 400;
+  font-size: var(--fs-body-05); /* 16px */
+  line-height: 150%;
+  color: var(--color-brand-dark);
+}
+
+.heating-mat-tech-safety__arrow-area {
+  display: flex;
+  flex-shrink: 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem; /* 20px */
+  text-align: center;
+}
+
+.heating-mat-tech-safety__icon-arrow {
+  display: block;
+  width: 5.625rem; /* 90px */
+  height: 5.625rem;
+}
+
+.heating-mat-tech-safety__arrow-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.625rem; /* 10px */
+}
+
+.heating-mat-tech-safety__arrow-title {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: 600; /* Semibold */
+  font-size: var(--fs-body-03); /* 20px */
+  line-height: 150%;
+  color: var(--color-brand-dark);
+}
+
+.heating-mat-tech-safety__arrow-desc {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: 400;
+  font-size: var(--fs-body-05); /* 16px */
+  line-height: 150%;
+  color: var(--color-brand-dark);
 }
