@@ -58,27 +58,170 @@
     const image = section.querySelector('.pillow-tech-sleep-position__image');
     if (!tabs.length || !panels.length || !image) return;
 
-    const activateTab = (index) => {
+    const TRANSITION_DURATION = 0.75;
+    const FADE_OUT_DURATION = TRANSITION_DURATION * 0.55;
+    const IMAGE_REVEAL_DURATION = 1;
+
+    let currentIndex = 0;
+    let isTransitioning = false;
+    let transitionTl = null;
+    let imageTween = null;
+    let revealImage = null;
+
+    const media = section.querySelector('.pillow-tech-sleep-position__media');
+
+    const cleanupRevealImage = () => {
+      if (revealImage) {
+        revealImage.remove();
+        revealImage = null;
+      }
+    };
+
+    const setImage = (index) => {
+      const nextSrc = SLEEP_POSITION_IMAGES[index];
+      if (!nextSrc || image.getAttribute('src') === nextSrc) return;
+      if (!media) return;
+
+      if (imageTween) {
+        imageTween.kill();
+        imageTween = null;
+      }
+      cleanupRevealImage();
+
+      const nextRevealImage = document.createElement('img');
+      nextRevealImage.className = 'pillow-tech-sleep-position__image-reveal';
+      nextRevealImage.alt = image.alt || '';
+      revealImage = nextRevealImage;
+
+      const startReveal = () => {
+        if (revealImage !== nextRevealImage) return;
+
+        gsap.set(nextRevealImage, { xPercent: 100 });
+        media.appendChild(nextRevealImage);
+
+        imageTween = gsap.to(nextRevealImage, {
+          xPercent: 0,
+          duration: IMAGE_REVEAL_DURATION,
+          ease: 'power2.inOut',
+          onComplete: () => {
+            if (revealImage !== nextRevealImage) return;
+            image.src = nextSrc;
+            cleanupRevealImage();
+            imageTween = null;
+          },
+        });
+      };
+
+      nextRevealImage.src = nextSrc;
+      if (nextRevealImage.complete) {
+        startReveal();
+      } else {
+        nextRevealImage.addEventListener('load', startReveal, { once: true });
+        nextRevealImage.addEventListener('error', startReveal, { once: true });
+      }
+    };
+
+    const activateTab = (index, animate = true) => {
+      if (index === currentIndex) return;
+      if (animate && isTransitioning) return;
+
+      const prevIndex = currentIndex;
+      currentIndex = index;
+
       tabs.forEach((tab, tabIndex) => {
         const isActive = tabIndex === index;
         tab.classList.toggle('is-active', isActive);
         tab.setAttribute('aria-selected', String(isActive));
       });
 
-      panels.forEach((panel, panelIndex) => {
-        const isActive = panelIndex === index;
-        panel.classList.toggle('is-active', isActive);
-        panel.hidden = !isActive;
+      const prevPanel = panels[prevIndex];
+      const nextPanel = panels[index];
+
+      if (!animate) {
+        if (transitionTl) {
+          transitionTl.kill();
+          transitionTl = null;
+        }
+        if (imageTween) {
+          imageTween.kill();
+          imageTween = null;
+        }
+        cleanupRevealImage();
+
+        panels.forEach((panel, panelIndex) => {
+          const isActive = panelIndex === index;
+          panel.classList.toggle('is-active', isActive);
+          panel.hidden = !isActive;
+          gsap.set(panel, { opacity: 1, y: 0, clearProps: 'will-change' });
+        });
+
+        image.src = SLEEP_POSITION_IMAGES[index];
+        gsap.set(image, { opacity: 1 });
+        isTransitioning = false;
+        return;
+      }
+
+      if (transitionTl) {
+        transitionTl.kill();
+        transitionTl = null;
+      }
+
+      isTransitioning = true;
+      setImage(index);
+
+      transitionTl = gsap.timeline({
+        onComplete: () => {
+          isTransitioning = false;
+          transitionTl = null;
+          gsap.set(nextPanel, { clearProps: 'will-change' });
+        },
       });
 
-      image.src = SLEEP_POSITION_IMAGES[index];
+      if (prevPanel && prevIndex !== index) {
+        prevPanel.classList.remove('is-active');
+
+        transitionTl.to(
+          prevPanel,
+          {
+            opacity: 0,
+            y: -8,
+            duration: FADE_OUT_DURATION,
+            ease: 'power2.in',
+            onComplete: () => {
+              prevPanel.hidden = true;
+              gsap.set(prevPanel, { y: 0 });
+            },
+          },
+          0
+        );
+      }
+
+      transitionTl.add(() => {
+        panels.forEach((panel, panelIndex) => {
+          panel.classList.toggle('is-active', panelIndex === index);
+        });
+        nextPanel.hidden = false;
+      });
+
+      transitionTl.fromTo(
+        nextPanel,
+        { opacity: 0, y: 12 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: TRANSITION_DURATION,
+          ease: 'power2.out',
+        }
+      );
     };
+
+    activateTab(0, false);
 
     tabs.forEach((tab) => {
       tab.addEventListener('click', () => {
         const index = Number(tab.dataset.index);
         if (Number.isNaN(index)) return;
-        activateTab(index);
+        activateTab(index, true);
       });
     });
   };
