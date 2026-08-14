@@ -99,7 +99,9 @@
     const prepare = () => {
       measureTitleSlideX();
       gsap.set(titles, { x: 0 });
-      gsap.set(fadeWithSlide, { opacity: 1 });
+      gsap.set(sideLetters, { opacity: 1 });
+      // 첫 화면: 영어만 고정, 한글은 아래쪽에서 대기
+      gsap.set(caption, { opacity: 0, y: 40, xPercent: -50 });
       gsap.set(row, { x: 0 });
       gsap.set(invertLayer, { opacity: 1 });
       gsap.set(circle, { clipPath: 'circle(0px at 50% 50%)' });
@@ -110,12 +112,14 @@
 
     prepare();
 
-    // 전체적으로 더 부드러운 scrub / 구간
+    // 캡션 등장 → 슬라이드/원 순으로, 전체는 부드럽게 유지
+    const CAPTION_DUR = 0.09;
+    const SLIDE_START = CAPTION_DUR * 0.85;
     const SLIDE_DUR = 0.16;
-    const CIRCLE_START = SLIDE_DUR * 0.55;
+    const CIRCLE_START = SLIDE_START + SLIDE_DUR * 0.55;
     const CIRCLE_DUR = 0.5;
     const HANDOFF = CIRCLE_START + CIRCLE_DUR;
-    const MSG_START = HANDOFF + 0.16;
+    const MSG_START = HANDOFF + 0.04;
 
     const tl = gsap.timeline({
       defaults: { ease: 'power1.inOut' },
@@ -131,6 +135,18 @@
       },
     });
 
+    // 0) 한글 캡션: 아래에서 위로 빠르게 올라옴
+    tl.to(
+      caption,
+      {
+        duration: CAPTION_DUR,
+        opacity: 1,
+        y: 0,
+        ease: 'power2.out',
+      },
+      0
+    );
+
     // 1) AEQUILIBRIUM 부드럽게 오른쪽 이동
     tl.to(
       titles,
@@ -138,7 +154,7 @@
         duration: SLIDE_DUR,
         x: () => titleSlideX || measureTitleSlideX(),
       },
-      0
+      SLIDE_START
     );
 
     // 1-b) A / IBRIUM + 한글 문구 함께 fade out
@@ -149,7 +165,7 @@
         opacity: 0,
         ease: 'power2.out',
       },
-      0
+      SLIDE_START
     );
 
     // 2) 원 확대 — EQUIL 반전 드러남
@@ -162,12 +178,13 @@
       CIRCLE_START
     );
 
-    // 3) 반전 EQUIL → EQ/UIL 인계
+    // 3) 반전 EQUIL → EQ/UIL 인계 (이후 EQUIL 페이드/이동 없음)
     tl.to(
       invertLayer,
       {
-        duration: 0.14,
+        duration: 0.08,
         opacity: 0,
+        ease: 'power1.out',
       },
       HANDOFF
     );
@@ -184,65 +201,62 @@
     tl.to(
       [eq, uil],
       {
-        duration: 0.14,
+        duration: 0.08,
         opacity: 1,
+        ease: 'power1.out',
       },
       HANDOFF
     );
 
-    // 4) 문구 펼침
+    // 4) 문구 펼침 — 더 빠르고 부드럽게
     tl.to(
       message,
       {
-        duration: 0.28,
+        duration: 0.16,
         width: () => getPartWidth(messageA),
         marginLeft: SIDE_GAP,
         marginRight: SIDE_GAP,
+        ease: 'power2.out',
       },
       MSG_START
     );
     tl.to(
       messageA,
       {
-        duration: 0.2,
+        duration: 0.1,
         opacity: 1,
+        ease: 'power1.out',
       },
-      MSG_START + 0.06
+      MSG_START + 0.02
     );
 
     tl.to(
       message,
       {
-        duration: 0.3,
+        duration: 0.18,
         width: () => getFullMessageWidth(),
+        ease: 'power2.out',
       },
-      MSG_START + 0.28
+      MSG_START + 0.14
     );
     tl.to(
       messageB,
       {
-        duration: 0.24,
+        duration: 0.12,
         opacity: 1,
+        ease: 'power1.out',
       },
-      MSG_START + 0.3
+      MSG_START + 0.16
     );
+    // 문구 펼침과 함께 EQ / UIL 서서히 사라짐
     tl.to(
       [eq, uil],
       {
-        duration: 0.24,
-        opacity: 0.2,
-      },
-      MSG_START + 0.3
-    );
-
-    // 5) 로고 소멸
-    tl.to(
-      [eq, uil],
-      {
-        duration: 0.2,
+        duration: 0.28,
         opacity: 0,
+        ease: 'power1.out',
       },
-      MSG_START + 0.62
+      MSG_START + 0.16
     );
   };
 

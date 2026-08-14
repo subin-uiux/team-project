@@ -94,13 +94,7 @@
   display: inline;
 }
 
-.brand-story-name__layer--base .brand-story-name__title-lead,
-.brand-story-name__layer--base .brand-story-name__title-tail,
-.brand-story-name__caption {
-  will-change: opacity;
-}
-
-/* 타이틀 정중앙 기준 — 한글은 그 아래 */
+/* 타이틀 정중앙 기준 — 한글은 그 아래 (스크롤 시 아래에서 등장) */
 .brand-story-name__caption {
   position: absolute;
   top: 100%;
@@ -109,13 +103,14 @@
   align-items: center;
   justify-content: center;
   gap: 1.25rem; /* 20px */
-  margin: 5rem 0 0; /* 24px below title */
-  transform: translateX(-50%);
+  margin: 5rem 0 0;
   font-family: var(--font-suit);
   font-weight: 500;
   font-size: 2rem; /* 32px */
   color: var(--color-text-dark);
   white-space: nowrap;
+  opacity: 0;
+  will-change: opacity, transform;
 }
 
 .brand-story-name__caption-word,
@@ -188,8 +183,7 @@
   font-weight: 900;
   font-size: clamp(2.5rem, 6.25vw, 7.5rem); /* 120px */
   letter-spacing: 0.1em; /* 10% */
-  line-height: 1.2;
-  padding-bottom: 0.12em; /* Q 디센더 잘림 방지 */
+  line-height: 1;
   color: #fff;
   white-space: nowrap;
   will-change: opacity;
@@ -201,12 +195,11 @@
   min-width: 0;
   max-width: 100%;
   margin: 0;
-  overflow-x: hidden;
-  overflow-y: visible;
+  overflow: hidden; /* x:hidden + y:visible 조합은 브라우저가 y:auto로 바꿔 스크롤 생김 */
   font-family: var(--font-suit);
   font-weight: 700;
   font-size: clamp(1.25rem, 2.6vw, 3.125rem); /* 50px */
-  line-height: 1.4;
+  line-height: 1;
   color: #fff;
   text-align: center;
   white-space: nowrap;
@@ -227,6 +220,11 @@
 @media (prefers-reduced-motion: reduce) {
   .brand-story-name__circle {
     clip-path: circle(150vmax at 50% 50%);
+  }
+
+  .brand-story-name__caption {
+    opacity: 1;
+    transform: translateX(-50%);
   }
 
   .brand-story-name__invert-layer {
