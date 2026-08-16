@@ -18,11 +18,13 @@
    * @param {string} options.sectionSelector
    * @param {string[]|null} [options.images]
    * @param {Array<{ left: string, top: string }>|null} [options.hotspotPositions]
+   * @param {'fade'|'crossfade'|'none'} [options.imageTransition]
    */
   const initScrollFeature = ({
     sectionSelector,
     images = null,
     hotspotPositions = null,
+    imageTransition = 'crossfade',
   }) => {
     const section = document.querySelector(sectionSelector);
     if (!section) return;
@@ -31,6 +33,7 @@
       section.querySelectorAll('.scroll-feature__feature')
     );
     const image = section.querySelector('.scroll-feature__image');
+    const media = section.querySelector('.scroll-feature__media');
     const hotspot = section.querySelector('.scroll-feature__hotspot');
 
     if (!features.length) return;
@@ -38,12 +41,16 @@
     if (hotspotPositions && !hotspot) return;
 
     const LAST_INDEX = features.length - 1;
+    const IMAGE_CROSSFADE_DURATION = 0.6;
+    const PIN_SCROLL_END = `+=${Math.max((LAST_INDEX + 1) * 100, 100)}%`;
     let currentIndex = 0;
     let pinTrigger = null;
     let lastSwitchTime = 0;
     let entryLockUntil = 0;
     let isTransitioning = false;
     let transitionTl = null;
+    let imageTween = null;
+    let revealImage = null;
 
     const isInCooldown = () =>
       SCROLL_FEATURE.COOLDOWN_MS > 0 &&
@@ -56,15 +63,64 @@
       entryLockUntil = Date.now() + SCROLL_FEATURE.ENTRY_LOCK_MS;
     };
 
+    const cleanupRevealImage = () => {
+      if (revealImage) {
+        revealImage.remove();
+        revealImage = null;
+      }
+    };
+
     const setImage = (index, animate = true) => {
       if (!images || !image) return;
 
       const nextSrc = images[index];
       if (!nextSrc || image.getAttribute('src') === nextSrc) return;
 
-      if (!animate) {
+      const mode = animate ? imageTransition : 'none';
+
+      if (imageTween) {
+        imageTween.kill();
+        imageTween = null;
+      }
+      cleanupRevealImage();
+
+      if (mode === 'none') {
         image.src = nextSrc;
         gsap.set(image, { opacity: 1 });
+        return;
+      }
+
+      if (mode === 'crossfade' && media) {
+        const nextReveal = document.createElement('img');
+        nextReveal.className =
+          'scroll-feature__image scroll-feature__image--reveal';
+        nextReveal.alt = image.alt || '';
+        nextReveal.src = nextSrc;
+        revealImage = nextReveal;
+
+        const startCrossfade = () => {
+          if (revealImage !== nextReveal) return;
+
+          media.appendChild(nextReveal);
+          gsap.set(nextReveal, { opacity: 0 });
+          imageTween = gsap.to(nextReveal, {
+            opacity: 1,
+            duration: IMAGE_CROSSFADE_DURATION,
+            ease: 'power1.inOut',
+            onComplete: () => {
+              image.src = nextSrc;
+              gsap.set(image, { opacity: 1 });
+              cleanupRevealImage();
+              imageTween = null;
+            },
+          });
+        };
+
+        if (nextReveal.complete) {
+          startCrossfade();
+        } else {
+          nextReveal.addEventListener('load', startCrossfade, { once: true });
+        }
         return;
       }
 
@@ -74,10 +130,13 @@
         ease: 'power1.in',
         onComplete: () => {
           image.src = nextSrc;
-          gsap.to(image, {
+          imageTween = gsap.to(image, {
             opacity: 1,
             duration: SCROLL_FEATURE.IMAGE_FADE_DURATION,
             ease: 'power1.out',
+            onComplete: () => {
+              imageTween = null;
+            },
           });
         },
       });
@@ -237,10 +296,26 @@
 
     activateFeature(0, false);
 
+    const isSectionPinnedInView = () => {
+      if (!pinTrigger?.isActive) return false;
+      return true;
+    };
+
+    const isSectionStuckInViewport = () => {
+      const rect = section.getBoundingClientRect();
+      return rect.top <= 0.5 && rect.bottom >= window.innerHeight - 0.5;
+    };
+
     const onWheel = (event) => {
-      if (!pinTrigger || !pinTrigger.isActive) return;
+      if (!pinTrigger) return;
 
       const goingDown = event.deltaY > 0;
+      const pinActive = isSectionPinnedInView();
+
+      /* pin이 아닌데 섹션에 머문 상태가 아니면 개입하지 않음 (히어로 등에서 top-layer로 점프 방지) */
+      if (!pinActive && !(currentIndex < LAST_INDEX && isSectionStuckInViewport())) {
+        return;
+      }
 
       if (isEntryLocked()) {
         event.preventDefault();
@@ -252,29 +327,42 @@
         return;
       }
 
-      /* 첫 특징 + 위로 → pin 해제, 자연 스크롤 */
+      /* 마지막 특징 전 + 아래 → 다음 특징만 (이탈 불가) */
+      if (goingDown && currentIndex < LAST_INDEX) {
+        event.preventDefault();
+        if (!pinActive) {
+          window.scrollTo(0, pinTrigger.start);
+        }
+        if (isInCooldown()) return;
+        activateFeature(currentIndex + 1, true);
+        return;
+      }
+
+      /* 첫 특징 + 위로 → 자연 스크롤로 이전 섹션 */
       if (!goingDown && currentIndex === 0) {
         return;
       }
 
-      /* 마지막 특징 + 아래로 → pin 해제, 자연 스크롤 */
+      /* 중간 특징에서 위로 → 이전 특징 */
+      if (!goingDown && currentIndex > 0) {
+        event.preventDefault();
+        if (isInCooldown()) return;
+        activateFeature(currentIndex - 1, true);
+        return;
+      }
+
+      /* 마지막 특징 + 아래로 → pin 구간 스크롤로 다음 섹션 */
       if (goingDown && currentIndex === LAST_INDEX) {
         if (isInCooldown()) {
           event.preventDefault();
         }
-        return;
       }
-
-      event.preventDefault();
-      if (isInCooldown()) return;
-
-      activateFeature(goingDown ? currentIndex + 1 : currentIndex - 1, true);
     };
 
     pinTrigger = ScrollTrigger.create({
       trigger: section,
       start: SCROLL_FEATURE.PIN_START,
-      end: SCROLL_FEATURE.PIN_END,
+      end: PIN_SCROLL_END,
       pin: true,
       pinSpacing: true,
       anticipatePin: 1,

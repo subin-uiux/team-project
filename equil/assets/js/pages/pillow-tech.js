@@ -254,9 +254,9 @@
     const AFTER_IMAGE_DELAY = 1.2;
     const AFTER_CALLOUTS_HOLD = 2;
     const LEAVE_GRACE_MS = 500;
-    const NEXT_CALLOUT_AT = 0.6; // 이전 텍스트 60% 지점
-    const DOT_DURATION = 0.45;
-    const LINE_DURATION = 0.75;
+    const NEXT_CALLOUT_AT = 0.3; // 이전 텍스트 10% 지점
+    const DOT_DURATION = 0.2;
+    const LINE_DURATION = 0.5;
 
     let sequenceStarted = false;
     let canLeave = false;
@@ -379,7 +379,7 @@
         const stagger =
           FADE_UP_DURATION / Math.max(item.chars.length * 2.5, 1);
 
-        // 이전 텍스트 애니메이션 60% 지점에서 다음 콜아웃 시작
+        // 이전 텍스트 애니메이션 10% 지점에서 다음 콜아웃 시작
         const startPos =
           index === 0
             ? 0
@@ -398,22 +398,31 @@
           startPos
         );
 
-        calloutTl.to(item.line, {
-          scaleY: 1,
-          duration: LINE_DURATION,
-          ease: 'power2.out',
-        });
-
-        calloutTl.to(item.chars, {
-          opacity: 1,
-          y: 0,
-          duration: FADE_UP_DURATION,
-          ease: 'power3.out',
-          stagger: item.chars.length > 1 ? stagger : 0,
-          onComplete: () => {
-            gsap.set(item.chars, { clearProps: 'will-change' });
+        // '>' — 방금 넣은 점 직후에 선·텍스트가 이어지도록 (타임라인 끝에 밀리지 않게)
+        calloutTl.to(
+          item.line,
+          {
+            scaleY: 1,
+            duration: LINE_DURATION,
+            ease: 'power2.out',
           },
-        });
+          '>'
+        );
+
+        calloutTl.to(
+          item.chars,
+          {
+            opacity: 1,
+            y: 0,
+            duration: FADE_UP_DURATION,
+            ease: 'power3.out',
+            stagger: item.chars.length > 1 ? stagger : 0,
+            onComplete: () => {
+              gsap.set(item.chars, { clearProps: 'will-change' });
+            },
+          },
+          '>'
+        );
       });
     };
 

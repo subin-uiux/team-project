@@ -111,6 +111,18 @@
   object-fit: cover;
 }
 
+.scroll-feature__image--reveal {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* 이미지 우측 60% */
+.scroll-feature--media-60.scroll-feature--media-end .scroll-feature__media {
+  width: 60%;
+}
+
 .scroll-feature__features {
   margin-top: 5rem; /* 80px */
   display: flex;
