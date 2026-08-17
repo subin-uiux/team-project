@@ -24,6 +24,7 @@ index.html
 ├ main-pillow-solution
 ├ main-bedding-overview
 ├ main-bedding-solution
+├ main-sleep-balance
 ├ main-sleep-fit
 └ main-review
 ```

@@ -10,9 +10,11 @@
 
   <link rel="stylesheet" href="./assets/css/reset.css">
   <link rel="stylesheet" href="./assets/css/common.css">
+  <link rel="stylesheet" href="./assets/css/components/buttons.css">
   <link rel="stylesheet" href="./assets/css/header.css">
   <link rel="stylesheet" href="./assets/css/footer.css">
   <link rel="stylesheet" href="./assets/css/pages/main.css">
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
 </head>
 
 <body>
@@ -29,18 +31,9 @@
       </nav>
       <div class="site-header__actions">
         <a class="site-header__cta" href="pages/sleep-fit-test/index.html">SLEEP FIT TEST</a>
-        <button
-          type="button"
-          class="site-header__menu-btn"
-          aria-label="메뉴 열기"
-          aria-expanded="false"
-          aria-controls="site-header-drawer"
-        >
-          <img
-            class="site-header__menu-icon"
-            src="assets/images/common/icons/hamburger-bar.png"
-            alt=""
-          />
+        <button type="button" class="site-header__menu-btn" aria-label="메뉴 열기" aria-expanded="false"
+          aria-controls="site-header-drawer">
+          <img class="site-header__menu-icon" src="assets/images/common/icons/hamburger-bar.png" alt="" />
           <span class="site-header__menu-close" aria-hidden="true"></span>
         </button>
       </div>
@@ -132,11 +125,7 @@
           <section class="main-hero">
             <div class="main-hero__frame">
               <div class="main-hero__media">
-                <img
-                  class="main-hero__image"
-                  src="assets/images/main/main-hero-bg.webp"
-                  alt=""
-                />
+                <img class="main-hero__image" src="assets/images/main/main-hero-bg.webp" alt="" />
               </div>
               <div class="container main-hero__container">
                 <h1 class="main-hero__title">
@@ -157,11 +146,7 @@
           <section class="main-problem" aria-label="수면 문제">
             <article class="main-problem__item" data-index="0">
               <div class="main-problem__media">
-                <img
-                  class="main-problem__image"
-                  src="assets/images/main/main-problem1.webp"
-                  alt=""
-                />
+                <img class="main-problem__image" src="assets/images/main/main-problem1.webp" alt="" />
                 <div class="main-problem__dim main-problem__dim--25" aria-hidden="true"></div>
               </div>
               <div class="container main-problem__container">
@@ -175,11 +160,7 @@
 
             <article class="main-problem__item" data-index="1">
               <div class="main-problem__media">
-                <img
-                  class="main-problem__image"
-                  src="assets/images/main/main-problem2.webp"
-                  alt=""
-                />
+                <img class="main-problem__image" src="assets/images/main/main-problem2.webp" alt="" />
                 <div class="main-problem__dim main-problem__dim--30" aria-hidden="true"></div>
               </div>
               <div class="container main-problem__container">
@@ -193,11 +174,7 @@
 
             <article class="main-problem__item" data-index="2">
               <div class="main-problem__media">
-                <img
-                  class="main-problem__image"
-                  src="assets/images/main/main-problem3.webp"
-                  alt=""
-                />
+                <img class="main-problem__image" src="assets/images/main/main-problem3.webp" alt="" />
                 <div class="main-problem__dim main-problem__dim--20" aria-hidden="true"></div>
               </div>
               <div class="container main-problem__container">
@@ -211,11 +188,7 @@
 
             <article class="main-problem__item" data-index="3">
               <div class="main-problem__media">
-                <img
-                  class="main-problem__image"
-                  src="assets/images/main/main-problem4.webp"
-                  alt=""
-                />
+                <img class="main-problem__image" src="assets/images/main/main-problem4.webp" alt="" />
                 <div class="main-problem__dim main-problem__dim--20" aria-hidden="true"></div>
               </div>
               <div class="container main-problem__container">
@@ -237,28 +210,271 @@
         </nav>
       </div>
     </div>
-    <section class="main-mattress-solution">
-      <div class="container">
+    <section class="main-mattress-solution" aria-label="매트리스 솔루션">
+      <div class="main-mattress-solution__viewport">
+        <div class="main-mattress-solution__content">
+          <article class="main-mattress-solution__panel is-active" data-index="0">
+            <div class="heading-3tier main-mattress-solution__heading">
+              <p class="heading-3tier__sub-title">SOFT RELIEF</p>
+              <h2 class="heading-3tier__title">
+                부드럽게 받아주는<br />
+                편안함이 필요한 순간
+              </h2>
+            </div>
+            <ul class="main-mattress-solution__features">
+              <li class="main-mattress-solution__feature">
+                <img class="main-mattress-solution__icon" src="assets/images/main/main-mattress-solution_soft-icon1.png"
+                  alt="" />
+                <p class="main-mattress-solution__label">부드러운 촉감</p>
+              </li>
+              <li class="main-mattress-solution__feature">
+                <img class="main-mattress-solution__icon" src="assets/images/main/main-mattress-solution_soft-icon2.png"
+                  alt="" />
+                <p class="main-mattress-solution__label">포근한 쿠션감</p>
+              </li>
+              <li class="main-mattress-solution__feature">
+                <img class="main-mattress-solution__icon" src="assets/images/main/main-mattress-solution_soft-icon3.png"
+                  alt="" />
+                <p class="main-mattress-solution__label">편안한 지지감</p>
+              </li>
+            </ul>
+          </article>
+
+          <article class="main-mattress-solution__panel" data-index="1" aria-hidden="true">
+            <div class="heading-3tier main-mattress-solution__heading">
+              <p class="heading-3tier__sub-title">BALANCE FIT</p>
+              <h2 class="heading-3tier__title">
+                움직임까지 편안한<br />
+                균형이 필요한 순간
+              </h2>
+            </div>
+            <ul class="main-mattress-solution__features">
+              <li class="main-mattress-solution__feature">
+                <img class="main-mattress-solution__icon"
+                  src="assets/images/main/main-mattress-solution_balance-icon1.png" alt="" />
+                <p class="main-mattress-solution__label">균형 잡힌 지지</p>
+              </li>
+              <li class="main-mattress-solution__feature">
+                <img class="main-mattress-solution__icon"
+                  src="assets/images/main/main-mattress-solution_balance-icon2.png" alt="" />
+                <p class="main-mattress-solution__label">유연한 반응력</p>
+              </li>
+              <li class="main-mattress-solution__feature">
+                <img class="main-mattress-solution__icon"
+                  src="assets/images/main/main-mattress-solution_balance-icon3.png" alt="" />
+                <p class="main-mattress-solution__label">안정적인 편안함</p>
+              </li>
+            </ul>
+          </article>
+
+          <article class="main-mattress-solution__panel" data-index="2" aria-hidden="true">
+            <div class="heading-3tier main-mattress-solution__heading">
+              <p class="heading-3tier__sub-title">FIRM SUPPORT</p>
+              <h2 class="heading-3tier__title">
+                안정적으로 받쳐주는<br />
+                편안함이 필요한 순간
+              </h2>
+            </div>
+            <ul class="main-mattress-solution__features">
+              <li class="main-mattress-solution__feature">
+                <img class="main-mattress-solution__icon" src="assets/images/main/main-mattress-solution_firm-icon1.png"
+                  alt="" />
+                <p class="main-mattress-solution__label">탄탄한 지지력</p>
+              </li>
+              <li class="main-mattress-solution__feature">
+                <img class="main-mattress-solution__icon" src="assets/images/main/main-mattress-solution_firm-icon2.png"
+                  alt="" />
+                <p class="main-mattress-solution__label">고른 압력 분산</p>
+              </li>
+              <li class="main-mattress-solution__feature">
+                <img class="main-mattress-solution__icon" src="assets/images/main/main-mattress-solution_firm-icon3.png"
+                  alt="" />
+                <p class="main-mattress-solution__label">안정적인 자세</p>
+              </li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="main-mattress-solution__media">
+          <div class="main-mattress-solution__scrollbar" aria-hidden="true">
+            <span class="main-mattress-solution__thumb"></span>
+          </div>
+          <div class="main-mattress-solution__images">
+            <img class="main-mattress-solution__image" src="assets/images/main/main-mattress-solution_soft-img.webp"
+              alt="EQUIL Soft Relief 매트리스" />
+            <img class="main-mattress-solution__image" src="assets/images/main/main-mattress-solution_balance-img.webp"
+              alt="EQUIL Balance Fit 매트리스" />
+            <img class="main-mattress-solution__image" src="assets/images/main/main-mattress-solution_firm-img.webp"
+              alt="EQUIL Firm Support 매트리스" />
+          </div>
+        </div>
       </div>
     </section>
-    <section class="main-heating-solution">
-      <div class="container">
+    <section class="main-heating-solution" aria-label="온열 솔루션">
+      <div class="main-heating-solution__media">
+        <img class="main-heating-solution__image" src="assets/images/main/main-heating-solution_img.png"
+          alt="I Zone Heating System이 적용된 EQUIL 매트리스" />
+      </div>
+      <div class="container main-heating-solution__container">
+        <div class="heading-3tier main-heating-solution__heading">
+          <p class="heading-3tier__sub-title">I Zone Heating System</p>
+          <h2 class="heading-3tier__title">
+            지지감은 몸에 맞게,<br />
+            온기는 필요한 곳에.
+          </h2>
+          <p class="heading-3tier__desc">
+            EQUIL의 세 가지 매트리스에는 원하는 부위만 선택해 따뜻하게<br />
+            사용할 수 있는 <strong class="main-heating-solution__emphasis">부위별 온열 시스템</strong>을 적용했습니다.
+          </p>
+        </div>
       </div>
     </section>
-    <section class="main-pillow-solution">
-      <div class="container">
+    <section class="main-pillow-solution" aria-label="베개 솔루션">
+      <div class="container main-pillow-solution__container">
+        <div class="heading-3tier main-pillow-solution__heading">
+          <p class="heading-3tier__sub-title">I Pillow</p>
+          <h2 class="heading-3tier__title">수면의 편안함을 베개에서도</h2>
+          <p class="heading-3tier__desc">
+            목의 자연스러운 곡선을 따라 설계된 경추형 베개로<br />
+            동일한 지지 구조에 세 가지 높이를 더해, 체형과 수면 자세에 맞는 편안함을 선택할 수 있습니다.
+          </p>
+        </div>
+      </div>
+      <div class="main-pillow-solution__cards">
+        <article class="main-pillow-solution__card" tabindex="0">
+          <img class="main-pillow-solution__image" src="assets/images/main/main-pillow-solution1.webp" alt="" />
+          <p class="main-pillow-solution__label">
+            Premium<br />
+            Memory Foam
+          </p>
+          <div class="main-pillow-solution__caption">
+            <p class="main-pillow-solution__caption-title">Premium Memory Foam</p>
+            <p class="main-pillow-solution__caption-text">
+              머리와 목의 압력을 부드럽게 분산시키는 고밀도 메모리폼을 사용으로<br />
+              체형에 맞춰 자연스럽게 형태를 잡아주며, 편안한 수면 자세를 오래 유지할 수 있도록 도와줍니다
+            </p>
+          </div>
+        </article>
+        <article class="main-pillow-solution__card" tabindex="0">
+          <img class="main-pillow-solution__image" src="assets/images/main/main-pillow-solution2.webp" alt="" />
+          <p class="main-pillow-solution__label">
+            Ergonomic<br />
+            Neck Support
+          </p>
+          <div class="main-pillow-solution__caption">
+            <p class="main-pillow-solution__caption-title">Ergonomic Neck Support</p>
+            <p class="main-pillow-solution__caption-text">
+              경추의 자연스러운 곡선을 고려한 인체공학적 설계입니다.<br />
+              목과 어깨를 안정적으로 받쳐 수면 중 부담을 줄이고 균형 있는 자세를 유지하도록 설계했습니다.
+            </p>
+          </div>
+        </article>
+        <article class="main-pillow-solution__card" tabindex="0">
+          <img class="main-pillow-solution__image" src="assets/images/main/main-pillow-solution3.webp" alt="" />
+          <p class="main-pillow-solution__label">
+            Breathable<br />
+            Comfort
+          </p>
+          <div class="main-pillow-solution__caption">
+            <p class="main-pillow-solution__caption-title">Breathable Comfort</p>
+            <p class="main-pillow-solution__caption-text">
+              통기성이 뛰어난 원단과 부드러운 촉감의 커버를 적용했습니다.<br />
+              사계절 내내 쾌적한 사용감을 유지하며, 피부에 닿는 순간까지 편안함을 제공합니다.
+            </p>
+          </div>
+        </article>
       </div>
     </section>
-    <section class="main-bedding-overview">
-      <div class="container">
+    <section class="main-bedding-overview" aria-label="침구 개요">
+      <div class="container main-bedding-overview__container">
+        <div class="heading-3tier main-bedding-overview__heading">
+          <p class="heading-3tier__sub-title">WOOL CLIMATE LAYER</p>
+          <h2 class="heading-3tier__title">포근함을 넘어, 쾌적함까지</h2>
+          <p class="heading-3tier__desc">
+            천연 양모의 섬유 구조가 몸 주변의 온도와 습도를 조절해<br />
+            계절에 관계없이 쾌적한 수면 환경을 만들어줍니다.
+          </p>
+        </div>
       </div>
     </section>
-    <section class="main-bedding-solution">
-      <div class="container">
+    <section class="main-bedding-solution" aria-label="침구 솔루션">
+      <article class="main-bedding-solution__panel">
+        <div class="main-bedding-solution__content">
+          <div class="main-bedding-solution__copy" data-aos="fade-down" data-aos-duration="700">
+            <h2 class="main-bedding-solution__title">
+              Moisture<br />
+              Control
+            </h2>
+            <p class="main-bedding-solution__text">습기를 머금고 배출하는 구조</p>
+          </div>
+        </div>
+        <div class="main-bedding-solution__media">
+          <img class="main-bedding-solution__image" src="assets/images/main/main-bedding-solution1.webp" alt=""
+            data-aos="fade-left" data-aos-duration="600" />
+        </div>
+      </article>
+
+      <article class="main-bedding-solution__panel main-bedding-solution__panel--media-start">
+        <div class="main-bedding-solution__content" data-aos="fade-down" data-aos-duration="800">
+          <h2 class="main-bedding-solution__title">
+            Temperature<br />
+            Balance
+          </h2>
+          <p class="main-bedding-solution__text">편안한 온도 균형</p>
+        </div>
+        <div class="main-bedding-solution__media">
+          <img class="main-bedding-solution__image" src="assets/images/main/main-bedding-solution2.webp" alt="" data-aos="fade-right" data-aos-duration="700" />
+        </div>
+      </article>
+
+      <article class="main-bedding-solution__panel">
+        <div class="main-bedding-solution__content" data-aos="fade-down" data-aos-duration="1000">
+          <h2 class="main-bedding-solution__title">
+            All-Season<br />
+            Comfort
+          </h2>
+          <p class="main-bedding-solution__text">계절에 따라 달라지는 쾌적함</p>
+        </div>
+        <div class="main-bedding-solution__media">
+          <img class="main-bedding-solution__image" src="assets/images/main/main-bedding-solution3.webp" alt="" data-aos="fade-left" data-aos-duration="900" />
+        </div>
+      </article>
+    </section>
+    <section class="main-sleep-balance" aria-label="Better balance, better sleep">
+      <div class="container main-sleep-balance__container">
+        <h2 class="main-sleep-balance__title">
+          Better balance.<br />
+          Better sleep.
+        </h2>
       </div>
     </section>
-    <section class="main-sleep-fit">
-      <div class="container">
+    <section class="main-sleep-fit" aria-label="Sleep Fit Test">
+      <div class="main-sleep-fit__viewport">
+        <div class="container main-sleep-fit__container">
+          <div class="main-sleep-fit__header">
+            <div class="main-sleep-fit__copy">
+              <h2 class="main-sleep-fit__title">
+                EQUIL에서 나에게 맞는 편안함을 찾아보세요
+              </h2>
+              <p class="main-sleep-fit__text">
+                목의 자연스러운 곡선을 따라 설계된 경추형 베개로<br />
+                동일한 지지 구조에 세 가지 높이를 더해, 체형과 수면 자세에 맞는 편안함을 선택할 수 있습니다.
+              </p>
+            </div>
+            <a class="btn btn-large main-sleep-fit__button" href="pages/sleep-fit-test/index.html">
+              <span>Sleep Fit Test</span>
+              <span class="btn-large__arrow" aria-hidden="true"></span>
+            </a>
+          </div>
+          <div class="main-sleep-fit__frame" aria-hidden="true"></div>
+        </div>
+        <div class="main-sleep-fit__media">
+          <img
+            class="main-sleep-fit__image"
+            src="assets/images/main/main-sleep-fit_bg.webp"
+            alt=""
+          />
+        </div>
       </div>
     </section>
     <section class="main-review">
@@ -295,6 +511,7 @@
     </div>
   </footer>
 
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script src="./assets/js/common.js"></script>
   <script src="./assets/js/pages/main.js"></script>
 </body>
