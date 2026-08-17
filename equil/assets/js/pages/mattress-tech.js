@@ -126,10 +126,21 @@
     const video = section.querySelector('video.mattress-tech-research__media');
     const gauge = section.querySelector('.mattress-tech-research__gauge');
     const currentEl = section.querySelector('.mattress-tech-research__current');
+    const dots = Array.from(
+      section.querySelectorAll('.mattress-tech-research__dot')
+    );
+    const prevArrow = section.querySelector(
+      '.mattress-tech-research__arrow--prev'
+    );
+    const nextArrow = section.querySelector(
+      '.mattress-tech-research__arrow--next'
+    );
     if (!slides.length || !video || !gauge || !currentEl) return;
 
     const RESEARCH_SLIDE_DURATION = 2;
     const RESEARCH_SLIDE_EASE = 'power2.inOut';
+    const compactQuery = window.matchMedia('(max-width: 63.9375rem)');
+    const isHorizontal = () => compactQuery.matches;
 
     let currentIndex = 0;
     let isAnimating = false;
@@ -211,7 +222,19 @@
 
     const updatePager = (index) => {
       currentEl.textContent = padPage(index);
+      dots.forEach((dot, dotIndex) => {
+        const isActive = dotIndex === index;
+        dot.classList.toggle('is-active', isActive);
+        if (isActive) {
+          dot.setAttribute('aria-current', 'true');
+        } else {
+          dot.removeAttribute('aria-current');
+        }
+      });
     };
+
+    const getSlideAxis = () => (isHorizontal() ? 'x' : 'y');
+    const getOffAxis = () => (isHorizontal() ? 'y' : 'x');
 
     const stopTimers = () => {
       if (autoTimer) {
@@ -259,11 +282,14 @@
 
     const resetSlides = (activeIndex) => {
       currentIndex = activeIndex;
+      const axis = getSlideAxis();
+      const offAxis = getOffAxis();
       slides.forEach((slide, index) => {
         const isActive = index === activeIndex;
         slide.classList.toggle('is-active', isActive);
         gsap.set(slide, {
-          y: isActive ? '0%' : '100%',
+          [axis]: isActive ? '0%' : '100%',
+          [offAxis]: '0%',
           zIndex: isActive ? 2 : 1,
         });
       });
@@ -348,7 +374,8 @@
       const currentSlide = slides[currentIndex];
       const nextSlide = slides[nextIndex];
       const isForward = nextIndex > currentIndex;
-      // main-problem: 아래로 스크롤 시 다음 패널이 아래에서 올라옴
+      const axis = getSlideAxis();
+      const offAxis = getOffAxis();
       const currentTo = isForward ? '-100%' : '100%';
       const nextFrom = isForward ? '100%' : '-100%';
 
@@ -357,13 +384,13 @@
       updatePager(nextIndex);
       resetSlideText(nextIndex);
 
-      gsap.set(nextSlide, { y: nextFrom, zIndex: 2 });
-      gsap.set(currentSlide, { zIndex: 1 });
+      gsap.set(nextSlide, { [axis]: nextFrom, [offAxis]: '0%', zIndex: 2 });
+      gsap.set(currentSlide, { [offAxis]: '0%', zIndex: 1 });
 
       gsap
         .timeline({
           onComplete: () => {
-            gsap.set(currentSlide, { y: nextFrom });
+            gsap.set(currentSlide, { [axis]: nextFrom, [offAxis]: '0%' });
             resetSlideText(currentIndex);
             currentIndex = nextIndex;
             isAnimating = false;
@@ -373,7 +400,7 @@
         .to(
           currentSlide,
           {
-            y: currentTo,
+            [axis]: currentTo,
             duration: RESEARCH_SLIDE_DURATION,
             ease: RESEARCH_SLIDE_EASE,
           },
@@ -381,9 +408,9 @@
         )
         .fromTo(
           nextSlide,
-          { y: nextFrom },
+          { [axis]: nextFrom },
           {
-            y: '0%',
+            [axis]: '0%',
             duration: RESEARCH_SLIDE_DURATION,
             ease: RESEARCH_SLIDE_EASE,
           },
@@ -472,6 +499,33 @@
     });
 
     section.addEventListener('wheel', onWheel, { passive: false });
+
+    prevArrow?.addEventListener('click', () => {
+      if (isAnimating || isTextAnimating) return;
+      goTo(currentIndex - 1);
+    });
+
+    nextArrow?.addEventListener('click', () => {
+      if (isAnimating || isTextAnimating) return;
+      goTo(currentIndex + 1);
+    });
+
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        if (isAnimating || isTextAnimating) return;
+        goTo(index);
+      });
+    });
+
+    const onCompactChange = () => {
+      resetSlides(currentIndex);
+    };
+
+    if (typeof compactQuery.addEventListener === 'function') {
+      compactQuery.addEventListener('change', onCompactChange);
+    } else if (typeof compactQuery.addListener === 'function') {
+      compactQuery.addListener(onCompactChange);
+    }
   };
 
   const initMattressTechStructureOverview = () => {
@@ -642,6 +696,18 @@
     const AFTER_HOLD = 1.5;
     const LEAVE_GRACE_MS = 500;
     const INITIAL_SPACER = 12;
+    const compactQuery = window.matchMedia('(max-width: 63.9375rem)');
+
+    const getSplitGap = () => {
+      if (!compactQuery.matches) return SPLIT_GAP;
+
+      const leftWidth = leftText.getBoundingClientRect().width;
+      const rightWidth = rightText.getBoundingClientRect().width;
+      return Math.max(
+        INITIAL_SPACER,
+        phrase.clientWidth - leftWidth - rightWidth
+      );
+    };
 
     let sequenceStarted = false;
     let hasCompleted = false;
@@ -667,7 +733,7 @@
 
     const setFinalVisualState = () => {
       gsap.set(chars, { opacity: 1, y: 0, clearProps: 'will-change' });
-      gsap.set(spacer, { width: SPLIT_GAP });
+      gsap.set(spacer, { width: getSplitGap() });
       gsap.set(dot, { opacity: 1 });
       gsap.set(line, { scaleX: 1, transformOrigin: 'left center' });
     };
@@ -726,7 +792,7 @@
       });
 
       sequenceTl.to(spacer, {
-        width: SPLIT_GAP,
+        width: getSplitGap(),
         duration: SPLIT_DURATION,
         ease: 'power2.inOut',
       });
@@ -861,10 +927,18 @@
     const cards = Array.from(
       section.querySelectorAll('.mattress-tech-support-layers__card')
     );
+    const prevButton = section.querySelector(
+      '.mattress-tech-support-layers__arrow--prev'
+    );
+    const nextButton = section.querySelector(
+      '.mattress-tech-support-layers__arrow--next'
+    );
     if (!heading || !tabs.length || cards.length !== 3) return;
 
     const FADE_DURATION = 0.35;
+    const compactQuery = window.matchMedia('(max-width: 63.9375rem)');
     let currentIndex = 0;
+    let currentCardIndex = 0;
     let isTransitioning = false;
     let transitionTl = null;
 
@@ -934,6 +1008,23 @@
       });
     };
 
+    const updateCardVisibility = () => {
+      cards.forEach((card, cardIndex) => {
+        const isActive = !compactQuery.matches || cardIndex === currentCardIndex;
+        card.classList.toggle('is-active', isActive);
+        if (!compactQuery.matches) {
+          gsap.set(card, { clearProps: 'opacity' });
+        } else {
+          gsap.set(card, { opacity: isActive ? 1 : 0 });
+        }
+      });
+    };
+
+    const cardsWrap = section.querySelector(
+      '.mattress-tech-support-layers__cards'
+    );
+    if (!cardsWrap) return;
+
     const switchTab = (index) => {
       if (
         index === currentIndex ||
@@ -957,21 +1048,71 @@
         },
       });
 
-      transitionTl.to(cards, {
+      transitionTl.to(cardsWrap, {
         opacity: 0,
         duration: FADE_DURATION,
         ease: 'power2.out',
         onComplete: () => {
           applyTabContent(index);
           currentIndex = index;
+          currentCardIndex = 0;
+          updateCardVisibility();
         },
       });
 
-      transitionTl.to(cards, {
+      transitionTl.to(cardsWrap, {
         opacity: 1,
         duration: FADE_DURATION,
         ease: 'power2.out',
       });
+    };
+
+    const goToCard = (index) => {
+      if (!compactQuery.matches || isTransitioning) return;
+
+      const nextIndex = (index + cards.length) % cards.length;
+      if (nextIndex === currentCardIndex) return;
+
+      isTransitioning = true;
+      const outgoing = cards[currentCardIndex];
+      const incoming = cards[nextIndex];
+
+      incoming.classList.add('is-active');
+      gsap.set(incoming, { opacity: 0 });
+
+      if (transitionTl) {
+        transitionTl.kill();
+      }
+
+      transitionTl = gsap.timeline({
+        onComplete: () => {
+          outgoing.classList.remove('is-active');
+          gsap.set(outgoing, { opacity: 0 });
+          currentCardIndex = nextIndex;
+          isTransitioning = false;
+          transitionTl = null;
+        },
+      });
+
+      transitionTl.to(
+        outgoing,
+        {
+          opacity: 0,
+          duration: FADE_DURATION,
+          ease: 'power2.out',
+        },
+        0
+      );
+
+      transitionTl.to(
+        incoming,
+        {
+          opacity: 1,
+          duration: FADE_DURATION,
+          ease: 'power2.out',
+        },
+        0
+      );
     };
 
     tabs.forEach((tab) => {
@@ -981,6 +1122,17 @@
         switchTab(index);
       });
     });
+
+    prevButton?.addEventListener('click', () => {
+      goToCard(currentCardIndex - 1);
+    });
+
+    nextButton?.addEventListener('click', () => {
+      goToCard(currentCardIndex + 1);
+    });
+
+    compactQuery.addEventListener('change', updateCardVisibility);
+    updateCardVisibility();
   };
 
   const PRESSURE_DESCS = [
@@ -1004,6 +1156,7 @@
     const TITLE_HOLD = 1;
     const TITLE_FADE_OUT = 0.6;
     const LINE_DURATION = 0.8;
+    const compactQuery = window.matchMedia('(max-width: 63.9375rem)');
     let currentIndex = 0;
     let lineTween = null;
     let introPlayed = false;
@@ -1020,7 +1173,8 @@
         lineTween.kill();
       }
 
-      gsap.set(line, { scaleX: 0, transformOrigin: 'left center' });
+      const origin = compactQuery.matches ? 'center' : 'left center';
+      gsap.set(line, { scaleX: 0, transformOrigin: origin });
       lineTween = gsap.to(line, {
         scaleX: 1,
         duration: LINE_DURATION,
@@ -1049,19 +1203,21 @@
       if (introPlayed) return;
       introPlayed = true;
 
-      gsap
-        .timeline()
-        .to(titleChars, {
-          opacity: 1,
-          y: 0,
-          duration: FADE_UP_DURATION,
-          ease: 'power3.out',
-          stagger: titleChars.length > 1 ? titleStagger : 0,
-          onComplete: () => {
-            gsap.set(titleChars, { clearProps: 'will-change' });
-          },
-        })
-        .to(
+      const introTl = gsap.timeline();
+
+      introTl.to(titleChars, {
+        opacity: 1,
+        y: 0,
+        duration: FADE_UP_DURATION,
+        ease: 'power3.out',
+        stagger: titleChars.length > 1 ? titleStagger : 0,
+        onComplete: () => {
+          gsap.set(titleChars, { clearProps: 'will-change' });
+        },
+      });
+
+      if (!compactQuery.matches) {
+        introTl.to(
           title,
           {
             opacity: 0,
@@ -1070,9 +1226,21 @@
           },
           `+=${TITLE_HOLD}`
         );
+      }
 
       playLine();
     };
+
+    compactQuery.addEventListener('change', () => {
+      if (compactQuery.matches) {
+        gsap.set(title, { opacity: 1 });
+        return;
+      }
+
+      if (introPlayed) {
+        gsap.set(title, { opacity: 0 });
+      }
+    });
 
     ScrollTrigger.create({
       trigger: section,
@@ -1098,11 +1266,25 @@
     const items = Array.from(
       section.querySelectorAll('.mattress-tech-process__item')
     );
+    const prevButton = section.querySelector(
+      '.mattress-tech-process__arrow--prev'
+    );
+    const nextButton = section.querySelector(
+      '.mattress-tech-process__arrow--next'
+    );
+    const dots = Array.from(
+      section.querySelectorAll('.mattress-tech-process__dot')
+    );
     if (!heading || !items.length) return;
 
     const IMAGE_REVEAL_DURATION = 1.2;
     const NEXT_ITEM_AT = 0.8;
+    const FADE_DURATION = 0.35;
+    const mobileQuery = window.matchMedia('(max-width: 47.9375rem)');
     let itemsStarted = false;
+    let currentItemIndex = 0;
+    let isTransitioning = false;
+    let itemTween = null;
 
     const headingTargets = [
       heading.querySelector('.heading-3tier__sub-title'),
@@ -1143,9 +1325,94 @@
     const getItemDuration = (chars) =>
       IMAGE_REVEAL_DURATION + getTextTweenDuration(chars);
 
+    const revealItems = () => {
+      itemData.forEach((item) => {
+        if (item.image) {
+          gsap.set(item.image, { clipPath: 'inset(0 0% 0 0)' });
+        }
+        gsap.set(item.chars, { opacity: 1, y: 0, clearProps: 'will-change' });
+      });
+    };
+
+    const updateItemVisibility = () => {
+      items.forEach((item, index) => {
+        const isActive = !mobileQuery.matches || index === currentItemIndex;
+        item.classList.toggle('is-active', isActive);
+        if (!mobileQuery.matches) {
+          gsap.set(item, { clearProps: 'opacity' });
+        } else {
+          gsap.set(item, { opacity: isActive ? 1 : 0 });
+        }
+      });
+
+      dots.forEach((dot, index) => {
+        const isActive = index === currentItemIndex;
+        dot.classList.toggle('is-active', isActive);
+        if (isActive) {
+          dot.setAttribute('aria-current', 'true');
+        } else {
+          dot.removeAttribute('aria-current');
+        }
+      });
+    };
+
+    const goToItem = (index) => {
+      if (!mobileQuery.matches || isTransitioning) return;
+
+      const nextIndex = (index + items.length) % items.length;
+      if (nextIndex === currentItemIndex) return;
+
+      isTransitioning = true;
+      const outgoing = items[currentItemIndex];
+      const incoming = items[nextIndex];
+
+      incoming.classList.add('is-active');
+      gsap.set(incoming, { opacity: 0 });
+
+      if (itemTween) {
+        itemTween.kill();
+      }
+
+      itemTween = gsap.timeline({
+        onComplete: () => {
+          outgoing.classList.remove('is-active');
+          gsap.set(outgoing, { opacity: 0 });
+          currentItemIndex = nextIndex;
+          isTransitioning = false;
+          itemTween = null;
+          updateItemVisibility();
+        },
+      });
+
+      itemTween.to(
+        outgoing,
+        {
+          opacity: 0,
+          duration: FADE_DURATION,
+          ease: 'power2.out',
+        },
+        0
+      );
+
+      itemTween.to(
+        incoming,
+        {
+          opacity: 1,
+          duration: FADE_DURATION,
+          ease: 'power2.out',
+        },
+        0
+      );
+    };
+
     const playItems = () => {
       if (itemsStarted) return;
       itemsStarted = true;
+
+      if (mobileQuery.matches) {
+        revealItems();
+        return;
+      }
 
       const itemsTl = gsap.timeline();
 
@@ -1216,6 +1483,28 @@
         onEnter: playItems,
       });
     }
+
+    prevButton?.addEventListener('click', () => {
+      goToItem(currentItemIndex - 1);
+    });
+
+    nextButton?.addEventListener('click', () => {
+      goToItem(currentItemIndex + 1);
+    });
+
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        goToItem(index);
+      });
+    });
+
+    mobileQuery.addEventListener('change', () => {
+      if (!mobileQuery.matches) {
+        currentItemIndex = 0;
+      }
+      updateItemVisibility();
+    });
+    updateItemVisibility();
   };
 
   const start = () => {

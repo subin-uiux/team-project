@@ -142,6 +142,67 @@
       });
     };
 
+    const updateDots = (index) => {
+      section.querySelectorAll('.scroll-feature__dot').forEach((dot, dotIndex) => {
+        dot.classList.toggle('is-active', dotIndex === index);
+      });
+    };
+
+    const ARROW_LEFT_SRC =
+      '../../assets/images/about/mattress-tech/mobile/mattress-tech-research_icon_arrow_left.svg';
+    const ARROW_RIGHT_SRC =
+      '../../assets/images/about/mattress-tech/mobile/mattress-tech-research_icon_arrow_right.svg';
+
+    const setupCompactNav = () => {
+      if (!media || media.querySelector('.scroll-feature__media-nav')) return;
+
+      const nav = document.createElement('div');
+      nav.className = 'scroll-feature__media-nav';
+
+      const prevButton = document.createElement('button');
+      prevButton.type = 'button';
+      prevButton.className = 'scroll-feature__arrow scroll-feature__arrow--prev';
+      prevButton.setAttribute('aria-label', '이전 특징');
+      prevButton.innerHTML = `<img src="${ARROW_LEFT_SRC}" alt="">`;
+
+      const nextButton = document.createElement('button');
+      nextButton.type = 'button';
+      nextButton.className = 'scroll-feature__arrow scroll-feature__arrow--next';
+      nextButton.setAttribute('aria-label', '다음 특징');
+      nextButton.innerHTML = `<img src="${ARROW_RIGHT_SRC}" alt="">`;
+
+      const dots = document.createElement('div');
+      dots.className = 'scroll-feature__dots';
+      dots.setAttribute('role', 'tablist');
+      dots.setAttribute('aria-label', '특징 슬라이드');
+
+      features.forEach((_, index) => {
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'scroll-feature__dot';
+        if (index === 0) dot.classList.add('is-active');
+        dot.setAttribute('aria-label', `${index + 1}번째 특징`);
+        dot.addEventListener('click', () => {
+          if (isEntryLocked() || isTransitioning) return;
+          activateFeature(index, true);
+        });
+        dots.appendChild(dot);
+      });
+
+      prevButton.addEventListener('click', () => {
+        if (isEntryLocked() || isTransitioning) return;
+        if (currentIndex > 0) activateFeature(currentIndex - 1, true);
+      });
+
+      nextButton.addEventListener('click', () => {
+        if (isEntryLocked() || isTransitioning) return;
+        if (currentIndex < LAST_INDEX) activateFeature(currentIndex + 1, true);
+      });
+
+      nav.append(prevButton, nextButton, dots);
+      media.appendChild(nav);
+    };
+
     const activateFeature = (index, animate = true) => {
       if (index === currentIndex && animate) return;
 
@@ -187,6 +248,7 @@
         }
         lastSwitchTime = 0;
         isTransitioning = false;
+        updateDots(index);
         return;
       }
 
@@ -197,6 +259,7 @@
 
       isTransitioning = true;
       setImage(index, true);
+      updateDots(index);
 
       const fadeOutDuration = getFadeOutDuration();
 
@@ -294,6 +357,7 @@
       }
     };
 
+    setupCompactNav();
     activateFeature(0, false);
 
     const isSectionPinnedInView = () => {

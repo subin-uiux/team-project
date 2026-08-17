@@ -60,6 +60,35 @@
   line-height: 150%;
 }
 
+@media (min-width: 48rem) and (max-width: 63.9375rem) {
+  .heating-mat-tech-hero__frame {
+    height: 25rem; /* 400px */
+  }
+
+  .heating-mat-tech-hero__title {
+    font-size: 3rem; /* 48px */
+    line-height: 100%;
+  }
+
+  .heating-mat-tech-hero__desc {
+    font-size: 1.25rem; /* 20px */
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .heating-mat-tech-hero__frame {
+    height: 25rem; /* 400px */
+  }
+
+  .heating-mat-tech-hero__title {
+    font-size: 1.875rem; /* 30px */
+    line-height: 100%;
+  }
+
+  .heating-mat-tech-hero__desc {
+    font-size: 1.125rem; /* 18px */
+  }
+}
 
 /* ========================================
    heating-mat-tech-problem

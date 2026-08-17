@@ -243,6 +243,38 @@
           </div>
         </div>
       </div>
+      <div class="container mattress-tech-research__nav">
+        <button
+          type="button"
+          class="mattress-tech-research__arrow mattress-tech-research__arrow--prev"
+          aria-label="이전 슬라이드"
+        >
+          <img
+            src="../../assets/images/about/mattress-tech/mobile/mattress-tech-research_icon_arrow_left.svg"
+            alt=""
+          >
+        </button>
+        <button
+          type="button"
+          class="mattress-tech-research__arrow mattress-tech-research__arrow--next"
+          aria-label="다음 슬라이드"
+        >
+          <img
+            src="../../assets/images/about/mattress-tech/mobile/mattress-tech-research_icon_arrow_right.svg"
+            alt=""
+          >
+        </button>
+      </div>
+      <div
+        class="mattress-tech-research__dots"
+        role="tablist"
+        aria-label="리서치 슬라이드"
+      >
+        <button type="button" class="mattress-tech-research__dot is-active" aria-label="1번째 슬라이드" aria-current="true"></button>
+        <button type="button" class="mattress-tech-research__dot" aria-label="2번째 슬라이드"></button>
+        <button type="button" class="mattress-tech-research__dot" aria-label="3번째 슬라이드"></button>
+        <button type="button" class="mattress-tech-research__dot" aria-label="4번째 슬라이드"></button>
+      </div>
       <div class="mattress-tech-research__progress">
         <div class="mattress-tech-research__track">
           <div class="mattress-tech-research__gauge"></div>
@@ -398,9 +430,10 @@
           </div>
         </div>
 
-        <div class="mattress-tech-support-layers__cards">
+        <div class="mattress-tech-support-layers__slider">
+          <div class="mattress-tech-support-layers__cards">
           <article
-            class="card card-material mattress-tech-support-layers__card"
+            class="card card-material mattress-tech-support-layers__card is-active"
             tabindex="0"
           >
             <div class="card-material__media" aria-hidden="true">
@@ -461,6 +494,29 @@
               </p>
             </div>
           </article>
+        </div>
+        <div class="mattress-tech-support-layers__nav">
+          <button
+            type="button"
+            class="mattress-tech-support-layers__arrow mattress-tech-support-layers__arrow--prev"
+            aria-label="이전 카드"
+          >
+            <img
+              src="../../assets/images/about/mattress-tech/mobile/mattress-tech-research_icon_arrow_left.svg"
+              alt=""
+            >
+          </button>
+          <button
+            type="button"
+            class="mattress-tech-support-layers__arrow mattress-tech-support-layers__arrow--next"
+            aria-label="다음 카드"
+          >
+            <img
+              src="../../assets/images/about/mattress-tech/mobile/mattress-tech-research_icon_arrow_right.svg"
+              alt=""
+            >
+          </button>
+        </div>
         </div>
       </div>
     </section>
@@ -526,8 +582,9 @@
           </p>
         </div>
 
-        <div class="mattress-tech-process__items">
-          <article class="mattress-tech-process__item">
+        <div class="mattress-tech-process__slider">
+          <div class="mattress-tech-process__items">
+          <article class="mattress-tech-process__item is-active">
             <div class="mattress-tech-process__media">
               <img
                 class="mattress-tech-process__image"
@@ -594,6 +651,39 @@
               </p>
             </div>
           </article>
+          </div>
+          <div class="mattress-tech-process__nav">
+            <button
+              type="button"
+              class="mattress-tech-process__arrow mattress-tech-process__arrow--prev"
+              aria-label="이전 공정"
+            >
+              <img
+                src="../../assets/images/about/mattress-tech/mobile/mattress-tech-research_icon_arrow_left.svg"
+                alt=""
+              >
+            </button>
+            <button
+              type="button"
+              class="mattress-tech-process__arrow mattress-tech-process__arrow--next"
+              aria-label="다음 공정"
+            >
+              <img
+                src="../../assets/images/about/mattress-tech/mobile/mattress-tech-research_icon_arrow_right.svg"
+                alt=""
+              >
+            </button>
+            <div
+              class="mattress-tech-process__dots"
+              role="tablist"
+              aria-label="공정 슬라이드"
+            >
+              <button type="button" class="mattress-tech-process__dot is-active" aria-label="1번째 공정" aria-current="true"></button>
+              <button type="button" class="mattress-tech-process__dot" aria-label="2번째 공정"></button>
+              <button type="button" class="mattress-tech-process__dot" aria-label="3번째 공정"></button>
+              <button type="button" class="mattress-tech-process__dot" aria-label="4번째 공정"></button>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -605,9 +695,8 @@
               한 번의 편안함이 아니라,<br>
               반복되는 밤에도 유지되는 균형.
             </h2>
-            <p class="section-cta__desc">Sleep Fit Test</p>
             <a class="btn btn-medium section-cta__button" href="../sleep-fit-test/index.html">
-              <span>자세히 보기</span>
+              <span>Sleep Fit Test</span>
               <span class="btn-medium__arrow" aria-hidden="true">&gt;</span>
             </a>
           </div>
