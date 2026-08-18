@@ -98,6 +98,12 @@
     return Array.from(element.querySelectorAll(`.${charClass}`));
   };
 
+  const POST_HERO_FADE_UP_DURATION = 2;
+  const POST_HERO_HEADING_SELECTORS = [
+    '.pillow-tech-sleep-position__heading',
+    '.heating-mat-tech-problem__heading',
+  ];
+
   const initHeading3tierFadeUp = () => {
     document.querySelectorAll('.heading-3tier').forEach((heading) => {
       const targets = [
@@ -113,15 +119,20 @@
       );
       if (!allChars.length) return;
 
+      const fadeUpDuration = POST_HERO_HEADING_SELECTORS.some((selector) =>
+        heading.matches(selector)
+      )
+        ? POST_HERO_FADE_UP_DURATION
+        : FADE_UP_DURATION;
       const charStagger =
-        FADE_UP_DURATION / Math.max(allChars.length * 2.5, 1);
+        fadeUpDuration / Math.max(allChars.length * 2.5, 1);
 
       gsap.set(allChars, { opacity: 0, y: 40 });
 
       gsap.to(allChars, {
         opacity: 1,
         y: 0,
-        duration: FADE_UP_DURATION,
+        duration: fadeUpDuration,
         ease: 'power3.out',
         stagger: allChars.length > 1 ? charStagger : 0,
         scrollTrigger: {
@@ -142,6 +153,7 @@
       const chars = splitHeadingChars(title, charClass);
       if (!chars.length) return;
 
+      const section = title.closest('section');
       const charStagger =
         FADE_UP_DURATION / Math.max(chars.length * 2.5, 1);
 
@@ -154,8 +166,8 @@
         ease: 'power3.out',
         stagger: chars.length > 1 ? charStagger : 0,
         scrollTrigger: {
-          trigger: title,
-          start: 'top 50%',
+          trigger: section || title,
+          start: 'top 90%',
           once: true,
         },
         onComplete: () => {
@@ -171,6 +183,122 @@
       initScrollFeatureTitleFadeUp();
     })
     .catch(() => {});
+
+  const parsePx = (value) => {
+    const parsed = parseFloat(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  };
+
+  window.initTechHero = (blockClass) => {
+    const hero = document.querySelector(`.${blockClass}`);
+    if (!hero) return;
+
+    const frame = hero.querySelector(`.${blockClass}__frame`);
+    const image = hero.querySelector(`.${blockClass}__image`);
+    const overlay = hero.querySelector(`.${blockClass}__overlay`);
+    const content = hero.querySelector(`.${blockClass}__content`);
+    if (!frame || !image || !overlay || !content) return;
+
+    const getEndHeight = () =>
+      parsePx(getComputedStyle(hero).getPropertyValue('--hero-end-height')) ||
+      437;
+    const getStartHeight = () => window.innerHeight;
+    const getShrinkDistance = () =>
+      Math.max(getStartHeight() - getEndHeight(), 1);
+    const getScaleDistance = () => Math.round(window.innerHeight * 0.2);
+
+    gsap.set(overlay, { opacity: 0 });
+    gsap.set(content, { opacity: 0 });
+    gsap.set(image, { scale: 1 });
+    gsap.set([hero, frame], { height: getStartHeight() });
+
+    let introPlayed = false;
+    let imageScaled = false;
+    let hasCompleted = false;
+    let tl = null;
+
+    const playIntro = () => {
+      if (introPlayed) return;
+      introPlayed = true;
+
+      gsap.to(overlay, {
+        opacity: 0.3,
+        duration: 0.5,
+        ease: 'power1.out',
+      });
+
+      gsap.to(content, {
+        opacity: 1,
+        duration: 1,
+        ease: 'power1.out',
+      });
+    };
+
+    const playImageScale = () => {
+      if (imageScaled) return;
+      imageScaled = true;
+
+      gsap.to(image, {
+        scale: 1.05,
+        ease: 'none',
+        duration: getScaleDistance() / getShrinkDistance(),
+      });
+    };
+
+    const lockCompleted = () => {
+      if (hasCompleted) return;
+      hasCompleted = true;
+
+      playIntro();
+      playImageScale();
+
+      if (tl) {
+        tl.scrollTrigger?.kill();
+        tl.kill();
+        tl = null;
+      }
+
+      gsap.set([hero, frame], { height: getEndHeight() });
+
+      requestAnimationFrame(() => {
+        ScrollTrigger.refresh();
+      });
+    };
+
+    tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: hero,
+        start: 'top top',
+        end: () => `+=${getShrinkDistance()}`,
+        pin: true,
+        pinSpacing: false,
+        scrub: true,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          if (self.progress >= 0.5) {
+            playIntro();
+            playImageScale();
+          }
+
+          if (self.progress >= 1) {
+            lockCompleted();
+          }
+        },
+        onLeave: lockCompleted,
+      },
+    });
+
+    tl.fromTo(
+      [hero, frame],
+      { height: () => getStartHeight() },
+      {
+        height: () => getEndHeight(),
+        ease: 'none',
+        duration: 1,
+      }
+    );
+  };
 
   const header = document.querySelector('.site-header');
   if (!header) return;

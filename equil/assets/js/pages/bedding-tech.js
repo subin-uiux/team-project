@@ -34,43 +34,8 @@
   };
 
   const initBeddingTechHero = () => {
-    const hero = document.querySelector('.bedding-tech-hero');
-    if (!hero) return;
-
-    const image = hero.querySelector('.bedding-tech-hero__image');
-    const overlay = hero.querySelector('.bedding-tech-hero__overlay');
-    const content = hero.querySelector('.bedding-tech-hero__content');
-    if (!image || !overlay || !content) return;
-
-    gsap.set(overlay, { opacity: 0 });
-    gsap.set(content, { opacity: 0 });
-    gsap.set(image, { scale: 1 });
-
-    gsap.to(overlay, {
-      opacity: 0.3,
-      duration: 0.5,
-      delay: 0.5,
-      ease: 'power1.out',
-    });
-
-    gsap.to(content, {
-      opacity: 1,
-      duration: 1,
-      delay: 1,
-      ease: 'power1.out',
-    });
-
-    gsap.to(image, {
-      scale: 1.05,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: hero,
-        start: 'top top',
-        end: () => `+=${Math.round(window.innerHeight * 0.2)}`,
-        scrub: true,
-        invalidateOnRefresh: true,
-      },
-    });
+    if (typeof window.initTechHero !== 'function') return;
+    window.initTechHero('bedding-tech-hero');
   };
 
   const initBeddingTechDesign = () => {
@@ -84,12 +49,14 @@
     );
     if (!overlay || !title || !descs.length) return;
 
+    const POST_HERO_FADE_UP_DURATION = 2;
+
     const charClass = 'bedding-tech-design__char';
     const titleChars = splitTextChars(title, charClass);
     const descChars = descs.flatMap((desc) => splitTextChars(desc, charClass));
     const allChars = [...titleChars, ...descChars];
     const charStagger =
-      FADE_UP_DURATION / Math.max(allChars.length * 2.5, 1);
+      POST_HERO_FADE_UP_DURATION / Math.max(allChars.length * 2.5, 1);
 
     gsap.set(overlay, { opacity: 0 });
     gsap.set(allChars, { opacity: 0, y: 40 });
@@ -111,7 +78,7 @@
       {
         opacity: 1,
         y: 0,
-        duration: FADE_UP_DURATION,
+        duration: POST_HERO_FADE_UP_DURATION,
         ease: 'power3.out',
         stagger: allChars.length > 1 ? charStagger : 0,
         onComplete: () => {

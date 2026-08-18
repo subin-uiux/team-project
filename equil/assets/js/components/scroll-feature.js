@@ -199,8 +199,9 @@
         if (currentIndex < LAST_INDEX) activateFeature(currentIndex + 1, true);
       });
 
-      nav.append(prevButton, nextButton, dots);
+      nav.append(prevButton, nextButton);
       media.appendChild(nav);
+      media.closest('.scroll-feature').appendChild(dots);
     };
 
     const activateFeature = (index, animate = true) => {
@@ -208,6 +209,15 @@
 
       const prevIndex = currentIndex;
       currentIndex = index;
+
+      if (isCompact) {
+        features.forEach((feature, i) => {
+          feature.classList.toggle('is-active', i === index);
+        });
+        setImage(index, animate);
+        updateDots(index);
+        return;
+      }
 
       const prevFeature = features[prevIndex];
       const nextFeature = features[index];
@@ -357,8 +367,38 @@
       }
     };
 
+    const isCompact = window.matchMedia('(max-width: 63.9375rem)').matches;
+
     setupCompactNav();
     activateFeature(0, false);
+
+    const revealTitle = () => {
+      const title = section.querySelector('.scroll-feature__title--ko');
+      if (!title || title.dataset.revealed === 'true') return;
+
+      const chars = title.querySelectorAll('.scroll-feature__char');
+      if (!chars.length) return;
+
+      title.dataset.revealed = 'true';
+      const charStagger =
+        1.26 / Math.max(chars.length * 2.5, 1);
+
+      gsap.to(chars, {
+        opacity: 1,
+        y: 0,
+        duration: 1.26,
+        ease: 'power3.out',
+        stagger: chars.length > 1 ? charStagger : 0,
+        onComplete: () => {
+          gsap.set(chars, { clearProps: 'will-change' });
+        },
+      });
+    };
+
+    if (isCompact) {
+      revealTitle();
+      return null;
+    }
 
     const isSectionPinnedInView = () => {
       if (!pinTrigger?.isActive) return false;
@@ -376,7 +416,6 @@
       const goingDown = event.deltaY > 0;
       const pinActive = isSectionPinnedInView();
 
-      /* pin이 아닌데 섹션에 머문 상태가 아니면 개입하지 않음 (히어로 등에서 top-layer로 점프 방지) */
       if (!pinActive && !(currentIndex < LAST_INDEX && isSectionStuckInViewport())) {
         return;
       }
@@ -391,23 +430,17 @@
         return;
       }
 
-      /* 마지막 특징 전 + 아래 → 다음 특징만 (이탈 불가) */
       if (goingDown && currentIndex < LAST_INDEX) {
         event.preventDefault();
-        if (!pinActive) {
-          window.scrollTo(0, pinTrigger.start);
-        }
         if (isInCooldown()) return;
         activateFeature(currentIndex + 1, true);
         return;
       }
 
-      /* 첫 특징 + 위로 → 자연 스크롤로 이전 섹션 */
       if (!goingDown && currentIndex === 0) {
         return;
       }
 
-      /* 중간 특징에서 위로 → 이전 특징 */
       if (!goingDown && currentIndex > 0) {
         event.preventDefault();
         if (isInCooldown()) return;
@@ -415,7 +448,6 @@
         return;
       }
 
-      /* 마지막 특징 + 아래로 → pin 구간 스크롤로 다음 섹션 */
       if (goingDown && currentIndex === LAST_INDEX) {
         if (isInCooldown()) {
           event.preventDefault();
@@ -434,10 +466,12 @@
       onEnter: () => {
         activateFeature(0, false);
         startEntryLock();
+        revealTitle();
       },
       onEnterBack: () => {
         activateFeature(LAST_INDEX, false);
         startEntryLock();
+        revealTitle();
       },
     });
 

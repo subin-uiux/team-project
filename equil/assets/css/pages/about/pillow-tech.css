@@ -3,14 +3,17 @@
    ======================================== */
 
 .pillow-tech-hero {
+  --hero-end-height: 437px;
   position: relative;
   width: 100%;
+  overflow: hidden;
 }
 
 .pillow-tech-hero__frame {
   position: relative;
   width: 100%;
-  height: 437px;
+  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
 }
 
@@ -61,8 +64,8 @@
 }
 
 @media (min-width: 48rem) and (max-width: 63.9375rem) {
-  .pillow-tech-hero__frame {
-    height: 25rem; /* 400px */
+  .pillow-tech-hero {
+    --hero-end-height: 400px;
   }
 
   .pillow-tech-hero__title {
@@ -76,8 +79,8 @@
 }
 
 @media (max-width: 47.9375rem) {
-  .pillow-tech-hero__frame {
-    height: 25rem; /* 400px */
+  .pillow-tech-hero {
+    --hero-end-height: 400px;
   }
 
   .pillow-tech-hero__title {

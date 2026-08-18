@@ -3,14 +3,17 @@
    ======================================== */
 
 .mattress-tech-hero {
+  --hero-end-height: 437px;
   position: relative;
   width: 100%;
+  overflow: hidden;
 }
 
 .mattress-tech-hero__frame {
   position: relative;
   width: 100%;
-  height: 437px;
+  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
 }
 
@@ -61,8 +64,8 @@
 }
 
 @media (min-width: 48rem) and (max-width: 63.9375rem) {
-  .mattress-tech-hero__frame {
-    height: 25rem; /* 400px */
+  .mattress-tech-hero {
+    --hero-end-height: 400px;
   }
 
   .mattress-tech-hero__title {
@@ -84,8 +87,8 @@
 }
 
 @media (max-width: 47.9375rem) {
-  .mattress-tech-hero__frame {
-    height: 25rem; /* 400px */
+  .mattress-tech-hero {
+    --hero-end-height: 400px;
   }
 
   .mattress-tech-hero__title {
@@ -612,7 +615,7 @@
   flex: 1 1 auto;
   height: 1px;
   min-width: 0;
-  margin-right: 1.125rem; /* 18px — 우측 텍스트와의 간격 */
+  margin-right: 1.125rem; /* 18px */
   background-color: var(--color-white);
   transform-origin: left center;
   will-change: transform;
@@ -638,27 +641,11 @@
   .mattress-tech-support-layers-overview__phrase {
     font-size: 2rem; /* 32px */
   }
-
-  .mattress-tech-support-layers-overview__dot {
-    margin-left: 1.25rem; /* 20px */
-  }
-
-  .mattress-tech-support-layers-overview__line {
-    margin-right: 1.25rem; /* 20px */
-  }
 }
 
 @media (max-width: 47.9375rem) {
   .mattress-tech-support-layers-overview__phrase {
     font-size: 1.75rem; /* 28px */
-  }
-
-  .mattress-tech-support-layers-overview__dot {
-    margin-left: 0.875rem; /* 14px */
-  }
-
-  .mattress-tech-support-layers-overview__line {
-    margin-right: 0.875rem; /* 14px */
   }
 }
 
@@ -862,20 +849,21 @@
    ======================================== */
 
 .mattress-tech-pressure {
+  display: flex;
   width: 100%;
   height: 100vh;
   background-color: var(--color-brand-light-2);
 }
 
 .mattress-tech-pressure__container {
-  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   height: 100%;
+  padding-top: 7.5rem; /* 120px */
 }
 
 .mattress-tech-pressure__title {
-  position: absolute;
-  top: 7.5rem; /* 120px */
-  left: 0;
   margin: 0;
   font-family: var(--font-suit);
   font-weight: var(--fw-suit-bold); /* 600 */
@@ -890,9 +878,6 @@
 }
 
 .mattress-tech-pressure__panel {
-  position: absolute;
-  top: 7.5rem; /* 120px */
-  right: 0;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -929,20 +914,18 @@
 
 @media (max-width: 63.9375rem) {
   .mattress-tech-pressure__container {
-    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    padding-top: 0;
     text-align: center;
   }
 
   .mattress-tech-pressure__title {
-    position: static;
     width: 100%;
   }
 
   .mattress-tech-pressure__panel {
-    position: static;
     align-items: center;
   }
 

@@ -209,9 +209,9 @@
     flex-direction: column;
     align-items: stretch;
     justify-content: flex-start;
-    gap: 2.5rem; /* 40px */
+    gap: 0;
     height: 100vh;
-    padding: 2.5rem var(--grid-margin);
+    padding: 0 var(--grid-margin);
     box-sizing: border-box;
   }
 
@@ -224,15 +224,16 @@
     flex: 0 0 auto;
     width: 100%;
     padding: 0;
+    margin-bottom: 1.25rem; /* 20px */
   }
 
   .scroll-feature__media,
   .scroll-feature--media-end .scroll-feature__media,
   .scroll-feature--media-60.scroll-feature--media-end .scroll-feature__media {
+    position: relative;
     width: 100%;
-    height: auto;
-    flex: 1 1 auto;
-    min-height: 0;
+    height: 60vh;
+    flex: 0 0 60vh;
     overflow: hidden;
   }
 
@@ -245,15 +246,18 @@
   }
 
   .scroll-feature__features {
-    margin-top: 5rem; /* 80px */
-    flex-direction: row;
-    align-items: flex-start;
-    gap: 1.25rem; /* 20px */
+    display: grid;
+    margin-top: 0;
+    gap: 0;
   }
 
   .scroll-feature__feature {
-    flex: 1;
-    min-width: 0;
+    grid-area: 1 / 1;
+    visibility: hidden;
+  }
+
+  .scroll-feature__feature.is-active {
+    visibility: visible;
   }
 
   .scroll-feature__indicator {
@@ -293,23 +297,19 @@
   }
 
   .scroll-feature__arrow--prev {
-    left: 0;
+    left: 1.25rem; /* 20px */
   }
 
   .scroll-feature__arrow--next {
-    right: 0;
+    right: 1.25rem; /* 20px */
   }
 
   .scroll-feature__dots {
-    position: absolute;
-    left: 50%;
-    bottom: 1.25rem; /* 20px */
-    z-index: 2;
     display: flex;
+    justify-content: center;
     align-items: center;
     gap: 0.9375rem; /* 15px */
-    transform: translateX(-50%);
-    pointer-events: auto;
+    margin-top: 0.875rem; /* 14px */
   }
 
   .scroll-feature__dot {
@@ -334,6 +334,10 @@
     font-size: 2rem; /* 32px */
   }
 
+  .scroll-feature__features {
+    margin-top: 3.125rem; /* 50px */
+  }
+
   .scroll-feature__feature-number {
     font-size: 1.125rem; /* 18px */
   }
@@ -356,6 +360,10 @@
   .scroll-feature__title,
   .scroll-feature__title--ko {
     font-size: 1.75rem; /* 28px */
+  }
+
+  .scroll-feature__features {
+    margin-top: 1.875rem; /* 30px */
   }
 
   .scroll-feature__feature-number {

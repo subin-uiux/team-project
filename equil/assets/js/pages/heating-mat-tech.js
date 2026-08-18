@@ -62,43 +62,8 @@
   };
 
   const initHeatingMatTechHero = () => {
-    const hero = document.querySelector('.heating-mat-tech-hero');
-    if (!hero) return;
-
-    const image = hero.querySelector('.heating-mat-tech-hero__image');
-    const overlay = hero.querySelector('.heating-mat-tech-hero__overlay');
-    const content = hero.querySelector('.heating-mat-tech-hero__content');
-    if (!image || !overlay || !content) return;
-
-    gsap.set(overlay, { opacity: 0 });
-    gsap.set(content, { opacity: 0 });
-    gsap.set(image, { scale: 1 });
-
-    gsap.to(overlay, {
-      opacity: 0.3,
-      duration: 0.5,
-      delay: 0.5,
-      ease: 'power1.out',
-    });
-
-    gsap.to(content, {
-      opacity: 1,
-      duration: 1,
-      delay: 1,
-      ease: 'power1.out',
-    });
-
-    gsap.to(image, {
-      scale: 1.05,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: hero,
-        start: 'top top',
-        end: () => `+=${Math.round(window.innerHeight * 0.2)}`,
-        scrub: true,
-        invalidateOnRefresh: true,
-      },
-    });
+    if (typeof window.initTechHero !== 'function') return;
+    window.initTechHero('heating-mat-tech-hero');
   };
 
   const initHeatingMatTechProductOverview = () => {
