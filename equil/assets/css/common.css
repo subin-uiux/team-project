@@ -334,3 +334,31 @@ a {
   display: inline-block;
   will-change: transform, opacity;
 }
+
+@media (min-width: 48rem) and (max-width: 63.9375rem) {
+  .heading-3tier__sub-title {
+    font-size: 1.125rem; /* 18px */
+  }
+
+  .heading-3tier__title {
+    font-size: 2rem; /* 32px */
+  }
+
+  .heading-3tier__desc {
+    font-size: 1.25rem; /* 20px */
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .heading-3tier__sub-title {
+    font-size: 1rem; /* 16px */
+  }
+
+  .heading-3tier__title {
+    font-size: 1.75rem; /* 28px */
+  }
+
+  .heading-3tier__desc {
+    font-size: 1rem; /* 16px */
+  }
+}

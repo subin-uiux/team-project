@@ -60,6 +60,36 @@
   line-height: 150%;
 }
 
+@media (min-width: 48rem) and (max-width: 63.9375rem) {
+  .pillow-tech-hero__frame {
+    height: 25rem; /* 400px */
+  }
+
+  .pillow-tech-hero__title {
+    font-size: 3rem; /* 48px */
+    line-height: 100%;
+  }
+
+  .pillow-tech-hero__desc {
+    font-size: 1.25rem; /* 20px */
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .pillow-tech-hero__frame {
+    height: 25rem; /* 400px */
+  }
+
+  .pillow-tech-hero__title {
+    font-size: 1.875rem; /* 30px */
+    line-height: 100%;
+  }
+
+  .pillow-tech-hero__desc {
+    font-size: 1.125rem; /* 18px */
+  }
+}
+
 /* ========================================
    pillow-tech-sleep-position
    ======================================== */
@@ -288,7 +318,6 @@
   flex-direction: column;
   gap: 0;
   width: max-content;
-  max-width: 20rem;
   text-align: center;
   transform: translateX(-50%);
   line-height: 0;
@@ -329,6 +358,7 @@
 
 .pillow-tech-zones__callout-desc {
   font-weight: 400;
+  white-space: nowrap;
 }
 
 .pillow-tech-zones__char {

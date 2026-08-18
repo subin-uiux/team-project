@@ -60,6 +60,51 @@
   line-height: 150%;
 }
 
+@media (min-width: 48rem) and (max-width: 63.9375rem) {
+  .mattress-tech-hero__frame {
+    height: 25rem; /* 400px */
+  }
+
+  .mattress-tech-hero__title {
+    font-size: 3rem; /* 48px */
+    line-height: 100%;
+  }
+
+  .mattress-tech-hero__desc {
+    font-size: 1.25rem; /* 20px */
+  }
+
+
+/* ========================================
+   mattress-tech-overview
+   ======================================== */
+  .mattress-tech-overview__container{
+    height: 37.5rem; /* 600px */
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .mattress-tech-hero__frame {
+    height: 25rem; /* 400px */
+  }
+
+  .mattress-tech-hero__title {
+    font-size: 1.875rem; /* 30px */
+    line-height: 100%;
+  }
+
+  .mattress-tech-hero__desc {
+    font-size: 1.125rem; /* 18px */
+  }
+
+  /* ========================================
+   mattress-tech-overview
+   ======================================== */
+   .mattress-tech-overview__container{
+    height: 37.5rem; /* 600px */
+  }
+}
+
 /* ========================================
    mattress-tech-overview
    ======================================== */
@@ -99,12 +144,46 @@
   margin: 0.625rem 0 0; /* 10px */
   line-height: 130%;
   color: var(--color-brand-dark);
+  letter-spacing: 0em;
 }
 
 .mattress-tech-copy__desc {
   margin: 0.875rem 0 0; /* 14px */
   line-height: 130%;
   color: var(--color-brand-dark);
+}
+
+.mattress-tech-copy__char {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+@media (min-width: 48rem) and (max-width: 63.9375rem) {
+  .mattress-tech-copy__eng-title {
+    font-size: 1.125rem; /* 18px */
+  }
+
+  .mattress-tech-copy__title {
+    font-size: 2rem; /* 32px */
+  }
+
+  .mattress-tech-copy__desc {
+    font-size: 1.25rem; /* 20px */
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .mattress-tech-copy__eng-title {
+    font-size: 1rem; /* 16px */
+  }
+
+  .mattress-tech-copy__title {
+    font-size: 1.75rem; /* 28px */
+  }
+
+  .mattress-tech-copy__desc {
+    font-size: 1rem; /* 16px */
+  }
 }
 
 /* ========================================
@@ -126,7 +205,7 @@
 }
 
 .mattress-tech-research__slide:not(.is-active) {
-  transform: translateX(-100%);
+  transform: translateY(100%);
 }
 
 .mattress-tech-research__media {
@@ -192,6 +271,11 @@
   line-height: 150%;
 }
 
+.mattress-tech-research__char {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
 .mattress-tech-research__progress {
   position: absolute;
   left: 50%;
@@ -229,6 +313,143 @@
   font-size: var(--fs-body-05); /* 16px */
   line-height: 130%;
   color: var(--color-white);
+}
+
+.mattress-tech-research__nav,
+.mattress-tech-research__arrow,
+.mattress-tech-research__dots {
+  display: none;
+}
+
+@media (max-width: 63.9375rem) {
+  .mattress-tech-research__slide:not(.is-active) {
+    transform: translateX(100%);
+  }
+
+  .mattress-tech-research__overlay {
+    top: auto;
+    height: 50%;
+    background: linear-gradient(to top, #2d2d2d 0%, transparent 100%);
+    opacity: 1;
+  }
+
+  .mattress-tech-research__container {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0 0 9.125rem; /* 146px — pagination 6 + gap 60 + bottom 80 */
+  }
+
+  .mattress-tech-research__content {
+    align-items: center;
+    text-align: center;
+  }
+
+  .mattress-tech-research__desc {
+    margin-top: 0.625rem; /* 10px */
+  }
+
+  .mattress-tech-research__label {
+    margin-top: 1.25rem; /* 20px */
+  }
+
+  .mattress-tech-research__progress {
+    display: none;
+  }
+
+  .mattress-tech-research__nav {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .mattress-tech-research__arrow {
+    position: static;
+    z-index: 4;
+    display: block;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    transform: none;
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  .mattress-tech-research__arrow img {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .mattress-tech-research__dots {
+    position: absolute;
+    left: 50%;
+    bottom: 5rem; /* 80px */
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    gap: 0.9375rem; /* 15px */
+    transform: translateX(-50%);
+  }
+
+  .mattress-tech-research__dot {
+    width: 0.375rem; /* 6px */
+    height: 0.375rem; /* 6px */
+    padding: 0;
+    border: 0;
+    border-radius: 6.25rem;
+    background-color: var(--color-white);
+    cursor: pointer;
+  }
+
+  .mattress-tech-research__dot.is-active {
+    width: 1.25rem; /* 20px */
+    background-color: #737373;
+  }
+}
+
+@media (min-width: 48rem) and (max-width: 63.9375rem) {
+  .mattress-tech-research__subtitle {
+    font-size: 2.125rem; /* 34px */
+  }
+
+  .mattress-tech-research__desc {
+    font-size: 1.25rem; /* 20px */
+  }
+
+  .mattress-tech-research__label {
+    font-size: 1.25rem; /* 20px */
+  }
+
+  .mattress-tech-research__arrow {
+    width: 4.0625rem; /* 65px */
+    height: 4.0625rem; /* 65px */
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .mattress-tech-research__subtitle {
+    font-size: 1.75rem; /* 28px */
+  }
+
+  .mattress-tech-research__desc {
+    font-size: 1rem; /* 16px */
+  }
+
+  .mattress-tech-research__label {
+    font-size: 1rem; /* 16px */
+  }
+
+  .mattress-tech-research__arrow {
+    width: 2.5rem; /* 40px */
+    height: 2.5rem; /* 40px */
+  }
 }
 
 /* ========================================
@@ -278,5 +499,728 @@
   width: 72rem; /* 1152px */
   max-width: none;
   height: auto;
+}
+
+.mattress-tech-structure-overview__break {
+  display: none;
+}
+
+@media (min-width: 48rem) and (max-width: 63.9375rem) {
+  .mattress-tech-structure-overview__title {
+    font-size: 2rem; /* 32px */
+  }
+
+  .mattress-tech-structure-overview__emphasis {
+    font-size: 2rem; /* 32px */
+  }
+
+  .mattress-tech-structure-overview__image {
+    width: 41.5rem; /* 664px */
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .mattress-tech-structure-overview__title {
+    font-size: 1.75rem; /* 28px */
+  }
+
+  .mattress-tech-structure-overview__emphasis {
+    font-size: 1.75rem; /* 28px */
+  }
+
+  .mattress-tech-structure-overview__break {
+    display: block;
+  }
+
+  .mattress-tech-structure-overview__image {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* ========================================
+   mattress-tech-top-layer
+   ======================================== */
+
+.mattress-tech-top-layer {
+  width: 100%;
+  height: 100vh;
+  background-color: var(--color-white);
+}
+
+/* ========================================
+   mattress-tech-support-layers-overview
+   ======================================== */
+
+.mattress-tech-support-layers-overview {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background-color: var(--color-brand-dark);
+}
+
+.mattress-tech-support-layers-overview__stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.mattress-tech-support-layers-overview__phrase {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  color: var(--color-white);
+  font-family: var(--font-suit);
+  font-weight: 800;
+  font-size: 3.125rem; /* 50px */
+  line-height: 100%;
+  white-space: nowrap;
+}
+
+.mattress-tech-support-layers-overview__text {
+  flex-shrink: 0;
+}
+
+.mattress-tech-support-layers-overview__char {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+.mattress-tech-support-layers-overview__spacer {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  width: 0.75rem; /* 12px — 초기 단어 간격 */
+  overflow: hidden;
+}
+
+.mattress-tech-support-layers-overview__dot {
+  flex-shrink: 0;
+  width: 1.5625rem; /* 25px */
+  height: 1.5625rem; /* 25px */
+  margin-left: 0.875rem; /* 14px */
+  border-radius: 50%;
+  background-color: var(--color-white);
+  opacity: 0;
+}
+
+.mattress-tech-support-layers-overview__line {
+  flex: 1 1 auto;
+  height: 1px;
+  min-width: 0;
+  margin-right: 1.125rem; /* 18px — 우측 텍스트와의 간격 */
+  background-color: var(--color-white);
+  transform-origin: left center;
+  will-change: transform;
+}
+
+@media (max-width: 63.9375rem) {
+  .mattress-tech-support-layers-overview__stage {
+    padding-inline: var(--grid-margin);
+  }
+
+  .mattress-tech-support-layers-overview__phrase {
+    width: 100%;
+    max-width: var(--layout-max);
+  }
+
+  .mattress-tech-support-layers-overview__dot {
+    width: 0.9375rem; /* 15px */
+    height: 0.9375rem; /* 15px */
+  }
+}
+
+@media (min-width: 48rem) and (max-width: 63.9375rem) {
+  .mattress-tech-support-layers-overview__phrase {
+    font-size: 2rem; /* 32px */
+  }
+
+  .mattress-tech-support-layers-overview__dot {
+    margin-left: 1.25rem; /* 20px */
+  }
+
+  .mattress-tech-support-layers-overview__line {
+    margin-right: 1.25rem; /* 20px */
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .mattress-tech-support-layers-overview__phrase {
+    font-size: 1.75rem; /* 28px */
+  }
+
+  .mattress-tech-support-layers-overview__dot {
+    margin-left: 0.875rem; /* 14px */
+  }
+
+  .mattress-tech-support-layers-overview__line {
+    margin-right: 0.875rem; /* 14px */
+  }
+}
+
+/* ========================================
+   mattress-tech-support-layers
+   ======================================== */
+
+.mattress-tech-support-layers {
+  width: 100%;
+  height: 67.5rem; /* 1080px */
+  display: flex;
+  align-items: center;
+  background-color: var(--color-white);
+}
+
+.mattress-tech-support-layers__container {
+  display: flex;
+  flex-direction: column;
+  gap: 3.125rem; /* 50px */
+}
+
+.mattress-tech-support-layers__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2.5rem; /* 40px */
+}
+
+.mattress-tech-support-layers__heading {
+  width: auto;
+  flex: 1;
+  min-width: 0;
+}
+
+.mattress-tech-support-layers__tabs {
+  flex-shrink: 0;
+}
+
+.mattress-tech-support-layers__cards {
+  display: flex;
+  gap: 0;
+  width: 100%;
+}
+
+.mattress-tech-support-layers__card.card-material {
+  flex: 1;
+  width: auto;
+  min-width: 0;
+}
+
+.mattress-tech-support-layers__card .card-material__eng-title,
+.mattress-tech-support-layers__card .card-material__title,
+.mattress-tech-support-layers__card .card-material__text {
+  white-space: nowrap;
+}
+
+.mattress-tech-support-layers__nav,
+.mattress-tech-support-layers__arrow {
+  display: none;
+}
+
+@media (max-width: 63.9375rem) {
+  .mattress-tech-support-layers {
+    height: auto;
+    padding-block: 5rem; /* 80px */
+  }
+
+  .mattress-tech-support-layers__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .mattress-tech-support-layers__tabs.btn-tab-group {
+    flex-wrap: wrap;
+  }
+
+  .mattress-tech-support-layers__slider {
+    position: relative;
+    width: 100%;
+  }
+
+  .mattress-tech-support-layers__cards {
+    display: block;
+    position: relative;
+    width: 100%;
+  }
+
+  .mattress-tech-support-layers__card.card-material {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 560 / 633;
+    padding: 0;
+  }
+
+  .mattress-tech-support-layers__card:not(.is-active) {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .mattress-tech-support-layers__card .card-material__overlay {
+    opacity: 1;
+    background-color: transparent;
+    padding: 2.5rem 1.25rem; /* 40px 20px */
+  }
+
+  .mattress-tech-support-layers__card .card-material__overlay::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent, var(--color-brand-dark));
+    opacity: 0.7;
+    pointer-events: none;
+  }
+
+  .mattress-tech-support-layers__card .card-material__overlay > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .mattress-tech-support-layers__card.card-material:hover .card-material__media img,
+  .mattress-tech-support-layers__card.card-material:focus-within .card-material__media img {
+    transform: none;
+  }
+
+  .mattress-tech-support-layers__card .card-material__eng-title,
+  .mattress-tech-support-layers__card .card-material__title,
+  .mattress-tech-support-layers__card .card-material__text {
+    white-space: normal;
+  }
+
+  .mattress-tech-support-layers__nav {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: block;
+    pointer-events: none;
+  }
+
+  .mattress-tech-support-layers__arrow {
+    position: absolute;
+    top: 50%;
+    z-index: 2;
+    display: block;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    transform: translateY(-50%);
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  .mattress-tech-support-layers__arrow img {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .mattress-tech-support-layers__arrow--prev {
+    left: 1.25rem; /* 20px */
+  }
+
+  .mattress-tech-support-layers__arrow--next {
+    right: 1.25rem; /* 20px */
+  }
+}
+
+@media (min-width: 48rem) and (max-width: 63.9375rem) {
+  .mattress-tech-support-layers__container {
+    gap: 3.125rem; /* 50px — 탭 ↔ 카드 */
+  }
+
+  .mattress-tech-support-layers__header {
+    gap: 1.875rem; /* 30px — 3단 타이틀 ↔ 탭 */
+  }
+
+  .mattress-tech-support-layers__arrow {
+    width: 4.0625rem; /* 65px */
+    height: 4.0625rem; /* 65px */
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .mattress-tech-support-layers__container {
+    gap: 1.875rem; /* 30px — 탭 ↔ 카드 */
+  }
+
+  .mattress-tech-support-layers__header {
+    gap: 1.25rem; /* 20px — 3단 타이틀 ↔ 탭 */
+  }
+
+  .mattress-tech-support-layers__arrow {
+    width: 2.5rem; /* 40px */
+    height: 2.5rem; /* 40px */
+  }
+}
+
+/* ========================================
+   mattress-tech-pressure
+   ======================================== */
+
+.mattress-tech-pressure {
+  width: 100%;
+  height: 100vh;
+  background-color: var(--color-brand-light-2);
+}
+
+.mattress-tech-pressure__container {
+  position: relative;
+  height: 100%;
+}
+
+.mattress-tech-pressure__title {
+  position: absolute;
+  top: 7.5rem; /* 120px */
+  left: 0;
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: var(--fw-suit-bold); /* 600 */
+  font-size: var(--fs-title); /* 40px */
+  line-height: 130%;
+  color: var(--color-brand-dark);
+}
+
+.mattress-tech-pressure__char {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+.mattress-tech-pressure__panel {
+  position: absolute;
+  top: 7.5rem; /* 120px */
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1.875rem; /* 30px */
+}
+
+.mattress-tech-pressure__detail {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.mattress-tech-pressure__desc {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: 400;
+  font-size: var(--fs-body-03); /* 20px */
+  line-height: 100%;
+  color: var(--color-brand-dark);
+}
+
+.mattress-tech-pressure__line {
+  display: block;
+  width: 100%;
+  height: 1px;
+  margin-top: 0.625rem; /* 10px */
+  background-color: var(--color-brand-dark);
+  transform: scaleX(0);
+  transform-origin: left center;
+  will-change: transform;
+}
+
+@media (max-width: 63.9375rem) {
+  .mattress-tech-pressure__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .mattress-tech-pressure__title {
+    position: static;
+    width: 100%;
+  }
+
+  .mattress-tech-pressure__panel {
+    position: static;
+    align-items: center;
+  }
+
+  .mattress-tech-pressure__tabs.btn-tab-group {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .mattress-tech-pressure__detail {
+    align-items: center;
+  }
+
+  .mattress-tech-pressure__line {
+    height: 1px;
+    transform-origin: center;
+  }
+}
+
+@media (min-width: 48rem) and (max-width: 63.9375rem) {
+  .mattress-tech-pressure__container {
+    gap: 1.875rem; /* 30px — 제목 ↔ 탭 */
+  }
+
+  .mattress-tech-pressure__title {
+    font-size: 2rem; /* 32px */
+  }
+
+  .mattress-tech-pressure__panel {
+    gap: 1.25rem; /* 20px — 탭 ↔ 텍스트 */
+  }
+
+  .mattress-tech-pressure__desc {
+    font-size: 1.25rem; /* 20px */
+  }
+
+  .mattress-tech-pressure__line {
+    margin-top: 0.5rem; /* 8px */
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .mattress-tech-pressure__container {
+    gap: 1.25rem; /* 20px — 제목 ↔ 탭 */
+  }
+
+  .mattress-tech-pressure__title {
+    font-size: 1.75rem; /* 28px */
+  }
+
+  .mattress-tech-pressure__panel {
+    gap: 0.875rem; /* 14px — 탭 ↔ 텍스트 */
+  }
+
+  .mattress-tech-pressure__desc {
+    font-size: 1rem; /* 16px */
+  }
+
+  .mattress-tech-pressure__line {
+    margin-top: 0.375rem; /* 6px */
+  }
+}
+
+/* ========================================
+   mattress-tech-process
+   ======================================== */
+
+.mattress-tech-process {
+  width: 100%;
+  height: 67.5rem; /* 1080px */
+  display: flex;
+  align-items: center;
+  background-color: var(--color-white);
+}
+
+.mattress-tech-process__container {
+  display: flex;
+  flex-direction: column;
+  gap: 3.125rem; /* 50px */
+}
+
+.mattress-tech-process__heading {
+  align-items: center;
+  text-align: center;
+}
+
+.mattress-tech-process__items {
+  display: flex;
+  gap: 1.25rem; /* 20px */
+  width: 100%;
+}
+
+.mattress-tech-process__item {
+  flex: 1;
+  min-width: 0;
+}
+
+.mattress-tech-process__media {
+  width: 100%;
+  height: 27.6875rem; /* 443px */
+  overflow: hidden;
+  border-radius: 1.25rem; /* 20px */
+}
+
+.mattress-tech-process__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1);
+  transform-origin: center center;
+  transition: transform 0.4s ease;
+  will-change: clip-path, transform;
+}
+
+.mattress-tech-process__item:hover .mattress-tech-process__image {
+  transform: scale(1.05);
+}
+
+.mattress-tech-process__body {
+  margin-top: 1.25rem; /* 20px */
+}
+
+.mattress-tech-process__item-title {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: 600; /* Semibold */
+  font-size: var(--fs-body-03); /* 20px */
+  line-height: 130%;
+  color: var(--color-brand-dark);
+}
+
+.mattress-tech-process__item-desc {
+  margin: 0.75rem 0 0; /* 12px */
+  font-family: var(--font-suit);
+  font-weight: 400;
+  font-size: var(--fs-body-05); /* 16px */
+  line-height: 130%;
+  color: var(--color-brand-dark);
+}
+
+.mattress-tech-process__char {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+.mattress-tech-process__nav,
+.mattress-tech-process__arrow,
+.mattress-tech-process__dots {
+  display: none;
+}
+
+@media (max-width: 63.9375rem) {
+  .mattress-tech-process {
+    height: auto;
+    padding-block: 5rem; /* 80px */
+  }
+
+  .mattress-tech-process__item {
+    width: 100%;
+  }
+
+  .mattress-tech-process__body {
+    margin-top: 1.25rem; /* 20px — 카드 ↔ 제목 */
+  }
+
+  .mattress-tech-process__item-desc {
+    margin-top: 0.75rem; /* 12px — 제목 ↔ 본문 */
+  }
+}
+
+@media (min-width: 48rem) and (max-width: 63.9375rem) {
+  .mattress-tech-process__items {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem; /* 20px */
+  }
+
+  .mattress-tech-process__item-title {
+    font-size: 1.25rem; /* 20px */
+  }
+
+  .mattress-tech-process__item-desc {
+    font-size: 1.125rem; /* 18px */
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .mattress-tech-process__container {
+    gap: 2.5rem; /* 40px — 3단 타이틀 ↔ 카드 */
+  }
+
+  .mattress-tech-process__slider {
+    position: relative;
+    width: 100%;
+  }
+
+  .mattress-tech-process__items {
+    display: block;
+    position: relative;
+    width: 100%;
+  }
+
+  .mattress-tech-process__item:not(.is-active) {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .mattress-tech-process__item-title,
+  .mattress-tech-process__item-desc {
+    font-size: 1rem; /* 16px */
+  }
+
+  .mattress-tech-process__nav {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    display: block;
+    height: 27.6875rem; /* 이미지 영역 */
+    pointer-events: none;
+  }
+
+  .mattress-tech-process__arrow {
+    position: absolute;
+    top: 50%;
+    z-index: 2;
+    display: block;
+    width: 2.5rem; /* 40px */
+    height: 2.5rem; /* 40px */
+    padding: 0;
+    border: 0;
+    background: transparent;
+    transform: translateY(-50%);
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  .mattress-tech-process__arrow img {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .mattress-tech-process__arrow--prev {
+    left: 1.25rem; /* 20px */
+  }
+
+  .mattress-tech-process__arrow--next {
+    right: 1.25rem; /* 20px */
+  }
+
+  .mattress-tech-process__dots {
+    position: absolute;
+    left: 50%;
+    bottom: 1.25rem; /* 20px */
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 0.9375rem; /* 15px */
+    transform: translateX(-50%);
+    pointer-events: auto;
+  }
+
+  .mattress-tech-process__dot {
+    width: 0.375rem; /* 6px */
+    height: 0.375rem; /* 6px */
+    padding: 0;
+    border: 0;
+    border-radius: 6.25rem;
+    background-color: var(--color-white);
+    cursor: pointer;
+  }
+
+  .mattress-tech-process__dot.is-active {
+    width: 1.25rem; /* 20px */
+    background-color: #737373;
+  }
 }
 
