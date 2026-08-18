@@ -10,6 +10,7 @@
 
   <link rel="stylesheet" href="../../assets/css/reset.css">
   <link rel="stylesheet" href="../../assets/css/common.css">
+  <link rel="stylesheet" href="../../assets/css/components/buttons.css">
   <link rel="stylesheet" href="../../assets/css/header.css">
   <link rel="stylesheet" href="../../assets/css/footer.css">
   <link rel="stylesheet" href="../../assets/css/pages/sleep-fit-test/test.css">
@@ -126,8 +127,299 @@
   </header>
 
   <main>
-    <section class="sleep-fit-test">
-      <div class="container">
+    <section class="sleep-fit-test" aria-label="Sleep Fit Test">
+      <div class="sleep-fit-test__intro">
+        <div class="sleep-fit-test__media">
+          <img
+            class="sleep-fit-test__background"
+            src="../../assets/images/sleep-fit-test/sleep-fit-test_hero-bg.webp"
+            alt=""
+          />
+        </div>
+        <div class="container sleep-fit-test__container">
+          <div class="sleep-fit-test__content">
+            <div class="sleep-fit-test__heading">
+              <h1 class="sleep-fit-test__title">SLEEP FIT TEST</h1>
+              <p class="sleep-fit-test__desc">
+                당신의 수면을 분석해 가장 편안한 제품을 추천합니다.
+              </p>
+            </div>
+            <div class="sleep-fit-test__features">
+              <div class="sleep-fit-test__feature">
+                <img
+                  class="sleep-fit-test__icon"
+                  src="../../assets/images/sleep-fit-test/sleep-fit-test-clock.png"
+                  alt=""
+                />
+                <p class="sleep-fit-test__feature-text">약 1분 소요</p>
+              </div>
+              <span class="sleep-fit-test__divider" aria-hidden="true"></span>
+              <div class="sleep-fit-test__feature">
+                <img
+                  class="sleep-fit-test__icon"
+                  src="../../assets/images/sleep-fit-test/sleep-fit-test-step.png"
+                  alt=""
+                />
+                <p class="sleep-fit-test__feature-text">4단계 STEP</p>
+              </div>
+              <span class="sleep-fit-test__divider" aria-hidden="true"></span>
+              <div class="sleep-fit-test__feature">
+                <img
+                  class="sleep-fit-test__icon"
+                  src="../../assets/images/sleep-fit-test/sleep-fit-test-free.png"
+                  alt=""
+                />
+                <p class="sleep-fit-test__feature-text">무료 테스트</p>
+              </div>
+            </div>
+            <button type="button" class="btn btn-medium sleep-fit-test__button">
+              <span>TEST 시작하기</span>
+              <span class="btn-medium__arrow" aria-hidden="true">→</span>
+            </button>
+            <p class="sleep-fit-test__note">
+              * 약 1분 소요 · 응답 내용은 저장되지 않습니다.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="sleep-fit-test__questions" hidden>
+        <div class="container sleep-fit-test__questions-container">
+          <ol class="sleep-fit-test__progress" aria-label="테스트 진행 단계">
+            <li class="sleep-fit-test__step is-active" aria-current="step">01</li>
+            <li class="sleep-fit-test__step">02</li>
+            <li class="sleep-fit-test__step">03</li>
+            <li class="sleep-fit-test__step">04</li>
+          </ol>
+          <div class="sleep-fit-test__panel" data-step="0">
+            <div class="sleep-fit-test__body">
+              <div class="heading-3tier sleep-fit-test__question-heading">
+                <p class="heading-3tier__sub-title">STEP 01</p>
+                <h2 class="heading-3tier__title">당신의 체형을 선택해주세요.</h2>
+                <p class="heading-3tier__desc">체형에 따라 필요한 지지대가 달라집니다.</p>
+              </div>
+              <div class="sleep-fit-test__choices">
+                <button
+                  type="button"
+                  class="sleep-fit-test__choice"
+                  data-question="weight"
+                  data-value="under-60"
+                >
+                  <img
+                    class="sleep-fit-test__choice-image"
+                    src="../../assets/images/sleep-fit-test/sleep-fit-test_weight1.png"
+                    alt=""
+                  />
+                  <span class="sleep-fit-test__choice-label">60kg 미만</span>
+                </button>
+                <button
+                  type="button"
+                  class="sleep-fit-test__choice"
+                  data-question="weight"
+                  data-value="60-85"
+                >
+                  <img
+                    class="sleep-fit-test__choice-image"
+                    src="../../assets/images/sleep-fit-test/sleep-fit-test_weight2.png"
+                    alt=""
+                  />
+                  <span class="sleep-fit-test__choice-label">60kg 이상에서 85kg미만</span>
+                </button>
+                <button
+                  type="button"
+                  class="sleep-fit-test__choice"
+                  data-question="weight"
+                  data-value="85-plus"
+                >
+                  <img
+                    class="sleep-fit-test__choice-image"
+                    src="../../assets/images/sleep-fit-test/sleep-fit-test_weight3.png"
+                    alt=""
+                  />
+                  <span class="sleep-fit-test__choice-label">85kg 이상</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="sleep-fit-test__panel" data-step="1" hidden>
+            <div class="sleep-fit-test__body">
+              <div class="heading-3tier sleep-fit-test__question-heading">
+                <p class="heading-3tier__sub-title">STEP 02</p>
+                <h2 class="heading-3tier__title">평소 어떤 자세로 자는 편인가요?</h2>
+                <p class="heading-3tier__desc">
+                  수면 자세에 따라 압력 분산과<br />
+                  지지력이 달라집니다.
+                </p>
+              </div>
+              <div class="sleep-fit-test__choices">
+                <button
+                  type="button"
+                  class="sleep-fit-test__choice sleep-fit-test__choice--posture"
+                  data-question="posture"
+                  data-value="still"
+                >
+                  <img
+                    class="sleep-fit-test__choice-image"
+                    src="../../assets/images/sleep-fit-test/sleep-fit-test_pose1.png"
+                    alt=""
+                  />
+                  <span class="sleep-fit-test__choice-label">
+                    한 자세로 가만히<br />
+                    자는 편이에요
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  class="sleep-fit-test__choice sleep-fit-test__choice--posture"
+                  data-question="posture"
+                  data-value="side"
+                >
+                  <img
+                    class="sleep-fit-test__choice-image"
+                    src="../../assets/images/sleep-fit-test/sleep-fit-test_pose2.png"
+                    alt=""
+                  />
+                  <span class="sleep-fit-test__choice-label">옆으로 누워서 자요</span>
+                </button>
+                <button
+                  type="button"
+                  class="sleep-fit-test__choice sleep-fit-test__choice--posture"
+                  data-question="posture"
+                  data-value="prone"
+                >
+                  <img
+                    class="sleep-fit-test__choice-image"
+                    src="../../assets/images/sleep-fit-test/sleep-fit-test_pose3.png"
+                    alt=""
+                  />
+                  <span class="sleep-fit-test__choice-label">엎드려서 자요</span>
+                </button>
+                <button
+                  type="button"
+                  class="sleep-fit-test__choice sleep-fit-test__choice--posture"
+                  data-question="posture"
+                  data-value="change"
+                >
+                  <img
+                    class="sleep-fit-test__choice-image"
+                    src="../../assets/images/sleep-fit-test/sleep-fit-test_pose4.png"
+                    alt=""
+                  />
+                  <span class="sleep-fit-test__choice-label">자세를 자주 바꾸며 자요</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="sleep-fit-test__panel" data-step="2" hidden>
+            <div class="sleep-fit-test__body">
+              <div class="heading-3tier sleep-fit-test__question-heading">
+                <p class="heading-3tier__sub-title">STEP 03</p>
+                <h2 class="heading-3tier__title">수면 중 불편한 부위가 있나요?</h2>
+                <p class="heading-3tier__desc">
+                  불편한 부위를 파악하면 더 정확한<br />
+                  추천이 가능합니다.
+                </p>
+              </div>
+              <div class="sleep-fit-test__select">
+                <div class="sleep-fit-test__preview">
+                  <img
+                    class="sleep-fit-test__preview-image"
+                    src="../../assets/images/sleep-fit-test/sleep-fit-test_pain1.png"
+                    alt=""
+                  />
+                </div>
+                <div class="sleep-fit-test__choices sleep-fit-test__choices--discomfort">
+                  <button
+                    type="button"
+                    class="sleep-fit-test__choice sleep-fit-test__choice--discomfort"
+                    data-question="discomfort"
+                    data-value="neck"
+                    data-image="../../assets/images/sleep-fit-test/sleep-fit-test_pain1.png"
+                  >
+                    <span class="sleep-fit-test__choice-label">목</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="sleep-fit-test__choice sleep-fit-test__choice--discomfort"
+                    data-question="discomfort"
+                    data-value="shoulder"
+                    data-image="../../assets/images/sleep-fit-test/sleep-fit-test_pain2.png"
+                  >
+                    <span class="sleep-fit-test__choice-label">어깨</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="sleep-fit-test__choice sleep-fit-test__choice--discomfort"
+                    data-question="discomfort"
+                    data-value="waist"
+                    data-image="../../assets/images/sleep-fit-test/sleep-fit-test_pain3.png"
+                  >
+                    <span class="sleep-fit-test__choice-label">허리, 골반</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="sleep-fit-test__choice sleep-fit-test__choice--discomfort"
+                    data-question="discomfort"
+                    data-value="none"
+                    data-image="../../assets/images/sleep-fit-test/sleep-fit-test_pain4.png"
+                  >
+                    <span class="sleep-fit-test__choice-label">특별히 불편한 부위는 없어요</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sleep-fit-test__panel" data-step="3" hidden>
+            <div class="sleep-fit-test__body">
+              <div class="heading-3tier sleep-fit-test__question-heading">
+                <p class="heading-3tier__sub-title">STEP 04</p>
+                <h2 class="heading-3tier__title">수면에서 가장 중요한 요소는 무엇인가요?</h2>
+                <p class="heading-3tier__desc">우선 순위에 따라 제품 추천 기준이 달라집니다.</p>
+              </div>
+              <div class="sleep-fit-test__choices sleep-fit-test__choices--preference">
+                <button
+                  type="button"
+                  class="sleep-fit-test__choice sleep-fit-test__choice--preference"
+                  data-question="preference"
+                  data-value="soft"
+                >
+                  <span class="sleep-fit-test__choice-label">체압분산 (몸의 부담감 감소)</span>
+                </button>
+                <button
+                  type="button"
+                  class="sleep-fit-test__choice sleep-fit-test__choice--preference"
+                  data-question="preference"
+                  data-value="balance"
+                >
+                  <span class="sleep-fit-test__choice-label">편안한 움직임과 균형 (부드러운 느낌)</span>
+                </button>
+                <button
+                  type="button"
+                  class="sleep-fit-test__choice sleep-fit-test__choice--preference"
+                  data-question="preference"
+                  data-value="firm"
+                >
+                  <span class="sleep-fit-test__choice-label">탄탄한 중심 지지 (허리 지지)</span>
+                </button>
+                <button
+                  type="button"
+                  class="sleep-fit-test__choice sleep-fit-test__choice--preference"
+                  data-question="preference"
+                  data-value="heat"
+                >
+                  <span class="sleep-fit-test__choice-label">온도 조절 (온열, 부위별 따뜻함)</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="sleep-fit-test__actions">
+            <button type="button" class="btn btn-small sleep-fit-test__prev" hidden>
+              이전
+            </button>
+            <button type="button" class="btn btn-small-next sleep-fit-test__next" disabled>
+              다음
+            </button>
+          </div>
+        </div>
       </div>
     </section>
     <section class="sleep-fit-result">
@@ -173,6 +465,7 @@
   </footer>
 
   <script src="../../assets/js/common.js"></script>
+  <script src="../../assets/js/pages/sleep-fit-test.js"></script>
 </body>
 
 </html>
