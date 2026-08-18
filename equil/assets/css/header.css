@@ -227,7 +227,60 @@
   display: none;
 }
 
-@media (max-width: 63.9375rem) {
+/* ---------- Tablet: 768–1023px — 햄버거 없이 nav 유지 ---------- */
+@media (min-width: 48rem) and (max-width: 63.9375rem) {
+  .site-header__bar {
+    padding: 0 1.25rem; /* 20px */
+  }
+
+  .site-header__nav {
+    gap: 1.25rem; /* 20px */
+  }
+
+  .site-header__link {
+    font-size: 0.9375rem; /* 15px */
+  }
+
+  .site-header__actions {
+    display: none;
+  }
+
+  .site-header__mega-panel {
+    padding: 2.5rem 1.25rem; /* 40px 20px — bar와 좌우 맞춤 */
+  }
+
+  .site-header__col:not(:first-child) {
+    padding-left: 1.25rem; /* 20px */
+  }
+
+  .site-header__col:not(:last-child) {
+    padding-right: 1.25rem; /* 20px */
+  }
+
+  .site-header__col-title,
+  .site-header__mega .site-header__sublink {
+    font-size: 0.9375rem; /* 15px */
+  }
+
+  /* btn-large tablet · 화살표 없음 */
+  .site-header__cta {
+    padding: 0.625rem; /* 10px */
+    border-radius: 3.125rem;
+    font-family: var(--font-paperlogy);
+    font-weight: 700;
+    font-size: 0.875rem; /* 14px */
+    letter-spacing: 0.1em;
+  }
+
+  .site-header__cta:hover,
+  .site-header__cta:active {
+    background-color: var(--color-brand-light-1);
+    color: var(--color-brand-dark);
+  }
+}
+
+/* ---------- Mobile: 320–767px — 햄버거 메뉴 ---------- */
+@media (max-width: 47.9375rem) {
   .site-header__bar {
     padding: 0 1.25rem; /* 20px */
   }
@@ -245,6 +298,21 @@
   .site-header:has(.site-header__mega:hover) .site-header__mega,
   .site-header:has(.site-header__nav:focus-within) .site-header__mega {
     grid-template-rows: 0fr;
+  }
+
+  .site-header__cta {
+    padding: 0.625rem; /* 10px — btn-large mobile */
+    border-radius: 3.125rem;
+    font-family: var(--font-paperlogy);
+    font-weight: 700;
+    font-size: 0.875rem; /* 14px */
+    letter-spacing: 0.1em;
+  }
+
+  .site-header__cta:hover,
+  .site-header__cta:active {
+    background-color: var(--color-brand-light-1);
+    color: var(--color-brand-dark);
   }
 
   .site-header__dim {
@@ -278,7 +346,8 @@
     top: 5rem; /* below header bar */
     right: 0;
     z-index: 1002;
-    width: 24rem; /* 384px */
+    width: 100%;
+    max-width: 24rem; /* 384px */
     height: 36.875rem; /* 590px */
     padding: 1.25rem; /* 20px */
     background-color: var(--color-brand-light-1);
@@ -377,8 +446,8 @@
   }
 }
 
-/* ---------- Mega menu dim (PC) ---------- */
-@media (min-width: 64rem) {
+/* ---------- Mega menu dim (PC / Tablet) ---------- */
+@media (min-width: 48rem) {
   .site-header__dim {
     display: block;
     position: fixed;

@@ -104,6 +104,8 @@
       if (heading.classList.contains('sleep-fit-test__question-heading')) return;
       if (heading.classList.contains('sleep-fit-result__heading')) return;
       if (heading.classList.contains('sleep-fit-structure__heading')) return;
+      /* 메인 핀 스크롤 이후에 main.js에서 따로 실행 */
+      if (heading.classList.contains('main-bedding-overview__heading')) return;
 
       const targets = [
         heading.querySelector('.heading-3tier__sub-title'),
@@ -260,7 +262,7 @@
 
   const mega = header.querySelector('.site-header__mega');
   const nav = header.querySelector('.site-header__nav');
-  const megaMq = window.matchMedia('(min-width: 64rem)');
+  const megaMq = window.matchMedia('(min-width: 48rem)');
 
   const setMegaOpen = (isOpen) => {
     document.body.classList.toggle('is-mega-open', isOpen);

@@ -46,20 +46,18 @@
   --grid-gutter: 1.25rem; /* 20px */
   --grid-margin: 1.25rem; /* 20px */
 
-  /* Typography — Mobile (320–767) TBD
-     확정 전까지 임시로 PC 스케일을 사용합니다.
-     모바일 값이 정해지면 아래를 교체하고, PC 값은 min-width: 64rem 블록으로 옮깁니다. */
-  --fs-extra-large: 4rem; /* 64px */
-  --fs-hero-title: 3.125rem; /* 50px */
-  --fs-title: 2.5rem; /* 40px */
-  --fs-subtitle-lg: 2.25rem; /* 36px */
-  --fs-subtitle-md: 1.75rem; /* 28px */
-  --fs-body-01: 1.5rem; /* 24px */
-  --fs-body-02: 1.375rem; /* 22px */
-  --fs-body-03: 1.25rem; /* 20px */
-  --fs-body-04: 1.125rem; /* 18px */
-  --fs-body-05: 1rem; /* 16px */
-  --fs-footer: 1rem; /* 16px */
+  /* Typography — Mobile (320–767) */
+  --fs-extra-large: 2rem; /* 32px */
+  --fs-hero-title: 1.875rem; /* 30px */
+  --fs-title: 1.75rem; /* 28px */
+  --fs-subtitle-lg: 1.5rem; /* 24px */
+  --fs-subtitle-md: 1.25rem; /* 20px */
+  --fs-body-01: 1.25rem; /* 20px */
+  --fs-body-02: 1.125rem; /* 18px */
+  --fs-body-03: 1rem; /* 16px */
+  --fs-body-04: 0.875rem; /* 14px */
+  --fs-body-05: 0.875rem; /* 14px */
+  --fs-footer: 0.875rem; /* 14px */
 }
 
 /* Tablet: 768–1023px */
@@ -69,19 +67,18 @@
     --grid-gutter: 1.25rem;
     --grid-margin: 1.25rem;
 
-    /* Typography — Tablet (768–1023) TBD
-    --fs-extra-large: ;
-    --fs-hero-title: ;
-    --fs-title: ;
-    --fs-subtitle-lg: ;
-    --fs-subtitle-md: ;
-    --fs-body-01: ;
-    --fs-body-02: ;
-    --fs-body-03: ;
-    --fs-body-04: ;
-    --fs-body-05: ;
-    --fs-footer: ;
-    */
+    /* Typography — Tablet (768–1023) */
+    --fs-extra-large: 3.625rem; /* 58px */
+    --fs-hero-title: 3rem; /* 48px */
+    --fs-title: 2rem; /* 32px */
+    --fs-subtitle-lg: 1.75rem; /* 28px */
+    --fs-subtitle-md: 1.625rem; /* 26px */
+    --fs-body-01: 1.375rem; /* 22px */
+    --fs-body-02: 1.25rem; /* 20px */
+    --fs-body-03: 1.125rem; /* 18px */
+    --fs-body-04: 1rem; /* 16px */
+    --fs-body-05: 0.875rem; /* 14px */
+    --fs-footer: 0.875rem; /* 14px */
   }
 }
 
@@ -289,6 +286,13 @@ a {
   font-family: var(--font-suit);
   font-weight: 400;
   font-size: var(--fs-footer);
+}
+
+/* Title01 — Tab/Mo: Paperlogy Bold (PC는 Semibold 600) */
+@media (max-width: 63.9375rem) {
+  .text-title-01 {
+    font-weight: 700;
+  }
 }
 
 /* ========================================

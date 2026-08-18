@@ -12,25 +12,28 @@
 
     const problemCount = items.length;
     const FEATHER = 2.5;
-    const SLIDE_DURATION = 0.9;
+    const SLIDE_DURATION = 0.9; /* hero → problem 패널 전환 속도 */
     const HERO_FILL_DURATION = 2.0; /* hero 글자 채움·되돌림 */
     const SLIDE_EASE = 'power2.inOut';
     const TEXT_ANIM = {
-      duration: 1.5,
+      duration: 1.5, /* problem 번호·제목·본문 텍스트 전환 속도 */
       ease: 'power3.out',
       fadeDownY: -40,
       fadeUpY: 40,
     };
+    const compactMq = window.matchMedia('(max-width: 63.9375rem)');
+    const isCompact = () => compactMq.matches;
+    const heroStepCount = () => (isCompact() ? 1 : 2);
 
-    /* step 0: hero 시작 → step 1: hero 채움 완료 → step 2~: problem 01~04 */
-    const STEPS = [
-      { fill: 0, track: 0 },
-      { fill: 1, track: 0 },
-      ...Array.from({ length: problemCount }, (_, index) => ({
-        fill: 1,
-        track: index + 1,
-      })),
-    ];
+    /* PC: step 0 hero 시작 → step 1 채움 완료 → step 2~ problem
+       Tab/Mo: 로드 시 자동 채움, step 0은 채워진 hero → step 1~ problem */
+    const problemSteps = Array.from({ length: problemCount }, (_, index) => ({
+      fill: 1,
+      track: index + 1,
+    }));
+    const STEPS = isCompact()
+      ? [{ fill: 1, track: 0 }, ...problemSteps]
+      : [{ fill: 0, track: 0 }, { fill: 1, track: 0 }, ...problemSteps];
 
     const animState = { fill: 0, track: 0 };
     let currentStep = 0;
@@ -207,7 +210,8 @@
 
     const getStepDuration = (fromStep, toStep) => {
       const isHeroFill =
-        (fromStep === 0 && toStep === 1) || (fromStep === 1 && toStep === 0);
+        !isCompact() &&
+        ((fromStep === 0 && toStep === 1) || (fromStep === 1 && toStep === 0));
       return isHeroFill ? HERO_FILL_DURATION : SLIDE_DURATION;
     };
 
@@ -333,6 +337,27 @@
 
     resetAllProblemText();
     applyStep(0, { immediate: true });
+    if (isCompact()) setFillProgress(0);
+
+    const playHeroFillOnLoad = () => {
+      if (!fill || !isCompact()) return;
+
+      setFillProgress(0);
+      gsap.to(
+        { progress: 0 },
+        {
+          progress: 1,
+          duration: HERO_FILL_DURATION,
+          ease: 'power2.out',
+          onUpdate() {
+            setFillProgress(this.targets()[0].progress);
+          },
+          onComplete() {
+            setFillProgress(1);
+          },
+        },
+      );
+    };
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       if (fill) {
@@ -374,14 +399,15 @@
     });
 
     bindWheelNavigation();
+    playHeroFillOnLoad();
 
     navItems.forEach((btn) => {
       btn.addEventListener('click', () => {
         const problemIndex = Number(btn.dataset.index);
         if (Number.isNaN(problemIndex)) return;
 
-        /* hero 2스텝 + problem index */
-        goToStep(problemIndex + 2);
+        /* hero 스텝 + problem index */
+        goToStep(problemIndex + heroStepCount());
       });
     });
   };
@@ -398,14 +424,17 @@
     }
 
     const LAST_INDEX = panels.length - 1;
-    const SLIDE_DURATION = 0.9;
+    const SLIDE_DURATION = 0.9; /* 매트리스 이미지 슬라이드 전환 속도 */
     const SLIDE_EASE = 'power2.inOut';
-    const FADE_UP_DURATION = 1.26;
+    const FADE_UP_DURATION = 3; /* heading·features fadeUp 속도 */
     const FADE_UP_EASE = 'power3.out';
     const FADE_UP_Y = 40;
-    const FEATURES_DELAY = 0.3;
+    const FEATURES_DELAY = 0.2; /* heading 이후 features가 따라오는 지연 */
     const ENTRY_LOCK_MS = 800;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const compactMq = window.matchMedia('(max-width: 63.9375rem)');
+    const isCompact = () => compactMq.matches;
+    const navItems = gsap.utils.toArray('.main-mattress-solution__nav-item', section);
 
     let currentIndex = -1;
     let isAnimating = false;
@@ -450,6 +479,7 @@
       currentIndex = index;
       nextPanel.classList.add('is-active');
       nextPanel.setAttribute('aria-hidden', 'false');
+      setActiveNav(index);
 
       const { heading, features } = getPanelParts(nextPanel);
       const targets = [heading, features].filter(Boolean);
@@ -468,6 +498,7 @@
       });
 
       if (heading) {
+        /* main-mattress-solution__heading fadeUp */
         textTween.to(
           heading,
           {
@@ -481,6 +512,7 @@
       }
 
       if (features) {
+        /* main-mattress-solution__features fadeUp */
         textTween.to(
           features,
           {
@@ -494,15 +526,27 @@
       }
     };
 
+    const setActiveNav = (index) => {
+      navItems.forEach((btn, navIndex) => {
+        btn.classList.toggle('is-active', navIndex === index);
+      });
+    };
+
+    const percentKey = () => (isCompact() ? 'xPercent' : 'yPercent');
+
     const getThumbY = (index) => {
       const unit = media.offsetHeight / 3;
       return index * unit;
     };
 
     const setImagesImmediate = (index) => {
+      const key = percentKey();
+      const other = key === 'xPercent' ? 'yPercent' : 'xPercent';
+
       images.forEach((image, imageIndex) => {
         gsap.set(image, {
-          yPercent: imageIndex === index ? 0 : imageIndex < index ? -100 : 100,
+          [other]: 0,
+          [key]: imageIndex === index ? 0 : imageIndex < index ? -100 : 100,
         });
       });
     };
@@ -517,16 +561,27 @@
       return scrollTrigger.start + (scrollTrigger.end - scrollTrigger.start) * progress;
     };
 
+    const wrapIndex = (index) => {
+      const count = LAST_INDEX + 1;
+      return ((index % count) + count) % count;
+    };
+
+    const isWrapForward = (fromIndex, toIndex) => {
+      if (fromIndex === LAST_INDEX && toIndex === 0) return true;
+      if (fromIndex === 0 && toIndex === LAST_INDEX) return false;
+      return toIndex > fromIndex;
+    };
+
     const applyIndex = (index, { animateText = false } = {}) => {
       const safeIndex = Math.max(0, Math.min(LAST_INDEX, index));
       setImagesImmediate(safeIndex);
-      setThumbImmediate(safeIndex);
+      if (!isCompact()) setThumbImmediate(safeIndex);
       activatePanel(safeIndex, { animate: animateText });
     };
 
     const goTo = (index, { immediate = false } = {}) => {
-      const safeIndex = Math.max(0, Math.min(LAST_INDEX, index));
       const fromIndex = Math.max(0, currentIndex);
+      const safeIndex = isCompact() ? wrapIndex(index) : Math.max(0, Math.min(LAST_INDEX, index));
 
       if (!immediate && (isAnimating || safeIndex === fromIndex && currentIndex !== -1)) {
         return false;
@@ -540,18 +595,19 @@
       if (immediate || reduceMotion) {
         isAnimating = false;
         applyIndex(safeIndex, { animateText: false });
-        window.scrollTo(0, getScrollYForIndex(safeIndex));
+        if (!isCompact()) window.scrollTo(0, getScrollYForIndex(safeIndex));
         return true;
       }
 
-      const isForward = safeIndex > fromIndex;
+      const isForward = isCompact() ? isWrapForward(fromIndex, safeIndex) : safeIndex > fromIndex;
       const currentImage = images[fromIndex];
       const nextImage = images[safeIndex];
       const startY = window.scrollY;
       const targetY = getScrollYForIndex(safeIndex);
+      const key = percentKey();
 
       isAnimating = true;
-      gsap.set(nextImage, { yPercent: isForward ? 100 : -100 });
+      gsap.set(nextImage, { [key]: isForward ? 100 : -100 });
       activatePanel(safeIndex, { animate: true });
 
       slideTween = gsap.timeline({
@@ -559,8 +615,10 @@
           isAnimating = false;
           slideTween = null;
           setImagesImmediate(safeIndex);
-          setThumbImmediate(safeIndex);
-          window.scrollTo(0, targetY);
+          if (!isCompact()) {
+            setThumbImmediate(safeIndex);
+            window.scrollTo(0, targetY);
+          }
         },
       });
 
@@ -568,7 +626,7 @@
         .to(
           currentImage,
           {
-            yPercent: isForward ? -100 : 100,
+            [key]: isForward ? -100 : 100,
             duration: SLIDE_DURATION,
             ease: SLIDE_EASE,
           },
@@ -577,51 +635,58 @@
         .to(
           nextImage,
           {
-            yPercent: 0,
+            [key]: 0,
             duration: SLIDE_DURATION,
             ease: SLIDE_EASE,
-          },
-          0,
-        )
-        .to(
-          thumb,
-          {
-            y: getThumbY(safeIndex),
-            duration: SLIDE_DURATION,
-            ease: SLIDE_EASE,
-          },
-          0,
-        )
-        .to(
-          { progress: 0 },
-          {
-            progress: 1,
-            duration: SLIDE_DURATION,
-            ease: SLIDE_EASE,
-            onUpdate() {
-              const t = this.targets()[0].progress;
-              window.scrollTo(0, startY + (targetY - startY) * t);
-            },
           },
           0,
         );
+
+      if (!isCompact()) {
+        slideTween
+          .to(
+            thumb,
+            {
+              y: getThumbY(safeIndex),
+              duration: SLIDE_DURATION,
+              ease: SLIDE_EASE,
+            },
+            0,
+          )
+          .to(
+            { progress: 0 },
+            {
+              progress: 1,
+              duration: SLIDE_DURATION,
+              ease: SLIDE_EASE,
+              onUpdate() {
+                const t = this.targets()[0].progress;
+                window.scrollTo(0, startY + (targetY - startY) * t);
+              },
+            },
+            0,
+          );
+      }
 
       return true;
     };
 
     const handleStepInput = (direction) => {
-      if (!scrollTrigger?.isActive || isAnimating) return false;
-      if (Date.now() < entryLockUntil) return true;
+      if (isAnimating) return false;
+      if (!isCompact()) {
+        if (!scrollTrigger?.isActive) return false;
+        if (Date.now() < entryLockUntil) return true;
+      }
 
       if (direction > 0) {
-        if (currentIndex >= LAST_INDEX) return false;
+        if (!isCompact() && currentIndex >= LAST_INDEX) return false;
         goTo(Math.max(0, currentIndex) + 1);
         return true;
       }
 
       if (direction < 0) {
-        if (currentIndex <= 0) return false;
-        goTo(currentIndex - 1);
+        if (!isCompact() && currentIndex <= 0) return false;
+        goTo(Math.max(0, currentIndex) - 1);
         return true;
       }
 
@@ -673,9 +738,36 @@
       );
     };
 
+    const bindCompactSwipe = () => {
+      let touchStartX = 0;
+
+      media.addEventListener(
+        'touchstart',
+        (event) => {
+          touchStartX = event.changedTouches[0]?.clientX ?? 0;
+        },
+        { passive: true },
+      );
+
+      media.addEventListener(
+        'touchend',
+        (event) => {
+          if (isAnimating) return;
+
+          const touchEndX = event.changedTouches[0]?.clientX ?? 0;
+          const deltaX = touchStartX - touchEndX;
+          if (Math.abs(deltaX) < 40) return;
+
+          handleStepInput(deltaX > 0 ? 1 : -1);
+        },
+        { passive: true },
+      );
+    };
+
     panels.forEach(hidePanel);
     setImagesImmediate(0);
-    setThumbImmediate(0);
+    setActiveNav(0);
+    if (!isCompact()) setThumbImmediate(0);
 
     if (reduceMotion) {
       showPanelImmediate(panels[0]);
@@ -691,6 +783,19 @@
         activatePanel(0, { animate: true });
       },
     });
+
+    navItems.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const index = Number(btn.dataset.index);
+        if (Number.isNaN(index)) return;
+        goTo(index);
+      });
+    });
+
+    if (isCompact()) {
+      bindCompactSwipe();
+      return;
+    }
 
     scrollTrigger = ScrollTrigger.create({
       trigger: section,
@@ -721,6 +826,464 @@
     bindWheelNavigation();
   };
 
+  const initMainPillowSolution = () => {
+    const section = document.querySelector('.main-pillow-solution');
+    const cardsWrap = section?.querySelector('.main-pillow-solution__cards');
+    const cards = gsap.utils.toArray('.main-pillow-solution__card', section);
+    const navItems = gsap.utils.toArray('.main-pillow-solution__nav-item', section);
+    const compactMq = window.matchMedia('(max-width: 63.9375rem)');
+    if (!section || !cardsWrap || cards.length < 2 || !compactMq.matches) return;
+
+    const LAST_INDEX = cards.length - 1;
+    const SLIDE_DURATION = 0.9;
+    const SLIDE_EASE = 'power2.inOut';
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let currentIndex = 0;
+    let isAnimating = false;
+    let slideTween = null;
+
+    const setActiveNav = (index) => {
+      navItems.forEach((btn, navIndex) => {
+        btn.classList.toggle('is-active', navIndex === index);
+      });
+    };
+
+    const setActiveCard = (index) => {
+      cards.forEach((card, cardIndex) => {
+        card.classList.toggle('is-active', cardIndex === index);
+      });
+    };
+
+    const setCardsImmediate = (index) => {
+      cards.forEach((card, cardIndex) => {
+        gsap.set(card, {
+          xPercent: cardIndex === index ? 0 : cardIndex < index ? -100 : 100,
+        });
+      });
+    };
+
+    const wrapIndex = (index) => {
+      const count = LAST_INDEX + 1;
+      return ((index % count) + count) % count;
+    };
+
+    const isWrapForward = (fromIndex, toIndex) => {
+      if (fromIndex === LAST_INDEX && toIndex === 0) return true;
+      if (fromIndex === 0 && toIndex === LAST_INDEX) return false;
+      return toIndex > fromIndex;
+    };
+
+    const goTo = (index) => {
+      const safeIndex = wrapIndex(index);
+      if (isAnimating || safeIndex === currentIndex) return false;
+
+      if (slideTween) {
+        slideTween.kill();
+        slideTween = null;
+      }
+
+      if (reduceMotion) {
+        currentIndex = safeIndex;
+        setCardsImmediate(safeIndex);
+        setActiveNav(safeIndex);
+        setActiveCard(safeIndex);
+        return true;
+      }
+
+      const isForward = isWrapForward(currentIndex, safeIndex);
+      const currentCard = cards[currentIndex];
+      const nextCard = cards[safeIndex];
+
+      isAnimating = true;
+      gsap.set(nextCard, { xPercent: isForward ? 100 : -100 });
+      setActiveNav(safeIndex);
+      setActiveCard(safeIndex);
+
+      slideTween = gsap.timeline({
+        onComplete: () => {
+          isAnimating = false;
+          slideTween = null;
+          currentIndex = safeIndex;
+          setCardsImmediate(safeIndex);
+        },
+      });
+
+      slideTween
+        .to(
+          currentCard,
+          {
+            xPercent: isForward ? -100 : 100,
+            duration: SLIDE_DURATION,
+            ease: SLIDE_EASE,
+          },
+          0,
+        )
+        .to(
+          nextCard,
+          {
+            xPercent: 0,
+            duration: SLIDE_DURATION,
+            ease: SLIDE_EASE,
+          },
+          0,
+        );
+
+      return true;
+    };
+
+    setCardsImmediate(0);
+    setActiveNav(0);
+    setActiveCard(0);
+
+    navItems.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const index = Number(btn.dataset.index);
+        if (Number.isNaN(index)) return;
+        goTo(index);
+      });
+    });
+
+    let touchStartX = 0;
+
+    cardsWrap.addEventListener(
+      'touchstart',
+      (event) => {
+        touchStartX = event.changedTouches[0]?.clientX ?? 0;
+      },
+      { passive: true },
+    );
+
+    cardsWrap.addEventListener(
+      'touchend',
+      (event) => {
+        if (isAnimating) return;
+
+        const touchEndX = event.changedTouches[0]?.clientX ?? 0;
+        const deltaX = touchStartX - touchEndX;
+        if (Math.abs(deltaX) < 40) return;
+
+        if (deltaX > 0) goTo(currentIndex + 1);
+        if (deltaX < 0) goTo(currentIndex - 1);
+      },
+      { passive: true },
+    );
+  };
+
+  const initMainBeddingSolution = () => {
+    const section = document.querySelector('.main-bedding-solution');
+    const viewport = section?.querySelector('.main-bedding-solution__viewport');
+    const panels = gsap.utils.toArray('.main-bedding-solution__panel', section);
+    const navItems = gsap.utils.toArray('.main-bedding-solution__nav-item', section);
+    const compactMq = window.matchMedia('(max-width: 63.9375rem)');
+    if (!section || !viewport || panels.length < 2 || !compactMq.matches) return;
+
+    const LAST_INDEX = panels.length - 1;
+    const SLIDE_DURATION = 0.9;
+    const SLIDE_EASE = 'power2.inOut';
+    const FADE_UP_DURATION = 1.26;
+    const FADE_UP_Y = 40;
+    const charClass = 'main-bedding-solution__char';
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let currentIndex = 0;
+    let isAnimating = false;
+    let slideTween = null;
+    let fadeTween = null;
+
+    const splitChars = (element) => {
+      const walk = (node) => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const chars = Array.from(node.textContent);
+          const fragment = document.createDocumentFragment();
+
+          chars.forEach((char) => {
+            if (/^\s$/.test(char)) {
+              fragment.appendChild(document.createTextNode(char));
+              return;
+            }
+
+            const span = document.createElement('span');
+            span.className = charClass;
+            span.textContent = char;
+            fragment.appendChild(span);
+          });
+
+          node.parentNode.replaceChild(fragment, node);
+          return;
+        }
+
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          if (node.tagName === 'BR') return;
+          Array.from(node.childNodes).forEach(walk);
+        }
+      };
+
+      Array.from(element.childNodes).forEach(walk);
+      return Array.from(element.querySelectorAll(`.${charClass}`));
+    };
+
+    const panelChars = panels.map((panel) => {
+      const copy = panel.querySelector('.main-bedding-solution__copy');
+      const targets = [
+        copy?.querySelector('.main-bedding-solution__title'),
+        copy?.querySelector('.main-bedding-solution__text'),
+      ].filter(Boolean);
+
+      return targets.flatMap((element) => splitChars(element));
+    });
+
+    const setActiveNav = (index) => {
+      navItems.forEach((btn, navIndex) => {
+        btn.classList.toggle('is-active', navIndex === index);
+      });
+    };
+
+    const setActivePanel = (index) => {
+      panels.forEach((panel, panelIndex) => {
+        panel.classList.toggle('is-active', panelIndex === index);
+      });
+    };
+
+    const setPanelsImmediate = (index) => {
+      panels.forEach((panel, panelIndex) => {
+        gsap.set(panel, {
+          xPercent: panelIndex === index ? 0 : panelIndex < index ? -100 : 100,
+        });
+      });
+    };
+
+    const playCopyFadeUp = (index) => {
+      if (fadeTween) {
+        fadeTween.kill();
+        fadeTween = null;
+      }
+
+      panelChars.forEach((chars, panelIndex) => {
+        if (!chars.length) return;
+
+        if (panelIndex !== index) {
+          gsap.set(chars, { opacity: 0, y: FADE_UP_Y });
+          return;
+        }
+
+        if (reduceMotion) {
+          gsap.set(chars, { opacity: 1, y: 0 });
+          return;
+        }
+
+        const stagger = FADE_UP_DURATION / Math.max(chars.length * 2.5, 1);
+
+        gsap.set(chars, { opacity: 0, y: FADE_UP_Y });
+        fadeTween = gsap.to(chars, {
+          opacity: 1,
+          y: 0,
+          duration: FADE_UP_DURATION,
+          ease: 'power3.out',
+          stagger: chars.length > 1 ? stagger : 0,
+        });
+      });
+    };
+
+    const wrapIndex = (index) => {
+      const count = LAST_INDEX + 1;
+      return ((index % count) + count) % count;
+    };
+
+    const isWrapForward = (fromIndex, toIndex) => {
+      if (fromIndex === LAST_INDEX && toIndex === 0) return true;
+      if (fromIndex === 0 && toIndex === LAST_INDEX) return false;
+      return toIndex > fromIndex;
+    };
+
+    const goTo = (index) => {
+      const safeIndex = wrapIndex(index);
+      if (isAnimating || safeIndex === currentIndex) return false;
+
+      if (slideTween) {
+        slideTween.kill();
+        slideTween = null;
+      }
+
+      if (reduceMotion) {
+        currentIndex = safeIndex;
+        setPanelsImmediate(safeIndex);
+        setActiveNav(safeIndex);
+        setActivePanel(safeIndex);
+        playCopyFadeUp(safeIndex);
+        return true;
+      }
+
+      const isForward = isWrapForward(currentIndex, safeIndex);
+      const currentPanel = panels[currentIndex];
+      const nextPanel = panels[safeIndex];
+
+      isAnimating = true;
+      gsap.set(nextPanel, { xPercent: isForward ? 100 : -100 });
+      setActiveNav(safeIndex);
+      setActivePanel(safeIndex);
+      playCopyFadeUp(safeIndex);
+
+      slideTween = gsap.timeline({
+        onComplete: () => {
+          isAnimating = false;
+          slideTween = null;
+          currentIndex = safeIndex;
+          setPanelsImmediate(safeIndex);
+        },
+      });
+
+      slideTween
+        .to(
+          currentPanel,
+          {
+            xPercent: isForward ? -100 : 100,
+            duration: SLIDE_DURATION,
+            ease: SLIDE_EASE,
+          },
+          0,
+        )
+        .to(
+          nextPanel,
+          {
+            xPercent: 0,
+            duration: SLIDE_DURATION,
+            ease: SLIDE_EASE,
+          },
+          0,
+        );
+
+      return true;
+    };
+
+    panelChars.forEach((chars) => {
+      if (!chars.length) return;
+      gsap.set(chars, reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: FADE_UP_Y });
+    });
+
+    setPanelsImmediate(0);
+    setActiveNav(0);
+    setActivePanel(0);
+    section.classList.add('is-ready');
+
+    ScrollTrigger.create({
+      trigger: section,
+      start: 'top 90%',
+      once: true,
+      onEnter: () => {
+        playCopyFadeUp(0);
+      },
+    });
+
+    navItems.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const index = Number(btn.dataset.index);
+        if (Number.isNaN(index)) return;
+        goTo(index);
+      });
+    });
+
+    let touchStartX = 0;
+
+    viewport.addEventListener(
+      'touchstart',
+      (event) => {
+        touchStartX = event.changedTouches[0]?.clientX ?? 0;
+      },
+      { passive: true },
+    );
+
+    viewport.addEventListener(
+      'touchend',
+      (event) => {
+        if (isAnimating) return;
+
+        const touchEndX = event.changedTouches[0]?.clientX ?? 0;
+        const deltaX = touchStartX - touchEndX;
+        if (Math.abs(deltaX) < 40) return;
+
+        if (deltaX > 0) goTo(currentIndex + 1);
+        if (deltaX < 0) goTo(currentIndex - 1);
+      },
+      { passive: true },
+    );
+  };
+
+  const initMainBeddingOverviewFadeUp = () => {
+    const heading = document.querySelector('.main-bedding-overview__heading');
+    if (!heading) return;
+
+    const FADE_UP_DURATION = 1.26;
+    const charClass = 'main-bedding-overview__char';
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const splitChars = (element) => {
+      const walk = (node) => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const chars = Array.from(node.textContent);
+          const fragment = document.createDocumentFragment();
+
+          chars.forEach((char) => {
+            if (/^\s$/.test(char)) {
+              fragment.appendChild(document.createTextNode(char));
+              return;
+            }
+
+            const span = document.createElement('span');
+            span.className = charClass;
+            span.textContent = char;
+            fragment.appendChild(span);
+          });
+
+          node.parentNode.replaceChild(fragment, node);
+          return;
+        }
+
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          if (node.tagName === 'BR') return;
+          Array.from(node.childNodes).forEach(walk);
+        }
+      };
+
+      Array.from(element.childNodes).forEach(walk);
+      return Array.from(element.querySelectorAll(`.${charClass}`));
+    };
+
+    const targets = [
+      heading.querySelector('.heading-3tier__sub-title'),
+      heading.querySelector('.heading-3tier__title'),
+      heading.querySelector('.heading-3tier__desc'),
+    ].filter(Boolean);
+
+    const chars = targets.flatMap((element) => splitChars(element));
+    if (!chars.length) return;
+
+    if (reduceMotion) {
+      gsap.set(chars, { opacity: 1, y: 0 });
+      return;
+    }
+
+    const stagger = FADE_UP_DURATION / Math.max(chars.length * 2.5, 1);
+
+    /* main-bedding-overview__heading 글자 단위 fadeUp */
+    gsap.set(chars, { opacity: 0, y: 40 });
+    gsap.to(chars, {
+      opacity: 1,
+      y: 0,
+      duration: FADE_UP_DURATION,
+      ease: 'power3.out',
+      stagger: chars.length > 1 ? stagger : 0,
+      scrollTrigger: {
+        trigger: heading,
+        start: 'top 90%',
+        once: true,
+      },
+      onComplete: () => {
+        gsap.set(chars, { clearProps: 'will-change' });
+      },
+    });
+  };
+
   const initMainSleepFit = () => {
     const section = document.querySelector('.main-sleep-fit');
     const viewport = section?.querySelector('.main-sleep-fit__viewport');
@@ -730,12 +1293,14 @@
     if (!section || !viewport || !media || !frame || !header) return;
 
     const LAST_INDEX = 1;
-    const SLIDE_DURATION = 1.1;
+    const SLIDE_DURATION = 1.1; /* 풀스크린 이미지가 1680×520으로 줄어드는 속도 */
     const SLIDE_EASE = 'power2.inOut';
-    const FADE_UP_DURATION = 1.26;
+    const FADE_UP_DURATION = 1.26; /* main-sleep-fit__header fadeUp 속도 */
     const FADE_UP_EASE = 'power3.out';
     const ENTRY_LOCK_MS = 800;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const compactMq = window.matchMedia('(max-width: 63.9375rem)');
+    const mobileMq = window.matchMedia('(max-width: 47.9375rem)');
 
     let currentIndex = 0;
     let isAnimating = false;
@@ -743,13 +1308,23 @@
     let slideTween = null;
     let scrollTrigger = null;
 
-    const getFullProps = () => ({
-      top: 0,
-      left: 0,
-      width: viewport.offsetWidth,
-      height: viewport.offsetHeight,
-      borderRadius: '0px',
-    });
+    const getFullHeight = () => {
+      if (mobileMq.matches) return 290;
+      if (compactMq.matches) return 430;
+      return viewport.offsetHeight;
+    };
+
+    const getFullProps = () => {
+      const height = getFullHeight();
+
+      return {
+        top: 0,
+        left: 0,
+        width: viewport.offsetWidth,
+        height,
+        borderRadius: '0px',
+      };
+    };
 
     const getShrunkProps = () => {
       const viewportRect = viewport.getBoundingClientRect();
@@ -835,21 +1410,48 @@
       isAnimating = true;
       currentIndex = safeIndex;
       section.classList.toggle('is-expanded', expanded);
-      applyHeaderState(expanded, { animate: true });
+
+      const HEADER_OUT_DURATION = 0.45; /* header 사라지는 속도 (이미지 확대 전) */
 
       slideTween = gsap.timeline({
         onComplete: () => {
           isAnimating = false;
           slideTween = null;
           applyMediaState(expanded);
+          applyHeaderState(expanded, { animate: false });
         },
       });
 
-      slideTween.to(media, {
-        ...(expanded ? getShrunkProps() : getFullProps()),
-        duration: SLIDE_DURATION,
-        ease: SLIDE_EASE,
-      }, 0);
+      if (expanded) {
+        gsap.set(header, { opacity: 0, y: 40 });
+        /* 1) 이미지 사방 축소 */
+        slideTween.to(media, {
+          ...getShrunkProps(),
+          duration: SLIDE_DURATION,
+          ease: SLIDE_EASE,
+        }, 0);
+        /* 2) 축소 후 header fadeUp */
+        slideTween.to(header, {
+          opacity: 1,
+          y: 0,
+          duration: FADE_UP_DURATION,
+          ease: FADE_UP_EASE,
+        }, SLIDE_DURATION);
+      } else {
+        /* 되돌리기: header 먼저 페이드아웃 */
+        slideTween.to(header, {
+          opacity: 0,
+          y: 40,
+          duration: HEADER_OUT_DURATION,
+          ease: 'power2.in',
+        }, 0);
+        /* 그다음 이미지 풀스크린으로 확대 */
+        slideTween.to(media, {
+          ...getFullProps(),
+          duration: SLIDE_DURATION,
+          ease: SLIDE_EASE,
+        }, HEADER_OUT_DURATION);
+      }
 
       if (scrollTrigger) {
         slideTween.to(
@@ -863,7 +1465,7 @@
               window.scrollTo(0, startY + (targetY - startY) * t);
             },
           },
-          0,
+          expanded ? 0 : HEADER_OUT_DURATION,
         );
       }
 
@@ -963,7 +1565,10 @@
     const init = () => {
       initMainScroll();
       initMainMattressSolution();
+      initMainPillowSolution();
+      initMainBeddingSolution();
       initMainSleepFit();
+      initMainBeddingOverviewFadeUp();
       ScrollTrigger.refresh();
 
       const savedY = Number(sessionStorage.getItem(SCROLL_POSITION_KEY));
