@@ -100,6 +100,11 @@
 
   const initHeading3tierFadeUp = () => {
     document.querySelectorAll('.heading-3tier').forEach((heading) => {
+      /* 질문 헤딩은 좁은 폭에서 단어 단위 줄바꿈을 유지해야 해서 글자 분리를 하지 않음 */
+      if (heading.classList.contains('sleep-fit-test__question-heading')) return;
+      if (heading.classList.contains('sleep-fit-result__heading')) return;
+      if (heading.classList.contains('sleep-fit-structure__heading')) return;
+
       const targets = [
         heading.querySelector('.heading-3tier__sub-title'),
         heading.querySelector('.heading-3tier__title'),
