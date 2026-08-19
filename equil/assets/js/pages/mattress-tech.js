@@ -41,6 +41,8 @@
     const copy = document.querySelector('.mattress-tech-copy');
     if (!copy) return;
 
+    const POST_HERO_FADE_UP_DURATION = 2;
+
     const targets = [
       copy.querySelector('.mattress-tech-copy__eng-title'),
       copy.querySelector('.mattress-tech-copy__title'),
@@ -55,14 +57,14 @@
     if (!allChars.length) return;
 
     const charStagger =
-      FADE_UP_DURATION / Math.max(allChars.length * 2.5, 1);
+      POST_HERO_FADE_UP_DURATION / Math.max(allChars.length * 2.5, 1);
 
     gsap.set(allChars, { opacity: 0, y: 40 });
 
     gsap.to(allChars, {
       opacity: 1,
       y: 0,
-      duration: FADE_UP_DURATION,
+      duration: POST_HERO_FADE_UP_DURATION,
       ease: 'power3.out',
       stagger: allChars.length > 1 ? charStagger : 0,
       scrollTrigger: {
@@ -77,43 +79,8 @@
   };
 
   const initMattressTechHero = () => {
-    const hero = document.querySelector('.mattress-tech-hero');
-    if (!hero) return;
-
-    const image = hero.querySelector('.mattress-tech-hero__image');
-    const overlay = hero.querySelector('.mattress-tech-hero__overlay');
-    const content = hero.querySelector('.mattress-tech-hero__content');
-    if (!image || !overlay || !content) return;
-
-    gsap.set(overlay, { opacity: 0 });
-    gsap.set(content, { opacity: 0 });
-    gsap.set(image, { scale: 1 });
-
-    gsap.to(overlay, {
-      opacity: 0.3,
-      duration: 0.5,
-      delay: 0.5,
-      ease: 'power1.out',
-    });
-
-    gsap.to(content, {
-      opacity: 1,
-      duration: 1,
-      delay: 1,
-      ease: 'power1.out',
-    });
-
-    gsap.to(image, {
-      scale: 1.05,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: hero,
-        start: 'top top',
-        end: () => `+=${Math.round(window.innerHeight * 0.2)}`,
-        scrub: true,
-        invalidateOnRefresh: true,
-      },
-    });
+    if (typeof window.initTechHero !== 'function') return;
+    window.initTechHero('mattress-tech-hero');
   };
 
   const initMattressTechResearch = () => {
@@ -531,18 +498,7 @@
   const initMattressTechStructureOverview = () => {
     const section = document.querySelector('.mattress-tech-structure-overview');
     const title = section?.querySelector('.mattress-tech-structure-overview__title');
-    const image = section?.querySelector('.mattress-tech-structure-overview__image');
-    if (!section || !title || !image) return;
-
-    let isTransitioning = false;
-    let hasCompleted = false;
-    let transitionTl = null;
-    let pinTrigger = null;
-    let holdCall = null;
-
-    const FADE_OUT_DURATION = 1;
-    const AFTER_APPEAR_HOLD = 2;
-    const LEAVE_GRACE_MS = 500;
+    if (!section || !title) return;
 
     const chars = splitChars(
       title,
@@ -551,102 +507,22 @@
     const charStagger =
       FADE_UP_DURATION / Math.max(chars.length * 2.5, 1);
 
-    const setFadedVisualState = () => {
-      gsap.set(title, { opacity: 0 });
-      gsap.set(chars, { opacity: 0 });
-      gsap.set(image, { opacity: 0 });
-    };
-
-    const releasePinForNaturalScroll = () => {
-      if (!pinTrigger) return;
-
-      setFadedVisualState();
-
-      const scrollY = window.scrollY;
-      const beforeTop = section.getBoundingClientRect().top;
-
-      pinTrigger.kill(true);
-      pinTrigger = null;
-      ScrollTrigger.refresh();
-
-      // pin-spacer 제거로 밀린 만큼만 보정 (이전 섹션으로 강제 이동하지 않음)
-      const afterTop = section.getBoundingClientRect().top;
-      window.scrollTo(0, scrollY + (afterTop - beforeTop));
-      window.removeEventListener('wheel', onWheel);
-    };
-
-    const unlockAfterFade = () => {
-      isTransitioning = false;
-      hasCompleted = true;
-      section.classList.remove('is-transitioning');
-      setFadedVisualState();
-      gsap.delayedCall(LEAVE_GRACE_MS / 1000, releasePinForNaturalScroll);
-    };
-
-    const playTransition = () => {
-      if (isTransitioning || hasCompleted) return;
-      if (!pinTrigger || !pinTrigger.isActive) return;
-
-      isTransitioning = true;
-      section.classList.add('is-transitioning');
-
-      if (transitionTl) {
-        transitionTl.kill();
-      }
-
-      transitionTl = gsap.timeline({
-        onComplete: unlockAfterFade,
-      });
-
-      transitionTl.to([title, image, ...chars], {
-        opacity: 0,
-        duration: FADE_OUT_DURATION,
-        ease: 'power1.out',
-      });
-    };
-
     gsap.set(chars, { opacity: 0, y: 40 });
-    gsap.fromTo(
-      chars,
-      { opacity: 0, y: 40 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: FADE_UP_DURATION,
-        ease: 'power3.out',
-        stagger: chars.length > 1 ? charStagger : 0,
-        scrollTrigger: {
-          trigger: title,
-          start: 'top 90%',
-          once: true,
-        },
-        onComplete: () => {
-          gsap.set(chars, { clearProps: 'will-change' });
-          holdCall = gsap.delayedCall(AFTER_APPEAR_HOLD, () => {
-            holdCall = null;
-            playTransition();
-          });
-        },
-      }
-    );
-
-    pinTrigger = ScrollTrigger.create({
-      trigger: section,
-      start: 'top top',
-      end: '+=100%',
-      pin: true,
-      pinSpacing: true,
-      anticipatePin: 1,
-      invalidateOnRefresh: true,
+    gsap.to(chars, {
+      opacity: 1,
+      y: 0,
+      duration: FADE_UP_DURATION,
+      ease: 'power3.out',
+      stagger: chars.length > 1 ? charStagger : 0,
+      scrollTrigger: {
+        trigger: title,
+        start: 'top 90%',
+        once: true,
+      },
+      onComplete: () => {
+        gsap.set(chars, { clearProps: 'will-change' });
+      },
     });
-
-    const onWheel = (event) => {
-      // pin이 실제로 해제되기 전까지 스크롤 유지 (완료 직후 spacer 제거 점프 방지)
-      if (!pinTrigger || !pinTrigger.isActive) return;
-      event.preventDefault();
-    };
-
-    window.addEventListener('wheel', onWheel, { passive: false });
   };
 
   const TOP_LAYER_IMAGES = [
@@ -692,7 +568,6 @@
     const SPLIT_GAP = 564;
     const SPLIT_DURATION = 1;
     const DOT_DURATION = 0.45;
-    const LINE_DURATION = 0.9;
     const AFTER_HOLD = 1.5;
     const LEAVE_GRACE_MS = 500;
     const INITIAL_SPACER = 12;
@@ -758,7 +633,9 @@
     const freezeCompletedState = () => {
       hasCompleted = true;
       setFinalVisualState();
-      gsap.delayedCall(LEAVE_GRACE_MS / 1000, releasePinForNaturalScroll);
+      // 사라지는 페이드아웃(또는 여유 딜레이)을 제거하고
+      // 애니메이션 완료 직후 pin만 해제합니다.
+      releasePinForNaturalScroll();
     };
 
     const playSequence = () => {
@@ -791,23 +668,25 @@
         },
       });
 
+      sequenceTl.add(() => {
+        gsap.set(line, { scaleX: 1, transformOrigin: 'left center' });
+      });
+
       sequenceTl.to(spacer, {
         width: getSplitGap(),
         duration: SPLIT_DURATION,
         ease: 'power2.inOut',
       });
 
-      sequenceTl.to(dot, {
-        opacity: 1,
-        duration: DOT_DURATION,
-        ease: 'power2.out',
-      });
-
-      sequenceTl.to(line, {
-        scaleX: 1,
-        duration: LINE_DURATION,
-        ease: 'power2.out',
-      });
+      sequenceTl.to(
+        dot,
+        {
+          opacity: 1,
+          duration: DOT_DURATION,
+          ease: 'power2.out',
+        },
+        '<'
+      );
     };
 
     const onWheel = (event) => {
@@ -1278,7 +1157,7 @@
     if (!heading || !items.length) return;
 
     const IMAGE_REVEAL_DURATION = 1.2;
-    const NEXT_ITEM_AT = 0.8;
+    const NEXT_ITEM_AT = 0.5;
     const FADE_DURATION = 0.35;
     const mobileQuery = window.matchMedia('(max-width: 47.9375rem)');
     let itemsStarted = false;

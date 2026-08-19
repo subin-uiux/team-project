@@ -199,15 +199,45 @@
         if (currentIndex < LAST_INDEX) activateFeature(currentIndex + 1, true);
       });
 
-      nav.append(prevButton, nextButton, dots);
+      nav.append(prevButton, nextButton);
       media.appendChild(nav);
+      media.closest('.scroll-feature').appendChild(dots);
     };
+
+    const compactMq = window.matchMedia('(max-width: 63.9375rem)');
+    const isCompactView = () => compactMq.matches;
 
     const activateFeature = (index, animate = true) => {
       if (index === currentIndex && animate) return;
 
       const prevIndex = currentIndex;
       currentIndex = index;
+
+      if (isCompactView()) {
+        features.forEach((feature, i) => {
+          feature.classList.toggle('is-active', i === index);
+        });
+        setImage(index, animate);
+        updateDots(index);
+
+        const hotspotPos = hotspotPositions?.[index];
+        if (hotspotPos && hotspot) {
+          if (animate) {
+            gsap.to(hotspot, {
+              left: hotspotPos.left,
+              top: hotspotPos.top,
+              duration: SCROLL_FEATURE.TRANSITION_DURATION,
+              ease: 'power2.inOut',
+            });
+          } else {
+            gsap.set(hotspot, {
+              left: hotspotPos.left,
+              top: hotspotPos.top,
+            });
+          }
+        }
+        return;
+      }
 
       const prevFeature = features[prevIndex];
       const nextFeature = features[index];
@@ -360,6 +390,29 @@
     setupCompactNav();
     activateFeature(0, false);
 
+    const revealTitle = () => {
+      const title = section.querySelector('.scroll-feature__title--ko');
+      if (!title || title.dataset.revealed === 'true') return;
+
+      const chars = title.querySelectorAll('.scroll-feature__char');
+      if (!chars.length) return;
+
+      title.dataset.revealed = 'true';
+      const charStagger =
+        1.26 / Math.max(chars.length * 2.5, 1);
+
+      gsap.to(chars, {
+        opacity: 1,
+        y: 0,
+        duration: 1.26,
+        ease: 'power3.out',
+        stagger: chars.length > 1 ? charStagger : 0,
+        onComplete: () => {
+          gsap.set(chars, { clearProps: 'will-change' });
+        },
+      });
+    };
+
     const isSectionPinnedInView = () => {
       if (!pinTrigger?.isActive) return false;
       return true;
@@ -376,7 +429,6 @@
       const goingDown = event.deltaY > 0;
       const pinActive = isSectionPinnedInView();
 
-      /* pin이 아닌데 섹션에 머문 상태가 아니면 개입하지 않음 (히어로 등에서 top-layer로 점프 방지) */
       if (!pinActive && !(currentIndex < LAST_INDEX && isSectionStuckInViewport())) {
         return;
       }
@@ -391,23 +443,17 @@
         return;
       }
 
-      /* 마지막 특징 전 + 아래 → 다음 특징만 (이탈 불가) */
       if (goingDown && currentIndex < LAST_INDEX) {
         event.preventDefault();
-        if (!pinActive) {
-          window.scrollTo(0, pinTrigger.start);
-        }
         if (isInCooldown()) return;
         activateFeature(currentIndex + 1, true);
         return;
       }
 
-      /* 첫 특징 + 위로 → 자연 스크롤로 이전 섹션 */
       if (!goingDown && currentIndex === 0) {
         return;
       }
 
-      /* 중간 특징에서 위로 → 이전 특징 */
       if (!goingDown && currentIndex > 0) {
         event.preventDefault();
         if (isInCooldown()) return;
@@ -415,7 +461,6 @@
         return;
       }
 
-      /* 마지막 특징 + 아래로 → pin 구간 스크롤로 다음 섹션 */
       if (goingDown && currentIndex === LAST_INDEX) {
         if (isInCooldown()) {
           event.preventDefault();
@@ -423,25 +468,57 @@
       }
     };
 
-    pinTrigger = ScrollTrigger.create({
-      trigger: section,
-      start: SCROLL_FEATURE.PIN_START,
-      end: PIN_SCROLL_END,
-      pin: true,
-      pinSpacing: true,
-      anticipatePin: 1,
-      invalidateOnRefresh: true,
-      onEnter: () => {
-        activateFeature(0, false);
-        startEntryLock();
-      },
-      onEnterBack: () => {
-        activateFeature(LAST_INDEX, false);
-        startEntryLock();
-      },
-    });
+    const enableDesktopPin = () => {
+      if (pinTrigger) return;
 
-    window.addEventListener('wheel', onWheel, { passive: false });
+      pinTrigger = ScrollTrigger.create({
+        trigger: section,
+        start: SCROLL_FEATURE.PIN_START,
+        end: PIN_SCROLL_END,
+        pin: true,
+        pinSpacing: true,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+        onEnter: () => {
+          activateFeature(0, false);
+          startEntryLock();
+          revealTitle();
+        },
+        onEnterBack: () => {
+          activateFeature(LAST_INDEX, false);
+          startEntryLock();
+          revealTitle();
+        },
+      });
+
+      window.addEventListener('wheel', onWheel, { passive: false });
+    };
+
+    const disableDesktopPin = () => {
+      if (pinTrigger) {
+        pinTrigger.kill();
+        pinTrigger = null;
+        ScrollTrigger.refresh();
+      }
+      window.removeEventListener('wheel', onWheel);
+    };
+
+    const syncPinToViewport = () => {
+      if (isCompactView()) {
+        disableDesktopPin();
+        revealTitle();
+        return;
+      }
+
+      enableDesktopPin();
+    };
+
+    syncPinToViewport();
+    if (compactMq.addEventListener) {
+      compactMq.addEventListener('change', syncPinToViewport);
+    } else {
+      compactMq.addListener(syncPinToViewport);
+    }
 
     return pinTrigger;
   };
