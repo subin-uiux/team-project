@@ -51,6 +51,14 @@
     let transitionTl = null;
     let imageTween = null;
     let revealImage = null;
+    let compactPrevButton = null;
+    let compactNextButton = null;
+
+    const updateCompactArrows = () => {
+      if (!compactPrevButton || !compactNextButton) return;
+      compactPrevButton.classList.toggle('is-hidden', currentIndex <= 0);
+      compactNextButton.classList.toggle('is-hidden', currentIndex >= LAST_INDEX);
+    };
 
     const isInCooldown = () =>
       SCROLL_FEATURE.COOLDOWN_MS > 0 &&
@@ -170,6 +178,8 @@
       nextButton.className = 'scroll-feature__arrow scroll-feature__arrow--next';
       nextButton.setAttribute('aria-label', '다음 특징');
       nextButton.innerHTML = `<img src="${ARROW_RIGHT_SRC}" alt="">`;
+      compactPrevButton = prevButton;
+      compactNextButton = nextButton;
 
       const dots = document.createElement('div');
       dots.className = 'scroll-feature__dots';
@@ -206,6 +216,49 @@
 
     const compactMq = window.matchMedia('(max-width: 63.9375rem)');
     const isCompactView = () => compactMq.matches;
+    const SWIPE_THRESHOLD = 40;
+    let pointerStartX = null;
+    let pointerStartY = null;
+
+    const setupCompactSwipe = () => {
+      const root = section.querySelector('.scroll-feature');
+      if (!root) return;
+
+      root.addEventListener('pointerdown', (event) => {
+        if (!isCompactView()) return;
+        if (event.pointerType === 'mouse' && event.button !== 0) return;
+        pointerStartX = event.clientX;
+        pointerStartY = event.clientY;
+      });
+
+      const endSwipe = (event) => {
+        if (!isCompactView() || pointerStartX === null) return;
+
+        const deltaX = event.clientX - pointerStartX;
+        const deltaY = event.clientY - pointerStartY;
+        pointerStartX = null;
+        pointerStartY = null;
+
+        if (Math.abs(deltaX) < SWIPE_THRESHOLD) return;
+        if (Math.abs(deltaX) <= Math.abs(deltaY)) return;
+        if (isEntryLocked() || isTransitioning) return;
+
+        if (deltaX < 0 && currentIndex < LAST_INDEX) {
+          activateFeature(currentIndex + 1, true);
+          return;
+        }
+
+        if (deltaX > 0 && currentIndex > 0) {
+          activateFeature(currentIndex - 1, true);
+        }
+      };
+
+      root.addEventListener('pointerup', endSwipe);
+      root.addEventListener('pointercancel', () => {
+        pointerStartX = null;
+        pointerStartY = null;
+      });
+    };
 
     const activateFeature = (index, animate = true) => {
       if (index === currentIndex && animate) return;
@@ -219,6 +272,7 @@
         });
         setImage(index, animate);
         updateDots(index);
+        updateCompactArrows();
 
         const hotspotPos = hotspotPositions?.[index];
         if (hotspotPos && hotspot) {
@@ -388,6 +442,7 @@
     };
 
     setupCompactNav();
+    setupCompactSwipe();
     activateFeature(0, false);
 
     const revealTitle = () => {

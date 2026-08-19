@@ -220,6 +220,8 @@
           dot.removeAttribute('aria-current');
         }
       });
+      prevArrow?.classList.toggle('is-hidden', index <= 0);
+      nextArrow?.classList.toggle('is-hidden', index >= LAST_SLIDE_INDEX);
     };
 
     const getSlideAxis = () => (isHorizontal() ? 'x' : 'y');
@@ -938,6 +940,11 @@
           gsap.set(card, { opacity: isActive ? 1 : 0 });
         }
       });
+      prevButton?.classList.toggle('is-hidden', currentCardIndex <= 0);
+      nextButton?.classList.toggle(
+        'is-hidden',
+        currentCardIndex >= cards.length - 1
+      );
     };
 
     const cardsWrap = section.querySelector(
@@ -990,7 +997,7 @@
     const goToCard = (index) => {
       if (!compactQuery.matches || isTransitioning) return;
 
-      const nextIndex = (index + cards.length) % cards.length;
+      const nextIndex = Math.max(0, Math.min(cards.length - 1, index));
       if (nextIndex === currentCardIndex) return;
 
       isTransitioning = true;
@@ -1011,6 +1018,7 @@
           currentCardIndex = nextIndex;
           isTransitioning = false;
           transitionTl = null;
+          updateCardVisibility();
         },
       });
 
@@ -1275,12 +1283,17 @@
           dot.removeAttribute('aria-current');
         }
       });
+      prevButton?.classList.toggle('is-hidden', currentItemIndex <= 0);
+      nextButton?.classList.toggle(
+        'is-hidden',
+        currentItemIndex >= items.length - 1
+      );
     };
 
     const goToItem = (index) => {
       if (!mobileQuery.matches || isTransitioning) return;
 
-      const nextIndex = (index + items.length) % items.length;
+      const nextIndex = Math.max(0, Math.min(items.length - 1, index));
       if (nextIndex === currentItemIndex) return;
 
       isTransitioning = true;
