@@ -112,6 +112,7 @@
       if (heading.classList.contains('sleep-fit-structure__heading')) return;
       /* 메인 핀 스크롤 이후에 main.js에서 따로 실행 */
       if (heading.classList.contains('main-bedding-overview__heading')) return;
+      if (heading.classList.contains('bedding-tech-seasonal__heading')) return;
 
       const targets = [
         heading.querySelector('.heading-3tier__sub-title'),
@@ -184,10 +185,110 @@
     });
   };
 
+  const initSectionCtaFadeUp = () => {
+    document.querySelectorAll('.section-cta').forEach((block) => {
+      const title = block.querySelector('.section-cta__title');
+      const desc = block.querySelector('.section-cta__desc');
+      const button = block.querySelector('.section-cta__button');
+      if (!title) return;
+
+      const charClass = 'section-cta__char';
+      const titleChars = splitHeadingChars(title, charClass);
+      const descChars = desc ? splitHeadingChars(desc, charClass) : [];
+
+      gsap.set(titleChars, { opacity: 0, y: 40 });
+      if (descChars.length) gsap.set(descChars, { opacity: 0, y: 40 });
+      if (button) gsap.set(button, { opacity: 0, y: 20 });
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: block,
+          start: 'top 90%',
+          once: true,
+        },
+      });
+
+      const getFadeUpTotal = (chars) => {
+        const stagger = FADE_UP_DURATION / Math.max(chars.length * 2.5, 1);
+        if (chars.length <= 1) return FADE_UP_DURATION;
+        return FADE_UP_DURATION + stagger * (chars.length - 1);
+      };
+
+      if (titleChars.length) {
+        const titleStagger =
+          FADE_UP_DURATION / Math.max(titleChars.length * 2.5, 1);
+        tl.to(
+          titleChars,
+          {
+            opacity: 1,
+            y: 0,
+            duration: FADE_UP_DURATION,
+            ease: 'power3.out',
+            stagger: titleChars.length > 1 ? titleStagger : 0,
+            onComplete: () => {
+              gsap.set(titleChars, { clearProps: 'will-change' });
+            },
+          },
+          0
+        );
+      }
+
+      if (descChars.length) {
+        const descStagger =
+          FADE_UP_DURATION / Math.max(descChars.length * 2.5, 1);
+        const descStart = titleChars.length
+          ? getFadeUpTotal(titleChars) * 0.3
+          : 0;
+        tl.to(
+          descChars,
+          {
+            opacity: 1,
+            y: 0,
+            duration: FADE_UP_DURATION,
+            ease: 'power3.out',
+            stagger: descChars.length > 1 ? descStagger : 0,
+            onComplete: () => {
+              gsap.set(descChars, { clearProps: 'will-change' });
+            },
+          },
+          descStart
+        );
+
+        if (button) {
+          tl.to(
+            button,
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.4,
+              ease: 'power2.out',
+            },
+            descStart + getFadeUpTotal(descChars) * 0.5
+          );
+        }
+      } else if (button) {
+        const buttonStart = titleChars.length
+          ? getFadeUpTotal(titleChars) * 0.5
+          : 0;
+        tl.to(
+          button,
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.4,
+            ease: 'power2.out',
+          },
+          buttonStart
+        );
+      }
+    });
+  };
+
   window.equilLibsReady
     .then(() => {
       initHeading3tierFadeUp();
       initScrollFeatureTitleFadeUp();
+      initSectionCtaFadeUp();
     })
     .catch(() => {});
 

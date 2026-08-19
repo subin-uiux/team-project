@@ -73,6 +73,7 @@ pillow-tech.html
 ```
 bedding-tech.html
 ├ bedding-tech-hero
+├ bedding-tech-overview
 ├ bedding-tech-design
 ├ bedding-tech-process
 ├ bedding-tech-wool

@@ -94,6 +94,69 @@
 }
 
 /* ========================================
+   bedding-tech-overview
+   ======================================== */
+
+.bedding-tech-overview {
+  display: none;
+}
+
+.bedding-tech-overview__container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bedding-tech-overview__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.bedding-tech-overview__title {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: 600; /* Semibold */
+  line-height: 150%;
+  color: var(--color-brand-dark);
+}
+
+.bedding-tech-overview__char {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+@media (max-width: 63.9375rem) {
+  .bedding-tech-overview {
+    display: block;
+    width: 100%;
+    background-color: var(--color-brand-light-2);
+  }
+}
+
+@media (min-width: 48rem) and (max-width: 63.9375rem) {
+  .bedding-tech-overview {
+    height: 25rem; /* 400px */
+  }
+
+  .bedding-tech-overview__title {
+    font-size: clamp(1.5rem, 3.128vw, 2rem); /* 32px */
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .bedding-tech-overview {
+    height: 16.875rem; /* 270px */
+  }
+
+  .bedding-tech-overview__title {
+    font-size: clamp(0.75rem, 3.651vw, 1.75rem); /* 28px */
+  }
+}
+
+/* ========================================
    bedding-tech-design
    ======================================== */
 
@@ -174,6 +237,33 @@
   will-change: transform, opacity;
 }
 
+@media (max-width: 63.9375rem) {
+  .bedding-tech-design {
+    height: 37.5rem; /* 600px */
+  }
+
+  .bedding-tech-design__title {
+    display: none;
+  }
+}
+
+@media (min-width: 48rem) and (max-width: 63.9375rem) {
+  .bedding-tech-design__desc {
+    font-size: clamp(1.032rem, 2.151vw, 1.375rem); /* 22px */
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .bedding-tech-design__desc {
+    font-size: clamp(0.75rem, 2.347vw, 1.125rem); /* 18px */
+  }
+}
+
+.bedding-tech-design__char {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
 /* ========================================
    bedding-tech-process
    ======================================== */
@@ -230,7 +320,7 @@
   top: 50%;
   left: 50%;
   z-index: 2;
-  width: 86.75rem; /* 1388px */
+  width: 72rem; /* 1152px */
   max-width: none;
   height: auto;
   opacity: 0;
@@ -246,7 +336,7 @@
   margin: 0;
   transform: translate(-50%, -50%);
   font-family: var(--font-suit);
-  font-weight: var(--fw-suit-bold); /* 600 */
+  font-weight: 800;
   font-size: 5rem; /* 80px */
   line-height: 130%;
   color: var(--color-brand-dark);

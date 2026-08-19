@@ -118,6 +118,8 @@
     let stopVideoSync = null;
     let pinTrigger = null;
     let textTween = null;
+    let hasEnteredOnce = false;
+    let skipTextAnimation = false;
 
     const contentCharsBySlide = slides.map((slide) => {
       const content = slide.querySelector('.mattress-tech-research__content');
@@ -151,6 +153,21 @@
       contentCharsBySlide.forEach((_, index) => resetSlideText(index));
     };
 
+    const showSlideTextComplete = (index) => {
+      if (textTween) {
+        textTween.kill();
+        textTween = null;
+      }
+      isTextAnimating = false;
+      contentCharsBySlide.forEach((chars, i) => {
+        gsap.killTweensOf(chars);
+        gsap.set(chars, {
+          opacity: i === index ? 1 : 0,
+          y: i === index ? 0 : 40,
+        });
+      });
+    };
+
     const animateSlideText = (index) => {
       const chars = contentCharsBySlide[index] || [];
       if (!chars.length) {
@@ -179,6 +196,11 @@
         duration: FADE_UP_DURATION,
         ease: 'power3.out',
         stagger: chars.length > 1 ? charStagger : 0,
+        onUpdate() {
+          if (isTextAnimating && this.progress() >= 0.5) {
+            isTextAnimating = false;
+          }
+        },
         onComplete: () => {
           textTween = null;
           isTextAnimating = false;
@@ -266,7 +288,11 @@
     const startSlideTimers = (index) => {
       stopTimers();
       resetGauge();
-      animateSlideText(index);
+      if (skipTextAnimation) {
+        showSlideTextComplete(index);
+      } else {
+        animateSlideText(index);
+      }
 
       if (index === 0) {
         const onTimeUpdate = () => {
@@ -349,7 +375,11 @@
       currentSlide.classList.remove('is-active');
       nextSlide.classList.add('is-active');
       updatePager(nextIndex);
-      resetSlideText(nextIndex);
+      if (skipTextAnimation) {
+        showSlideTextComplete(nextIndex);
+      } else {
+        resetSlideText(nextIndex);
+      }
 
       gsap.set(nextSlide, { [axis]: nextFrom, [offAxis]: '0%', zIndex: 2 });
       gsap.set(currentSlide, { [offAxis]: '0%', zIndex: 1 });
@@ -388,14 +418,25 @@
     const activate = (startIndex) => {
       isLocked = true;
       isAnimating = false;
+      skipTextAnimation = hasEnteredOnce;
       stopTimers();
-      resetAllSlideText();
-      resetSlides(startIndex);
+      if (skipTextAnimation) {
+        if (textTween) {
+          textTween.kill();
+          textTween = null;
+        }
+        resetSlides(startIndex);
+        showSlideTextComplete(startIndex);
+      } else {
+        resetAllSlideText();
+        resetSlides(startIndex);
+      }
       resetGauge();
       startSlideTimers(startIndex);
     };
 
     const deactivate = () => {
+      hasEnteredOnce = true;
       isLocked = false;
       isAnimating = false;
       isTextAnimating = false;
@@ -1156,8 +1197,9 @@
     );
     if (!heading || !items.length) return;
 
-    const IMAGE_REVEAL_DURATION = 1.2;
-    const NEXT_ITEM_AT = 0.5;
+    const IMAGE_REVEAL_DURATION = 2.4;
+    const PROCESS_FADE_UP_DURATION = FADE_UP_DURATION * 2;
+    const NEXT_ITEM_AT = 0.1;
     const FADE_DURATION = 0.35;
     const mobileQuery = window.matchMedia('(max-width: 47.9375rem)');
     let itemsStarted = false;
@@ -1188,7 +1230,7 @@
         );
 
       if (image) {
-        gsap.set(image, { clipPath: 'inset(0 100% 0 0)' });
+        gsap.set(image, { clipPath: 'inset(100% 0 0 0)' });
       }
       gsap.set(chars, { opacity: 0, y: 40 });
 
@@ -1196,18 +1238,18 @@
     });
 
     const getTextTweenDuration = (chars) => {
-      const stagger = FADE_UP_DURATION / Math.max(chars.length * 2.5, 1);
-      if (chars.length <= 1) return FADE_UP_DURATION;
-      return FADE_UP_DURATION + stagger * (chars.length - 1);
+      const stagger = PROCESS_FADE_UP_DURATION / Math.max(chars.length * 2.5, 1);
+      if (chars.length <= 1) return PROCESS_FADE_UP_DURATION;
+      return PROCESS_FADE_UP_DURATION + stagger * (chars.length - 1);
     };
 
     const getItemDuration = (chars) =>
-      IMAGE_REVEAL_DURATION + getTextTweenDuration(chars);
+      Math.max(IMAGE_REVEAL_DURATION, getTextTweenDuration(chars));
 
     const revealItems = () => {
       itemData.forEach((item) => {
         if (item.image) {
-          gsap.set(item.image, { clipPath: 'inset(0 0% 0 0)' });
+          gsap.set(item.image, { clipPath: 'inset(0% 0 0 0)' });
         }
         gsap.set(item.chars, { opacity: 1, y: 0, clearProps: 'will-change' });
       });
@@ -1297,7 +1339,7 @@
 
       itemData.forEach((item, index) => {
         const textStagger =
-          FADE_UP_DURATION / Math.max(item.chars.length * 2.5, 1);
+          PROCESS_FADE_UP_DURATION / Math.max(item.chars.length * 2.5, 1);
         const startPos =
           index === 0
             ? 0
@@ -1309,7 +1351,7 @@
           itemsTl.to(
             item.image,
             {
-              clipPath: 'inset(0 0% 0 0)',
+              clipPath: 'inset(0% 0 0 0)',
               duration: IMAGE_REVEAL_DURATION,
               ease: 'power2.out',
             },
@@ -1324,14 +1366,14 @@
           {
             opacity: 1,
             y: 0,
-            duration: FADE_UP_DURATION,
+            duration: PROCESS_FADE_UP_DURATION,
             ease: 'power3.out',
             stagger: item.chars.length > 1 ? textStagger : 0,
             onComplete: () => {
               gsap.set(item.chars, { clearProps: 'will-change' });
             },
           },
-          '>'
+          '<'
         );
       });
     };
@@ -1348,10 +1390,10 @@
           trigger: heading,
           start: 'top 90%',
           once: true,
+          onEnter: playItems,
         },
         onComplete: () => {
           gsap.set(headingChars, { clearProps: 'will-change' });
-          playItems();
         },
       });
     } else {

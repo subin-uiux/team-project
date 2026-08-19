@@ -42,7 +42,7 @@
 
     const LAST_INDEX = features.length - 1;
     const IMAGE_CROSSFADE_DURATION = 0.6;
-    const PIN_SCROLL_END = `+=${Math.max((LAST_INDEX + 1) * 100, 100)}%`;
+    const PIN_SCROLL_END = SCROLL_FEATURE.PIN_END;
     let currentIndex = 0;
     let pinTrigger = null;
     let lastSwitchTime = 0;
@@ -458,13 +458,6 @@
         event.preventDefault();
         if (isInCooldown()) return;
         activateFeature(currentIndex - 1, true);
-        return;
-      }
-
-      if (goingDown && currentIndex === LAST_INDEX) {
-        if (isInCooldown()) {
-          event.preventDefault();
-        }
       }
     };
 

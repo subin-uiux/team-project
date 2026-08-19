@@ -38,6 +38,41 @@
     window.initTechHero('bedding-tech-hero');
   };
 
+  const initBeddingTechOverview = () => {
+    const section = document.querySelector('.bedding-tech-overview');
+    if (!section) return;
+    if (window.matchMedia('(min-width: 64rem)').matches) return;
+
+    const title = section.querySelector('.bedding-tech-overview__title');
+    if (!title) return;
+
+    const TITLE_FADE_UP_DURATION = 1.6;
+    const charClass = 'bedding-tech-overview__char';
+    const titleChars = splitTextChars(title, charClass);
+    if (!titleChars.length) return;
+
+    const titleStagger =
+      TITLE_FADE_UP_DURATION / Math.max(titleChars.length * 2.5, 1);
+
+    gsap.set(titleChars, { opacity: 0, y: 40 });
+
+    gsap.to(titleChars, {
+      opacity: 1,
+      y: 0,
+      duration: TITLE_FADE_UP_DURATION,
+      ease: 'power3.out',
+      stagger: titleChars.length > 1 ? titleStagger : 0,
+      scrollTrigger: {
+        trigger: section,
+        start: 'top 90%',
+        once: true,
+      },
+      onComplete: () => {
+        gsap.set(titleChars, { clearProps: 'will-change' });
+      },
+    });
+  };
+
   const initBeddingTechDesign = () => {
     const section = document.querySelector('.bedding-tech-design');
     if (!section) return;
@@ -50,9 +85,10 @@
     if (!overlay || !title || !descs.length) return;
 
     const POST_HERO_FADE_UP_DURATION = 2;
+    const isCompact = window.matchMedia('(max-width: 63.9375rem)').matches;
 
     const charClass = 'bedding-tech-design__char';
-    const titleChars = splitTextChars(title, charClass);
+    const titleChars = isCompact ? [] : splitTextChars(title, charClass);
     const descChars = descs.flatMap((desc) => splitTextChars(desc, charClass));
     const allChars = [...titleChars, ...descChars];
     const charStagger =
@@ -364,6 +400,7 @@
     const section = document.querySelector('.bedding-tech-seasonal');
     if (!section) return;
 
+    const heading = section.querySelector('.bedding-tech-seasonal__heading');
     const medias = Array.from(
       section.querySelectorAll('.bedding-tech-seasonal__media')
     );
@@ -371,30 +408,72 @@
 
     gsap.set(medias, { top: '0%' });
 
-    gsap
-      .timeline({
-        defaults: { ease: 'none' },
-        scrollTrigger: {
-          trigger: section,
-          start: 'top top',
-          end: () => `+=${window.innerHeight * 2}`,
-          scrub: true,
-          pin: true,
-          pinSpacing: true,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-        },
-      })
-      .to(medias, {
+    const playMediaReveal = () => {
+      gsap.to(medias, {
         top: '35%',
-        duration: 0.2,
-        stagger: 0.1,
+        duration: 1,
+        ease: 'power2.inOut',
+        stagger: 0.5,
       });
+    };
+
+    if (!heading) {
+      ScrollTrigger.create({
+        trigger: section,
+        start: 'top 80%',
+        once: true,
+        onEnter: playMediaReveal,
+      });
+      return;
+    }
+
+    const targets = [
+      heading.querySelector('.heading-3tier__sub-title'),
+      heading.querySelector('.heading-3tier__title'),
+      heading.querySelector('.heading-3tier__desc'),
+    ].filter(Boolean);
+
+    const headingChars = targets.flatMap((element) =>
+      splitTextChars(element, 'heading-3tier__char')
+    );
+    const charStagger =
+      FADE_UP_DURATION / Math.max(headingChars.length * 2.5, 1);
+
+    gsap.set(headingChars, { opacity: 0, y: 40 });
+
+    let mediaStarted = false;
+
+    gsap.to(headingChars, {
+      opacity: 1,
+      y: 0,
+      duration: FADE_UP_DURATION,
+      ease: 'power3.out',
+      stagger: headingChars.length > 1 ? charStagger : 0,
+      scrollTrigger: {
+        trigger: heading,
+        start: 'top 90%',
+        once: true,
+      },
+      onUpdate() {
+        if (!mediaStarted && this.progress() >= 0.5) {
+          mediaStarted = true;
+          playMediaReveal();
+        }
+      },
+      onComplete: () => {
+        gsap.set(headingChars, { clearProps: 'will-change' });
+        if (!mediaStarted) {
+          mediaStarted = true;
+          playMediaReveal();
+        }
+      },
+    });
   };
 
   const start = () => {
     const init = () => {
       initBeddingTechHero();
+      initBeddingTechOverview();
       initBeddingTechDesign();
       initBeddingTechProcess();
       initBeddingTechWool();
