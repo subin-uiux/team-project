@@ -236,3 +236,91 @@ body.is-popup-open {
   height: 2.5rem;
   color: var(--color-grey-400);
 }
+
+/* Tablet: 768–1023px — News popup */
+@media (min-width: 48rem) and (max-width: 63.9375rem) {
+  .popup-news {
+    width: 45.5625rem; /* 729px */
+    height: 58.26rem; /* 932.16px */
+    max-width: 100%;
+    max-height: 100%;
+    padding: 1.875rem 0 1.875rem 1.25rem; /* 30px 20px — 오른쪽은 inner */
+  }
+
+  .popup-news__inner {
+    gap: 0;
+    padding-right: 1.25rem; /* 20px */
+  }
+
+  .popup-news__title {
+    font-weight: 400;
+    font-size: 1.375rem; /* 22px — Body01 tablet */
+  }
+
+  .popup-news__date,
+  .popup-news__text {
+    font-weight: 400;
+    font-size: 0.875rem; /* 14px — Body05 tablet */
+  }
+
+  .popup-news__media {
+    width: 48.75rem; /* 780px */
+    max-width: 100%;
+    height: 16.9375rem; /* 271px */
+    margin-block: 0.875rem; /* 14px */
+  }
+
+  .popup-news__body {
+    width: 100%;
+    max-width: 100%;
+    padding-block: 1.5625rem; /* 25px */
+  }
+
+  /* Event popup */
+  .popup-event {
+    width: 45.5625rem; /* 729px */
+    height: 48.641875rem; /* 778.27px */
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  .popup-event__title {
+    font-weight: 400;
+    font-size: 1.375rem; /* 22px — Body01 tablet, News와 동일 */
+  }
+
+  .popup-event__date {
+    font-weight: 400;
+    font-size: 0.875rem; /* 14px — Body05 tablet, News와 동일 */
+  }
+
+  .popup-event__inner,
+  .popup-event__header,
+  .popup-event__body,
+  .popup-event__section {
+    gap: 0.9375rem; /* 15px */
+  }
+
+  .popup-event__section--divided {
+    padding-bottom: 0.9375rem; /* 15px */
+  }
+
+  .popup-event__content {
+    min-width: 0;
+  }
+
+  .popup-event__media {
+    width: 23.625rem; /* 378px */
+    height: 38.311875rem; /* 612.99px */
+  }
+
+  .popup-event__body-title {
+    font-size: 1.25rem; /* 20px — mo/Subtitle03 */
+  }
+
+  .popup-event__body-text,
+  .popup-event__section--notice .popup-event__body-title {
+    font-weight: 400;
+    font-size: 0.875rem; /* 14px — Body05 tablet */
+  }
+}
