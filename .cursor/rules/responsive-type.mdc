@@ -1,0 +1,44 @@
+---
+description: 태블릿·모바일 폰트는 지정 크기를 최댓값으로 clamp해 화면과 함께 줄어들게 한다
+globs: "**/*.css"
+alwaysApply: true
+---
+
+# EQUIL Responsive Type
+
+반응형에서 폰트 크기를 지정받으면 **그 크기를 해당 구간 최댓값**으로 두고, 화면이 줄어들면 `clamp`로 같이 줄어들게 한다. 고정 `px`/`rem`만 넣지 않는다.
+
+## 구간
+
+| 구간 | 미디어 | 기준 너비 (지정 크기가 나오는 지점) |
+|---|---|---|
+| Tablet | `(min-width: 48rem) and (max-width: 63.9375rem)` | **1023px** |
+| Mobile | `(max-width: 47.9375rem)` | **767px** |
+| Compact (탭+모 동일 값) | `(max-width: 63.9375rem)` | **1023px** |
+
+PC는 지정값이 있으면 고정(또는 기존 clamp)을 유지한다.
+
+## 공식
+
+```
+preferred = 지정px / 기준너비px * 100vw
+min = max(12px, 지정px * 구간최소너비 / 기준너비)
+max = 지정 크기
+```
+
+- Tablet 구간최소 = 768px
+- Mobile 구간최소 = 320px
+- 가독성 하한 **12px** (`0.75rem`)
+
+```css
+/* ✅ Tablet 32px @1023 → ~24px @768 */
+font-size: clamp(1.5rem, 3.128vw, 2rem); /* 32px */
+
+/* ✅ Mobile 24px @767 → 하한 12px */
+font-size: clamp(0.75rem, 3.129vw, 1.5rem); /* 24px */
+
+/* ❌ */
+font-size: 2rem; /* 32px */
+```
+
+주석에는 **지정 px**를 남긴다. 사용자가 준 태블릿·모바일 값은 바꾸지 않고 max로만 쓴다.

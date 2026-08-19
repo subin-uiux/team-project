@@ -136,6 +136,7 @@
   .main-hero__title {
     font-size: 3.625rem; /* 58px */
   }
+
 }
 
 @media (max-width: 47.9375rem) {
@@ -1010,7 +1011,7 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
 @media (min-width: 48rem) and (max-width: 63.9375rem) {
   .main-pillow-solution {
     box-sizing: border-box;
-    height: 100vh;
+    height: 100%;
     padding: 6.25rem 0; /* 100px 위아래 */
   }
 
@@ -1103,7 +1104,7 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
 @media (max-width: 47.9375rem) {
   .main-pillow-solution {
     box-sizing: border-box;
-    height: 100vh;
+    height: 100%;
     padding: 6.25rem 0; /* 100px 위아래 */
   }
 
@@ -1278,7 +1279,7 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
   }
 
   .main-bedding-overview__heading .heading-3tier__title {
-    font-family: var(--font-paperlogy);
+    font-family: var(--font-suit);
     font-weight: 600;
     font-size: var(--fs-title); /* 32px, tab/p-title03 */
   }
@@ -1547,6 +1548,7 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
 .main-sleep-fit {
   position: relative;
   width: 100%;
+  height: 100vh;
   max-width: 120rem; /* 1920px */
   margin-inline: auto;
 }
@@ -1554,7 +1556,7 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
 .main-sleep-fit__viewport {
   position: relative;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   overflow: hidden;
 }
 
@@ -1594,6 +1596,13 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
   line-height: 1.3;
   color: var(--color-brand-dark);
   text-align: left;
+}
+
+.main-sleep-fit__brand {
+  font-family: var(--font-paperlogy);
+  font-weight: 900;
+  font-size: 1.875rem; /* 30px — 로고와 동일 */
+  letter-spacing: 0.1em;
 }
 
 .main-sleep-fit__text {
@@ -1636,87 +1645,50 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
   object-fit: cover;
 }
 
-@media (min-width: 48rem) and (max-width: 63.9375rem) {
-  .main-sleep-fit__viewport {
-    height: 26.875rem; /* 430px — 축소 전 이미지 높이 */
-  }
-
-  .main-sleep-fit.is-expanded .main-sleep-fit__viewport {
-    height: auto;
-  }
-
-  .main-sleep-fit__container {
-    justify-content: flex-start;
-    height: 100%;
-  }
-
-  .main-sleep-fit.is-expanded .main-sleep-fit__container {
-    height: auto;
-  }
-
-  .main-sleep-fit__title {
-    font-size: 1.5rem; /* 24px, mo/subtitle02 */
-  }
-
-  .main-sleep-fit__text {
-    font-weight: 400;
-    font-size: 1rem; /* 16px, mo/body03 */
-  }
-
-  .main-sleep-fit__text-detail {
-    display: none;
-  }
-
-  .main-sleep-fit__frame {
-    width: 100%;
-    height: 15.75rem; /* 252px — 축소 후 */
-  }
+.main-sleep-fit__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-color: #333;
+  opacity: 0;
+  pointer-events: none;
 }
 
-@media (max-width: 47.9375rem) {
-  .main-sleep-fit__viewport {
-    height: 18.125rem; /* 290px — 축소 전 이미지 높이 */
-  }
-
-  .main-sleep-fit.is-expanded .main-sleep-fit__viewport {
-    height: auto;
-  }
-
+@media (max-width: 63.9375rem) {
   .main-sleep-fit__container {
-    justify-content: flex-start;
+    justify-content: center;
+    align-items: center;
     height: 100%;
-    gap: 2.5rem;
-  }
-
-  .main-sleep-fit.is-expanded .main-sleep-fit__container {
-    height: auto;
   }
 
   .main-sleep-fit__header {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 0;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem; /* 20px */
+    width: 100%;
+    height: 100%;
+    text-align: center;
+  }
+
+  .main-sleep-fit__copy {
+    text-align: center;
+    color: var(--color-brand-light-1);
   }
 
   .main-sleep-fit__title {
-    font-size: 1.5rem; /* 24px, mo/subtitle02 */
+    font-size: 1.75rem; /* 28px, mo/subtitle02 */
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--color-brand-light-1);
+    text-align: center;
   }
 
   .main-sleep-fit__text {
-    font-weight: 400;
-    font-size: 1rem; /* 16px, mo/body03 */
-  }
-
-  .main-sleep-fit__text-detail {
     display: none;
   }
 
-  .main-sleep-fit__button {
-    margin-top: 1.25rem; /* 20px */
-  }
-
   .main-sleep-fit__frame {
-    width: 100%;
-    height: 12.25rem; /* 196px — 축소 후 */
+    display: none;
   }
 }

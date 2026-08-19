@@ -260,9 +260,165 @@
     );
   };
 
+  const initBrandStoryPhilosophy = () => {
+    const section = document.querySelector('.brand-story-philosophy');
+    const list = section?.querySelector('.brand-story-philosophy__list');
+    const compactMq = window.matchMedia('(max-width: 63.9375rem)');
+    if (!section || !list || !compactMq.matches) return;
+    if (typeof gsap === 'undefined') return;
+
+    const items = gsap.utils.toArray('.brand-story-philosophy__item', section);
+    const cards = gsap.utils.toArray('.brand-story-philosophy__card', section);
+    const navItems = gsap.utils.toArray('.brand-story-philosophy__nav-item', section);
+    if (items.length < 2) return;
+
+    const LAST_INDEX = items.length - 1;
+    const SLIDE_DURATION = 0.9;
+    const SLIDE_EASE = 'power2.inOut';
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let currentIndex = 0;
+    let isAnimating = false;
+    let slideTween = null;
+
+    const getSlideX = () => list.offsetWidth || 0;
+
+    const setActiveNav = (index) => {
+      navItems.forEach((btn, navIndex) => {
+        btn.classList.toggle('is-active', navIndex === index);
+      });
+    };
+
+    const setActiveCard = (index) => {
+      cards.forEach((card, cardIndex) => {
+        card.classList.toggle('is-active', cardIndex === index);
+      });
+      items.forEach((item, itemIndex) => {
+        item.style.zIndex = itemIndex === index ? '1' : '0';
+      });
+    };
+
+    const setItemsImmediate = (index) => {
+      const slideX = getSlideX();
+      items.forEach((item, itemIndex) => {
+        gsap.set(item, {
+          x: itemIndex === index ? 0 : itemIndex < index ? -slideX : slideX,
+        });
+      });
+    };
+
+    const wrapIndex = (index) => {
+      const count = LAST_INDEX + 1;
+      return ((index % count) + count) % count;
+    };
+
+    const isWrapForward = (fromIndex, toIndex) => {
+      if (fromIndex === LAST_INDEX && toIndex === 0) return true;
+      if (fromIndex === 0 && toIndex === LAST_INDEX) return false;
+      return toIndex > fromIndex;
+    };
+
+    const goTo = (index) => {
+      const safeIndex = wrapIndex(index);
+      if (isAnimating || safeIndex === currentIndex) return false;
+
+      if (slideTween) {
+        slideTween.kill();
+        slideTween = null;
+      }
+
+      if (reduceMotion) {
+        currentIndex = safeIndex;
+        setItemsImmediate(safeIndex);
+        setActiveNav(safeIndex);
+        setActiveCard(safeIndex);
+        return true;
+      }
+
+      const isForward = isWrapForward(currentIndex, safeIndex);
+      const currentItem = items[currentIndex];
+      const nextItem = items[safeIndex];
+      const slideX = getSlideX();
+
+      isAnimating = true;
+      gsap.set(nextItem, { x: isForward ? slideX : -slideX });
+      setActiveNav(safeIndex);
+      setActiveCard(safeIndex);
+
+      slideTween = gsap.timeline({
+        onComplete: () => {
+          isAnimating = false;
+          slideTween = null;
+          currentIndex = safeIndex;
+          setItemsImmediate(safeIndex);
+        },
+      });
+
+      slideTween
+        .to(
+          currentItem,
+          {
+            x: isForward ? -slideX : slideX,
+            duration: SLIDE_DURATION,
+            ease: SLIDE_EASE,
+          },
+          0,
+        )
+        .to(
+          nextItem,
+          {
+            x: 0,
+            duration: SLIDE_DURATION,
+            ease: SLIDE_EASE,
+          },
+          0,
+        );
+
+      return true;
+    };
+
+    setItemsImmediate(0);
+    setActiveNav(0);
+    setActiveCard(0);
+
+    navItems.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const index = Number(btn.dataset.index);
+        if (Number.isNaN(index)) return;
+        goTo(index);
+      });
+    });
+
+    let touchStartX = 0;
+
+    list.addEventListener(
+      'touchstart',
+      (event) => {
+        touchStartX = event.changedTouches[0]?.clientX ?? 0;
+      },
+      { passive: true },
+    );
+
+    list.addEventListener(
+      'touchend',
+      (event) => {
+        if (isAnimating) return;
+
+        const touchEndX = event.changedTouches[0]?.clientX ?? 0;
+        const deltaX = touchStartX - touchEndX;
+        if (Math.abs(deltaX) < 40) return;
+
+        if (deltaX > 0) goTo(currentIndex + 1);
+        if (deltaX < 0) goTo(currentIndex - 1);
+      },
+      { passive: true },
+    );
+  };
+
   const start = () => {
     const init = () => {
       initBrandStoryName();
+      initBrandStoryPhilosophy();
       ScrollTrigger.refresh();
     };
 

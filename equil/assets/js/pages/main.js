@@ -1284,10 +1284,79 @@
     });
   };
 
+  const initMainSleepBalanceFadeDown = () => {
+    const title = document.querySelector('.main-sleep-balance__title');
+    if (!title) return;
+
+    const FADE_DURATION = 1.26;
+    const charClass = 'main-sleep-balance__char';
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const splitChars = (element) => {
+      const walk = (node) => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const chars = Array.from(node.textContent);
+          const fragment = document.createDocumentFragment();
+
+          chars.forEach((char) => {
+            if (/^\s$/.test(char)) {
+              fragment.appendChild(document.createTextNode(char));
+              return;
+            }
+
+            const span = document.createElement('span');
+            span.className = charClass;
+            span.textContent = char;
+            fragment.appendChild(span);
+          });
+
+          node.parentNode.replaceChild(fragment, node);
+          return;
+        }
+
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          if (node.tagName === 'BR') return;
+          Array.from(node.childNodes).forEach(walk);
+        }
+      };
+
+      Array.from(element.childNodes).forEach(walk);
+      return Array.from(element.querySelectorAll(`.${charClass}`));
+    };
+
+    const chars = splitChars(title);
+    if (!chars.length) return;
+
+    if (reduceMotion) {
+      gsap.set(chars, { opacity: 1, y: 0 });
+      return;
+    }
+
+    const stagger = FADE_DURATION / Math.max(chars.length * 2.5, 1);
+
+    gsap.set(chars, { opacity: 0, y: -40 });
+    gsap.to(chars, {
+      opacity: 1,
+      y: 0,
+      duration: FADE_DURATION,
+      ease: 'power3.out',
+      stagger: chars.length > 1 ? stagger : 0,
+      scrollTrigger: {
+        trigger: title,
+        start: 'top 90%',
+        once: true,
+      },
+      onComplete: () => {
+        gsap.set(chars, { clearProps: 'will-change' });
+      },
+    });
+  };
+
   const initMainSleepFit = () => {
     const section = document.querySelector('.main-sleep-fit');
     const viewport = section?.querySelector('.main-sleep-fit__viewport');
     const media = section?.querySelector('.main-sleep-fit__media');
+    const overlay = section?.querySelector('.main-sleep-fit__overlay');
     const frame = section?.querySelector('.main-sleep-fit__frame');
     const header = section?.querySelector('.main-sleep-fit__header');
     if (!section || !viewport || !media || !frame || !header) return;
@@ -1295,24 +1364,24 @@
     const LAST_INDEX = 1;
     const SLIDE_DURATION = 1.1; /* 풀스크린 이미지가 1680×520으로 줄어드는 속도 */
     const SLIDE_EASE = 'power2.inOut';
+    const OVERLAY_DURATION = 0.9; /* 모바일/태블릿 오버레이 페이드 */
+    const OVERLAY_OPACITY = 0.4;
     const FADE_UP_DURATION = 1.26; /* main-sleep-fit__header fadeUp 속도 */
     const FADE_UP_EASE = 'power3.out';
     const ENTRY_LOCK_MS = 800;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const compactMq = window.matchMedia('(max-width: 63.9375rem)');
-    const mobileMq = window.matchMedia('(max-width: 47.9375rem)');
 
     let currentIndex = 0;
     let isAnimating = false;
     let entryLockUntil = 0;
+    let hasAutoPlayed = false;
     let slideTween = null;
     let scrollTrigger = null;
 
-    const getFullHeight = () => {
-      if (mobileMq.matches) return 290;
-      if (compactMq.matches) return 430;
-      return viewport.offsetHeight;
-    };
+    const isCompact = () => compactMq.matches;
+
+    const getFullHeight = () => viewport.offsetHeight;
 
     const getFullProps = () => {
       const height = getFullHeight();
@@ -1339,7 +1408,18 @@
       };
     };
 
+    const applyOverlayState = (expanded) => {
+      if (!overlay) return;
+      gsap.set(overlay, {
+        opacity: expanded && isCompact() ? OVERLAY_OPACITY : 0,
+      });
+    };
+
     const applyMediaState = (expanded) => {
+      if (isCompact()) {
+        gsap.set(media, getFullProps());
+        return;
+      }
       gsap.set(media, expanded ? getShrunkProps() : getFullProps());
     };
 
@@ -1379,6 +1459,7 @@
       currentIndex = expanded ? LAST_INDEX : 0;
       section.classList.toggle('is-expanded', expanded);
       applyMediaState(expanded);
+      applyOverlayState(expanded);
       applyHeaderState(expanded, { animate });
     };
 
@@ -1418,39 +1499,67 @@
           isAnimating = false;
           slideTween = null;
           applyMediaState(expanded);
+          applyOverlayState(expanded);
           applyHeaderState(expanded, { animate: false });
         },
       });
 
       if (expanded) {
         gsap.set(header, { opacity: 0, y: 40 });
-        /* 1) 이미지 사방 축소 */
-        slideTween.to(media, {
-          ...getShrunkProps(),
-          duration: SLIDE_DURATION,
-          ease: SLIDE_EASE,
-        }, 0);
-        /* 2) 축소 후 header fadeUp */
-        slideTween.to(header, {
-          opacity: 1,
-          y: 0,
-          duration: FADE_UP_DURATION,
-          ease: FADE_UP_EASE,
-        }, SLIDE_DURATION);
+
+        if (isCompact()) {
+          gsap.set(media, getFullProps());
+          if (overlay) {
+            gsap.set(overlay, { opacity: 0 });
+            slideTween.to(overlay, {
+              opacity: OVERLAY_OPACITY,
+              duration: OVERLAY_DURATION,
+              ease: 'power2.out',
+            }, 0);
+          }
+          slideTween.to(header, {
+            opacity: 1,
+            y: 0,
+            duration: FADE_UP_DURATION,
+            ease: FADE_UP_EASE,
+          }, 0);
+        } else {
+          if (overlay) gsap.set(overlay, { opacity: 0 });
+          slideTween.to(media, {
+            ...getShrunkProps(),
+            duration: SLIDE_DURATION,
+            ease: SLIDE_EASE,
+          }, 0);
+          slideTween.to(header, {
+            opacity: 1,
+            y: 0,
+            duration: FADE_UP_DURATION,
+            ease: FADE_UP_EASE,
+          }, SLIDE_DURATION);
+        }
       } else {
-        /* 되돌리기: header 먼저 페이드아웃 */
         slideTween.to(header, {
           opacity: 0,
           y: 40,
           duration: HEADER_OUT_DURATION,
           ease: 'power2.in',
         }, 0);
-        /* 그다음 이미지 풀스크린으로 확대 */
-        slideTween.to(media, {
-          ...getFullProps(),
-          duration: SLIDE_DURATION,
-          ease: SLIDE_EASE,
-        }, HEADER_OUT_DURATION);
+
+        if (isCompact()) {
+          if (overlay) {
+            slideTween.to(overlay, {
+              opacity: 0,
+              duration: HEADER_OUT_DURATION,
+              ease: 'power2.in',
+            }, 0);
+          }
+        } else {
+          slideTween.to(media, {
+            ...getFullProps(),
+            duration: SLIDE_DURATION,
+            ease: SLIDE_EASE,
+          }, HEADER_OUT_DURATION);
+        }
       }
 
       if (scrollTrigger) {
@@ -1519,6 +1628,11 @@
       return;
     }
 
+    const playExpand = () => {
+      if (currentIndex >= LAST_INDEX && !isAnimating) return;
+      goTo(LAST_INDEX);
+    };
+
     scrollTrigger = ScrollTrigger.create({
       trigger: section,
       start: 'top top',
@@ -1529,22 +1643,24 @@
       invalidateOnRefresh: true,
       onRefresh: () => {
         applyMediaState(currentIndex >= LAST_INDEX);
+        applyOverlayState(currentIndex >= LAST_INDEX);
       },
       onEnter: () => {
         entryLockUntil = Date.now() + ENTRY_LOCK_MS;
+        if (hasAutoPlayed) return;
+        hasAutoPlayed = true;
         applyIndex(0, { animate: false });
+        requestAnimationFrame(() => {
+          playExpand();
+        });
       },
       onEnterBack: () => {
         entryLockUntil = Date.now() + ENTRY_LOCK_MS;
         applyIndex(LAST_INDEX, { animate: false });
       },
-      onUpdate: (self) => {
-        if (isAnimating) return;
-
-        const syncedIndex = Math.round(self.progress * LAST_INDEX);
-        if (syncedIndex !== currentIndex) {
-          applyIndex(syncedIndex, { animate: true });
-        }
+      onLeaveBack: () => {
+        hasAutoPlayed = false;
+        applyIndex(0, { animate: false });
       },
     });
 
@@ -1569,6 +1685,7 @@
       initMainBeddingSolution();
       initMainSleepFit();
       initMainBeddingOverviewFadeUp();
+      initMainSleepBalanceFadeDown();
       ScrollTrigger.refresh();
 
       const savedY = Number(sessionStorage.getItem(SCROLL_POSITION_KEY));
