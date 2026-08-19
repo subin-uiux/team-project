@@ -2,6 +2,19 @@
    main-scroll (hero + problem 통합 pin)
    ======================================== */
 
+html {
+  overflow-x: clip;
+}
+
+body {
+  overflow-x: clip;
+  max-width: 100%;
+}
+
+.pin-spacer {
+  max-width: 100% !important;
+}
+
 .main-scroll {
   width: 100%;
   max-width: 120rem; /* 1920px */
@@ -842,15 +855,19 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
 .main-pillow-solution {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  gap: 2.5rem; /* 40px — heading ↔ cards */
+  box-sizing: border-box;
   width: 100%;
   max-width: 120rem; /* 1920px */
   height: 100vh;
   margin-inline: auto;
+  padding-block: 6.25rem; /* 100px 위아래 */
 }
 
 .main-pillow-solution__container {
   display: flex;
-  flex: 1 1 auto;
+  flex: 0 0 auto;
   align-items: center;
   justify-content: center;
 }
@@ -868,6 +885,7 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
   max-width: calc(100% - (var(--grid-margin) * 2));
   height: 37.5rem; /* 600px */
   margin-inline: auto;
+  overflow: hidden;
 }
 
 .main-pillow-solution__card {
@@ -1010,13 +1028,11 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
 
 @media (min-width: 48rem) and (max-width: 63.9375rem) {
   .main-pillow-solution {
-    box-sizing: border-box;
     height: 100%;
-    padding: 6.25rem 0; /* 100px 위아래 */
+    padding-block: 6.25rem; /* 100px 위아래 */
   }
 
   .main-pillow-solution__container {
-    flex: 0 0 auto;
     justify-content: center;
   }
 
@@ -1051,7 +1067,7 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
     max-width: calc(100% - (var(--grid-margin) * 2));
     height: 37.5rem; /* 600px */
     gap: 0;
-    margin-top: 2.5rem;
+    margin-top: 0;
     overflow: hidden;
   }
 
@@ -1097,19 +1113,17 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
     align-items: center;
     justify-content: center;
     gap: 0.9375rem; /* 15px */
-    margin-top: 1.25rem; /* 20px */
+    margin-top: 0;
   }
 }
 
 @media (max-width: 47.9375rem) {
   .main-pillow-solution {
-    box-sizing: border-box;
     height: 100%;
-    padding: 6.25rem 0; /* 100px 위아래 */
+    padding-block: 6.25rem; /* 100px 위아래 */
   }
 
   .main-pillow-solution__container {
-    flex: 0 0 auto;
     justify-content: center;
   }
 
@@ -1144,7 +1158,7 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
     max-width: calc(100% - (var(--grid-margin) * 2));
     height: 37.5rem; /* 600px */
     gap: 0;
-    margin-top: 2.5rem;
+    margin-top: 0;
     overflow: hidden;
   }
 
@@ -1190,7 +1204,7 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
     align-items: center;
     justify-content: center;
     gap: 0.9375rem; /* 15px */
-    margin-top: 1.25rem; /* 20px */
+    margin-top: 0;
   }
 }
 
@@ -1319,6 +1333,7 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
   width: 100%;
   max-width: 120rem; /* 1920px */
   margin-inline: auto;
+  overflow-x: clip;
 }
 
 .main-bedding-solution__panel {
