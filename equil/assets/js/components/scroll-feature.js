@@ -204,18 +204,38 @@
       media.closest('.scroll-feature').appendChild(dots);
     };
 
+    const compactMq = window.matchMedia('(max-width: 63.9375rem)');
+    const isCompactView = () => compactMq.matches;
+
     const activateFeature = (index, animate = true) => {
       if (index === currentIndex && animate) return;
 
       const prevIndex = currentIndex;
       currentIndex = index;
 
-      if (isCompact) {
+      if (isCompactView()) {
         features.forEach((feature, i) => {
           feature.classList.toggle('is-active', i === index);
         });
         setImage(index, animate);
         updateDots(index);
+
+        const hotspotPos = hotspotPositions?.[index];
+        if (hotspotPos && hotspot) {
+          if (animate) {
+            gsap.to(hotspot, {
+              left: hotspotPos.left,
+              top: hotspotPos.top,
+              duration: SCROLL_FEATURE.TRANSITION_DURATION,
+              ease: 'power2.inOut',
+            });
+          } else {
+            gsap.set(hotspot, {
+              left: hotspotPos.left,
+              top: hotspotPos.top,
+            });
+          }
+        }
         return;
       }
 
@@ -367,8 +387,6 @@
       }
     };
 
-    const isCompact = window.matchMedia('(max-width: 63.9375rem)').matches;
-
     setupCompactNav();
     activateFeature(0, false);
 
@@ -394,11 +412,6 @@
         },
       });
     };
-
-    if (isCompact) {
-      revealTitle();
-      return null;
-    }
 
     const isSectionPinnedInView = () => {
       if (!pinTrigger?.isActive) return false;
@@ -455,27 +468,57 @@
       }
     };
 
-    pinTrigger = ScrollTrigger.create({
-      trigger: section,
-      start: SCROLL_FEATURE.PIN_START,
-      end: PIN_SCROLL_END,
-      pin: true,
-      pinSpacing: true,
-      anticipatePin: 1,
-      invalidateOnRefresh: true,
-      onEnter: () => {
-        activateFeature(0, false);
-        startEntryLock();
-        revealTitle();
-      },
-      onEnterBack: () => {
-        activateFeature(LAST_INDEX, false);
-        startEntryLock();
-        revealTitle();
-      },
-    });
+    const enableDesktopPin = () => {
+      if (pinTrigger) return;
 
-    window.addEventListener('wheel', onWheel, { passive: false });
+      pinTrigger = ScrollTrigger.create({
+        trigger: section,
+        start: SCROLL_FEATURE.PIN_START,
+        end: PIN_SCROLL_END,
+        pin: true,
+        pinSpacing: true,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+        onEnter: () => {
+          activateFeature(0, false);
+          startEntryLock();
+          revealTitle();
+        },
+        onEnterBack: () => {
+          activateFeature(LAST_INDEX, false);
+          startEntryLock();
+          revealTitle();
+        },
+      });
+
+      window.addEventListener('wheel', onWheel, { passive: false });
+    };
+
+    const disableDesktopPin = () => {
+      if (pinTrigger) {
+        pinTrigger.kill();
+        pinTrigger = null;
+        ScrollTrigger.refresh();
+      }
+      window.removeEventListener('wheel', onWheel);
+    };
+
+    const syncPinToViewport = () => {
+      if (isCompactView()) {
+        disableDesktopPin();
+        revealTitle();
+        return;
+      }
+
+      enableDesktopPin();
+    };
+
+    syncPinToViewport();
+    if (compactMq.addEventListener) {
+      compactMq.addEventListener('change', syncPinToViewport);
+    } else {
+      compactMq.addListener(syncPinToViewport);
+    }
 
     return pinTrigger;
   };
