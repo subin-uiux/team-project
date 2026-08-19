@@ -1619,6 +1619,7 @@
       };
 
       viewport.addEventListener('wheel', onWheel, { passive: false });
+      section.addEventListener('wheel', onWheel, { passive: false });
     };
 
     applyIndex(0, { animate: false });
@@ -1636,8 +1637,9 @@
     scrollTrigger = ScrollTrigger.create({
       trigger: section,
       start: 'top top',
-      end: () => `+=${viewport.offsetHeight}`,
-      pin: viewport,
+      end: () => `+=${section.offsetHeight}`,
+      pin: true,
+      pinSpacing: true,
       scrub: false,
       anticipatePin: 1,
       invalidateOnRefresh: true,

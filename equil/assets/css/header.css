@@ -31,6 +31,7 @@
   height: 5rem; /* 80px */
   padding: 0 7.5rem; /* 0 120px */
   background-color: var(--color-white);
+  box-shadow: 0 0.0625rem 0.125rem 0 rgb(0 0 0 / 10%); /* 0 1px 2px 0, black 10% */
 }
 
 .site-header__logo {
@@ -50,6 +51,7 @@
 }
 
 .site-header__link {
+  position: relative;
   display: inline-flex;
   align-items: center;
   height: 100%;
@@ -58,6 +60,24 @@
   font-size: 1rem; /* 16px */
   letter-spacing: 0.1em; /* 10% */
   color: var(--color-brand-dark);
+}
+
+.site-header__link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: calc(50% + 0.7em);
+  width: 100%;
+  height: 0.0625rem; /* 1px */
+  background-color: var(--color-brand-dark);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.3s ease;
+}
+
+.site-header__link:hover::after,
+.site-header__link:focus-visible::after {
+  transform: scaleX(1);
 }
 
 .site-header__cta {
