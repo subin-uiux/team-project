@@ -212,7 +212,8 @@
     const transitionSection = document.querySelector('.sleep-fit-transition');
     const resultSection = document.querySelector('.sleep-fit-result');
     const structureSection = document.querySelector('.sleep-fit-structure');
-    const structureImage = structureSection?.querySelector('.sleep-fit-structure__image');
+    const ctaSection = document.querySelector('.sleep-fit-cta');
+    const structureImage = structureSection?.querySelector('.sleep-fit-structure__image--pc');
     const panels = section ? [...section.querySelectorAll('.sleep-fit-test__panel')] : [];
     const steps = section ? [...section.querySelectorAll('.sleep-fit-test__step')] : [];
     const choices = section?.querySelectorAll('.sleep-fit-test__choice');
@@ -235,6 +236,10 @@
 
     if (transitionSection) {
       transitionSection.hidden = true;
+    }
+
+    if (ctaSection) {
+      ctaSection.hidden = true;
     }
 
     const STRUCTURE_DATA = {
@@ -296,12 +301,54 @@
         const src = structureImage.dataset[`image${resultKey.charAt(0).toUpperCase() + resultKey.slice(1)}`];
         if (src) structureImage.src = src;
       }
+
+      setStructureLayer(0);
+    };
+
+    let setStructureLayer = () => {};
+
+    const initStructureGallery = () => {
+      if (!structureSection) return;
+
+      const hotspots = [...structureSection.querySelectorAll('.sleep-fit-structure__hotspot')];
+      const thumbs = [...structureSection.querySelectorAll('.sleep-fit-structure__thumb')];
+      const layerFeatures = [...structureSection.querySelectorAll('.sleep-fit-structure__feature')];
+      const prevArrow = structureSection.querySelector('.sleep-fit-structure__arrow--prev');
+      const nextArrow = structureSection.querySelector('.sleep-fit-structure__arrow--next');
+      const layerCount = layerFeatures.length;
+      let currentLayer = 0;
+
+      const setLayer = (index) => {
+        currentLayer = ((index % layerCount) + layerCount) % layerCount;
+
+        [hotspots, thumbs, layerFeatures].forEach((group) => {
+          group.forEach((el, i) => {
+            el.classList.toggle('is-active', i === currentLayer);
+          });
+        });
+      };
+
+      hotspots.forEach((el) => {
+        el.addEventListener('click', () => setLayer(Number(el.dataset.index)));
+      });
+      thumbs.forEach((el) => {
+        el.addEventListener('click', () => setLayer(Number(el.dataset.index)));
+      });
+      prevArrow?.addEventListener('click', () => setLayer(currentLayer - 1));
+      nextArrow?.addEventListener('click', () => setLayer(currentLayer + 1));
+
+      setStructureLayer = setLayer;
+      setLayer(0);
     };
 
     const initResultStructureTransition = (resultKey) => {
       if (!transitionSection || !window.gsap || !window.ScrollTrigger) return;
 
       updateStructureContent(resultKey);
+
+      if (window.matchMedia('(max-width: 63.9375rem)').matches) {
+        return;
+      }
 
       if (resultTransitionScrollTrigger) {
         resultTransitionScrollTrigger.kill();
@@ -319,7 +366,7 @@
         : [];
       const structureFadeTargets = [
         structureSection?.querySelector('.sleep-fit-structure__content'),
-        structureSection?.querySelector('.sleep-fit-structure__image'),
+        structureSection?.querySelector('.sleep-fit-structure__image--pc'),
       ].filter(Boolean);
       const structureFeatures = structureSection
         ? [...structureSection.querySelectorAll('.sleep-fit-structure__feature')]
@@ -376,14 +423,6 @@
       });
     };
 
-    const updatePreview = (choice) => {
-      const panel = choice.closest('.sleep-fit-test__panel');
-      const preview = panel?.querySelector('.sleep-fit-test__preview-image');
-      const imageSrc = choice.dataset.image;
-      if (!preview || !imageSrc) return;
-      preview.src = imageSrc;
-    };
-
     const showStep = (index) => {
       currentStep = Math.max(0, Math.min(panels.length - 1, index));
 
@@ -398,13 +437,6 @@
       if (nextButton) {
         nextButton.disabled = !answers[QUESTION_KEYS[currentStep]];
         nextButton.textContent = currentStep === panels.length - 1 ? '결과보기' : '다음';
-      }
-
-      const selectedChoice = panels[currentStep]?.querySelector(
-        '.sleep-fit-test__choice.is-selected',
-      );
-      if (selectedChoice) {
-        updatePreview(selectedChoice);
       }
 
       updateProgress();
@@ -437,6 +469,10 @@
 
       if (structureSection) {
         structureSection.hidden = false;
+      }
+
+      if (ctaSection) {
+        ctaSection.hidden = false;
       }
 
       initResultStructureTransition(resultKey);
@@ -500,7 +536,6 @@
         group.forEach((item) => item.classList.remove('is-selected'));
         choice.classList.add('is-selected');
         answers[questionKey] = value;
-        updatePreview(choice);
 
         if (nextButton && questionKey === QUESTION_KEYS[currentStep]) {
           nextButton.disabled = false;
@@ -524,6 +559,8 @@
 
       showStep(currentStep + 1);
     });
+
+    initStructureGallery();
   };
 
   initSleepFitTest();
