@@ -234,28 +234,40 @@
 
     const SLIDE_SPEED = 900;
     const slides = Array.from(swiperEl.querySelectorAll('.swiper-slide'));
+    const swiperArea = section.querySelector(
+      '.heating-mat-tech-technology__swiper-area'
+    );
+    const compactMq = window.matchMedia('(max-width: 63.9375rem)');
+    const isCompactView = () => compactMq.matches;
 
     const CIRCLE_ACTIVE = 600;
     const CIRCLE_OFFSET_Y = 60;
 
-    const getCircleSize = () => CIRCLE_ACTIVE;
+    const getCircleSize = () => {
+      if (isCompactView() && swiperArea) {
+        return swiperArea.clientWidth || CIRCLE_ACTIVE;
+      }
+      return CIRCLE_ACTIVE;
+    };
 
     const getCircleTarget = () => {
-      if (sticky) {
-        const stickyRect = sticky.getBoundingClientRect();
+      const stickyRect = sticky.getBoundingClientRect();
+
+      if (isCompactView() && swiperArea) {
+        const mediaRect = swiperArea.getBoundingClientRect();
         return {
-          x: stickyRect.width / 2,
-          y: stickyRect.height / 2 - CIRCLE_OFFSET_Y,
+          x: mediaRect.left - stickyRect.left + mediaRect.width / 2,
+          y: mediaRect.top - stickyRect.top + mediaRect.height / 2,
           width: stickyRect.width,
           height: stickyRect.height,
         };
       }
 
       return {
-        x: window.innerWidth / 2,
-        y: window.innerHeight / 2 - CIRCLE_OFFSET_Y,
-        width: window.innerWidth,
-        height: window.innerHeight,
+        x: stickyRect.width / 2,
+        y: stickyRect.height / 2 - CIRCLE_OFFSET_Y,
+        width: stickyRect.width,
+        height: stickyRect.height,
       };
     };
 
@@ -376,15 +388,21 @@
       entryLockUntil = Date.now() + ENTRY_LOCK_MS;
     };
 
-    const getTrackStep = () => sticky?.clientWidth || window.innerWidth;
+    const getTrackStep = () => {
+      if (isCompactView()) {
+        return swiperArea?.clientWidth || sticky?.clientWidth || window.innerWidth;
+      }
+      return sticky?.clientWidth || window.innerWidth;
+    };
 
     const getTrackOffset = (index) => {
-      const step = getTrackStep() * 0.5;
+      const step = isCompactView() ? getTrackStep() : getTrackStep() * 0.5;
+      if (isCompactView()) return -index * step;
       return (0.5 - index) * step;
     };
 
     const syncTrackLayout = (animate = false) => {
-      const step = getTrackStep() * 0.5;
+      const step = isCompactView() ? getTrackStep() : getTrackStep() * 0.5;
 
       slides.forEach((slide) => {
         slide.style.width = `${step}px`;
@@ -483,6 +501,37 @@
       nextEl.addEventListener('click', () => goToSlide(currentIndex + 1));
     }
 
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    swiperEl.addEventListener(
+      'touchstart',
+      (event) => {
+        if (!isCompactView() || !content.classList.contains('is-visible')) return;
+        touchStartX = event.changedTouches[0].clientX;
+        touchStartY = event.changedTouches[0].clientY;
+      },
+      { passive: true },
+    );
+
+    swiperEl.addEventListener(
+      'touchend',
+      (event) => {
+        if (!isCompactView() || !content.classList.contains('is-visible')) return;
+
+        const deltaX = event.changedTouches[0].clientX - touchStartX;
+        const deltaY = event.changedTouches[0].clientY - touchStartY;
+        if (Math.abs(deltaX) < 40 || Math.abs(deltaX) < Math.abs(deltaY)) return;
+
+        if (deltaX < 0) {
+          goToSlide(currentIndex + 1);
+        } else {
+          goToSlide(currentIndex - 1);
+        }
+      },
+      { passive: true },
+    );
+
     const LAST_INDEX = slides.length - 1;
 
     const shouldLockSwiperScroll = () => {
@@ -572,6 +621,11 @@
     window.addEventListener('resize', () => {
       updateIntroFrame(introComplete ? 1 : 0);
       syncTrackLayout(false);
+    });
+    compactMq.addEventListener('change', () => {
+      syncTrackLayout(false);
+      updateIntroFrame(introComplete ? 1 : 0);
+      ScrollTrigger.refresh();
     });
   };
 
@@ -749,9 +803,79 @@
     initFadeUp(heading, targets, 'heating-mat-tech-safety__char');
   };
 
+  const initHeatingMatTechProblemSlider = () => {
+    const section = document.querySelector('.heating-mat-tech-problem');
+    if (!section) return;
+
+    const track = section.querySelector('.heating-mat-tech-problem__cards');
+    const cards = [...section.querySelectorAll('.heating-mat-tech-problem__card')];
+    const dots = [...section.querySelectorAll('.heating-mat-tech-problem__dot')];
+    if (!track || !cards.length) return;
+
+    const mobileQuery = window.matchMedia('(max-width: 47.9375rem)');
+    let currentIndex = 0;
+    let startX = 0;
+    let startY = 0;
+
+    const isMobile = () => mobileQuery.matches;
+
+    const goTo = (index) => {
+      currentIndex = (index + cards.length) % cards.length;
+
+      if (isMobile()) {
+        track.style.transform = `translate3d(-${currentIndex * 100}%, 0, 0)`;
+      } else {
+        track.style.transform = '';
+      }
+
+      dots.forEach((dot, dotIndex) => {
+        dot.classList.toggle('is-active', dotIndex === currentIndex);
+      });
+    };
+
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        if (!isMobile()) return;
+        goTo(index);
+      });
+    });
+
+    track.addEventListener(
+      'touchstart',
+      (event) => {
+        if (!isMobile()) return;
+        startX = event.changedTouches[0].clientX;
+        startY = event.changedTouches[0].clientY;
+      },
+      { passive: true },
+    );
+
+    track.addEventListener(
+      'touchend',
+      (event) => {
+        if (!isMobile()) return;
+
+        const deltaX = event.changedTouches[0].clientX - startX;
+        const deltaY = event.changedTouches[0].clientY - startY;
+        if (Math.abs(deltaX) < 40 || Math.abs(deltaX) < Math.abs(deltaY)) return;
+
+        if (deltaX < 0) {
+          goTo(currentIndex + 1);
+        } else {
+          goTo(currentIndex - 1);
+        }
+      },
+      { passive: true },
+    );
+
+    mobileQuery.addEventListener('change', () => goTo(isMobile() ? currentIndex : 0));
+    goTo(0);
+  };
+
   const start = () => {
     const init = () => {
       initHeatingMatTechHero();
+      initHeatingMatTechProblemSlider();
       initHeatingMatTechProductOverview();
       initHeatingMatTechProduct();
       initHeatingMatTechTechnology();

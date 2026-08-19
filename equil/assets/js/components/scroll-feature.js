@@ -215,7 +215,14 @@
 
       if (isCompactView()) {
         features.forEach((feature, i) => {
-          feature.classList.toggle('is-active', i === index);
+          const isActive = i === index;
+          feature.classList.toggle('is-active', isActive);
+
+          const desc = feature.querySelector('.scroll-feature__feature-desc');
+          if (!desc) return;
+
+          desc.hidden = false;
+          gsap.set(desc, { opacity: 1, y: 0 });
         });
         setImage(index, animate);
         updateDots(index);
@@ -345,13 +352,13 @@
 
         if (nextDesc) {
           nextDesc.hidden = false;
+          gsap.set(nextDesc, { opacity: 0, y: 12 });
         }
       });
 
       if (nextDesc) {
-        transitionTl.fromTo(
+        transitionTl.to(
           nextDesc,
-          { opacity: 0, y: 12 },
           {
             opacity: 1,
             y: 0,
