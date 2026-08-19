@@ -206,6 +206,13 @@
     const section = document.querySelector('.sleep-fit-test');
     const startButton = section?.querySelector('.sleep-fit-test__button');
     const questions = section?.querySelector('.sleep-fit-test__questions');
+    const loading = section?.querySelector('.sleep-fit-test__loading');
+    const loadingBar = loading?.querySelector('.sleep-fit-test__loading-bar');
+    const loadingFill = loading?.querySelector('.sleep-fit-test__loading-bar-fill');
+    const transitionSection = document.querySelector('.sleep-fit-transition');
+    const resultSection = document.querySelector('.sleep-fit-result');
+    const structureSection = document.querySelector('.sleep-fit-structure');
+    const structureImage = structureSection?.querySelector('.sleep-fit-structure__image');
     const panels = section ? [...section.querySelectorAll('.sleep-fit-test__panel')] : [];
     const steps = section ? [...section.querySelectorAll('.sleep-fit-test__step')] : [];
     const choices = section?.querySelectorAll('.sleep-fit-test__choice');
@@ -213,7 +220,145 @@
     const nextButton = section?.querySelector('.sleep-fit-test__next');
     if (!section || !startButton || !questions || !panels.length) return;
 
+    const LOADING_DURATION = 2500;
     let currentStep = 0;
+    let isAnalyzing = false;
+    let resultTransitionScrollTrigger = null;
+
+    if (resultSection) {
+      resultSection.hidden = true;
+    }
+
+    if (structureSection) {
+      structureSection.hidden = true;
+    }
+
+    if (transitionSection) {
+      transitionSection.hidden = true;
+    }
+
+    const STRUCTURE_DATA = {
+      soft: {
+        subTitle: 'Your Sleep Match',
+        title: 'Soft Relief',
+        desc: '이러한 부드러운 지지감은 서로 다른 역할을\n가진 세 가지 내부층의 조합에서 완성됩니다.',
+        features: [
+          { title: 'Soft Memory Foam', text: '어깨와 골반의 체압을 부드럽게 분산시킵니다.' },
+          { title: 'High-Resilience Support Foam', text: '몸이 지나치게 가라앉지 않도록 지지합니다.' },
+          { title: 'Soft Zoned Pocket Spring', text: '어깨는 부드럽게, 허리와 골반은 안정적으로 받쳐줍니다.' },
+        ],
+      },
+      balance: {
+        subTitle: 'Your Sleep Match',
+        title: 'Balance Move',
+        desc: '이러한 균형적인 지지감은 서로 다른 역할을\n가진 세 가지 내부층의 조합에서 완성됩니다.',
+        features: [
+          { title: 'Responsive Latex Foam', text: '자세를 바꿀 때 빠르게 복원합니다.' },
+          { title: 'Balance HR Foam', text: '쿠션감과 지지감의 균형 유지합니다.' },
+          { title: 'Medium Zoned Pocket Spring', text: '움직임에 맞춰 몸 전체를 고르게 지지합니다.' },
+        ],
+      },
+      firm: {
+        subTitle: 'Firm Support',
+        title: 'Balance Move',
+        desc: '이러한 단단한 지지감은 서로 다른 역할을\n가진 세 가지 내부층의 조합에서 완성됩니다.',
+        features: [
+          { title: 'High-Resilience Comfort Foam', text: '탄탄함 속에 기본적인 쿠션감 제공합니다.' },
+          { title: 'High-Density Support Foam', text: '몸이 지나치게 가라앉지 않도록 지지합니다.' },
+          { title: 'Firm Zoned Pocket Spring', text: '높은 하중에도 몸의 중심을 안정적으로 지지합니다.' },
+        ],
+      },
+    };
+
+    const updateStructureContent = (resultKey) => {
+      if (!structureSection) return;
+      const data = STRUCTURE_DATA[resultKey];
+      if (!data) return;
+
+      const subTitle = structureSection.querySelector('.heading-3tier__sub-title');
+      const title = structureSection.querySelector('.heading-3tier__title');
+      const desc = structureSection.querySelector('.heading-3tier__desc');
+
+      if (subTitle) subTitle.textContent = data.subTitle;
+      if (title) title.textContent = data.title;
+      if (desc) desc.innerHTML = data.desc.replace(/\n/g, '<br>');
+
+      const features = structureSection.querySelectorAll('.sleep-fit-structure__feature');
+      data.features.forEach((item, i) => {
+        if (!features[i]) return;
+        const ft = features[i].querySelector('.sleep-fit-structure__feature-title');
+        const fx = features[i].querySelector('.sleep-fit-structure__feature-text');
+        if (ft) ft.textContent = item.title;
+        if (fx) fx.textContent = item.text;
+      });
+
+      if (structureImage) {
+        const src = structureImage.dataset[`image${resultKey.charAt(0).toUpperCase() + resultKey.slice(1)}`];
+        if (src) structureImage.src = src;
+      }
+    };
+
+    const initResultStructureTransition = (resultKey) => {
+      if (!transitionSection || !window.gsap || !window.ScrollTrigger) return;
+
+      updateStructureContent(resultKey);
+
+      if (resultTransitionScrollTrigger) {
+        resultTransitionScrollTrigger.kill();
+        resultTransitionScrollTrigger = null;
+      }
+
+      const activeResultPanel = resultSection?.querySelector(
+        `.sleep-fit-result__panel[data-result="${resultKey}"]`,
+      );
+      const resultFadeTargets = activeResultPanel
+        ? [
+          activeResultPanel.querySelector('.sleep-fit-result__content'),
+          activeResultPanel.querySelector('.sleep-fit-result__media'),
+        ].filter(Boolean)
+        : [];
+      const structureFadeTargets = [
+        structureSection?.querySelector('.sleep-fit-structure__content'),
+        structureSection?.querySelector('.sleep-fit-structure__image'),
+      ].filter(Boolean);
+      const structureFeatures = structureSection
+        ? [...structureSection.querySelectorAll('.sleep-fit-structure__feature')]
+        : [];
+
+      if (!resultFadeTargets.length || !structureFadeTargets.length) return;
+
+      gsap.set(resultFadeTargets, { autoAlpha: 1, y: 0 });
+      gsap.set(structureSection, { autoAlpha: 0 });
+      gsap.set(structureFadeTargets, { autoAlpha: 0, y: 40 });
+      gsap.set(structureFeatures, { autoAlpha: 0, y: 40 });
+
+      const tl = gsap.timeline({
+        defaults: { ease: 'power3.out' },
+        scrollTrigger: {
+          trigger: transitionSection,
+          start: 'top top',
+          end: '+=100%',
+          scrub: 0.6,
+          pin: true,
+          anticipatePin: 1,
+          snap: { snapTo: 1, duration: { min: 0.4, max: 0.7 }, ease: 'power2.inOut' },
+        },
+      });
+
+      tl.to(
+        resultFadeTargets,
+        { autoAlpha: 0, y: -36, duration: 0.35, ease: 'power2.out' },
+        0,
+      )
+        .to(structureSection, { autoAlpha: 1, duration: 0.01 }, 0.3)
+        .to(structureFadeTargets, { autoAlpha: 1, y: 0, duration: 0.35 }, 0.3)
+        .to(structureFeatures[0], { autoAlpha: 1, y: 0, duration: 0.2 }, 0.55)
+        .to(structureFeatures[1], { autoAlpha: 1, y: 0, duration: 0.2 }, 0.65)
+        .to(structureFeatures[2], { autoAlpha: 1, y: 0, duration: 0.2 }, 0.75);
+
+      resultTransitionScrollTrigger = tl.scrollTrigger || null;
+      ScrollTrigger.refresh();
+    };
 
     const updateProgress = () => {
       steps.forEach((step, index) => {
@@ -265,6 +410,77 @@
       updateProgress();
     };
 
+    const setLoadingProgress = (value) => {
+      if (loadingBar) {
+        loadingBar.setAttribute('aria-valuenow', String(Math.round(value)));
+      }
+    };
+
+    const showResult = (result) => {
+      root.sleepFitResult = result;
+      if (loading) loading.hidden = true;
+      section.hidden = true;
+      if (transitionSection) transitionSection.hidden = false;
+
+      if (!resultSection) return;
+
+      const resultKey = result.result || 'soft';
+      resultSection.hidden = false;
+      resultSection.querySelectorAll('.sleep-fit-result__panel').forEach((panel) => {
+        panel.hidden = panel.dataset.result !== resultKey;
+      });
+
+      if (structureImage) {
+        const nextSrc = structureImage.dataset[`image${resultKey.charAt(0).toUpperCase()}${resultKey.slice(1)}`];
+        if (nextSrc) structureImage.src = nextSrc;
+      }
+
+      if (structureSection) {
+        structureSection.hidden = false;
+      }
+
+      initResultStructureTransition(resultKey);
+
+      window.scrollTo(0, 0);
+    };
+
+    const startLoading = (result) => {
+      if (!loading || !loadingFill) {
+        showResult(result);
+        return;
+      }
+
+      isAnalyzing = true;
+      questions.hidden = true;
+      loading.hidden = false;
+      window.scrollTo(0, 0);
+
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const duration = reduceMotion ? 0 : LOADING_DURATION;
+
+      loadingFill.style.transition = 'none';
+      loadingFill.style.width = '0%';
+      setLoadingProgress(0);
+      void loadingFill.offsetWidth;
+
+      if (duration === 0) {
+        loadingFill.style.width = '100%';
+        setLoadingProgress(100);
+        isAnalyzing = false;
+        showResult(result);
+        return;
+      }
+
+      loadingFill.style.transition = `width ${duration}ms ease-in-out`;
+      loadingFill.style.width = '100%';
+      setLoadingProgress(100);
+
+      window.setTimeout(() => {
+        isAnalyzing = false;
+        showResult(result);
+      }, duration);
+    };
+
     startButton.addEventListener('click', () => {
       section.classList.add('is-started');
       questions.hidden = false;
@@ -299,12 +515,10 @@
     });
 
     nextButton?.addEventListener('click', () => {
-      if (!answers[QUESTION_KEYS[currentStep]]) return;
+      if (isAnalyzing || !answers[QUESTION_KEYS[currentStep]]) return;
 
       if (currentStep >= panels.length - 1) {
-        const result = calculateSleepFitResult(answers);
-        root.sleepFitResult = result;
-        console.log(result);
+        startLoading(calculateSleepFitResult(answers));
         return;
       }
 

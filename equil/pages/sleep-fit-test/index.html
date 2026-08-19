@@ -14,6 +14,8 @@
   <link rel="stylesheet" href="../../assets/css/header.css">
   <link rel="stylesheet" href="../../assets/css/footer.css">
   <link rel="stylesheet" href="../../assets/css/pages/sleep-fit-test/test.css">
+  <link rel="stylesheet" href="../../assets/css/pages/sleep-fit-test/result.css">
+  <link rel="stylesheet" href="../../assets/css/components/section-cta.css">
 </head>
 
 <body>
@@ -246,8 +248,7 @@
                 <p class="heading-3tier__sub-title">STEP 02</p>
                 <h2 class="heading-3tier__title">평소 어떤 자세로 자는 편인가요?</h2>
                 <p class="heading-3tier__desc">
-                  수면 자세에 따라 압력 분산과<br />
-                  지지력이 달라집니다.
+                  수면 자세에 따라 압력 분산과<br />지지력이 달라집니다.
                 </p>
               </div>
               <div class="sleep-fit-test__choices">
@@ -315,8 +316,7 @@
                 <p class="heading-3tier__sub-title">STEP 03</p>
                 <h2 class="heading-3tier__title">수면 중 불편한 부위가 있나요?</h2>
                 <p class="heading-3tier__desc">
-                  불편한 부위를 파악하면 더 정확한<br />
-                  추천이 가능합니다.
+                  불편한 부위를 파악하면 더 정확한<br />추천이 가능합니다.
                 </p>
               </div>
               <div class="sleep-fit-test__select">
@@ -373,7 +373,7 @@
               <div class="heading-3tier sleep-fit-test__question-heading">
                 <p class="heading-3tier__sub-title">STEP 04</p>
                 <h2 class="heading-3tier__title">수면에서 가장 중요한 요소는 무엇인가요?</h2>
-                <p class="heading-3tier__desc">우선 순위에 따라 제품 추천 기준이 달라집니다.</p>
+                <p class="heading-3tier__desc">우선순위에 따라 제품 추천 기준이 달라집니다.</p>
               </div>
               <div class="sleep-fit-test__choices sleep-fit-test__choices--preference">
                 <button
@@ -421,17 +421,164 @@
           </div>
         </div>
       </div>
-    </section>
-    <section class="sleep-fit-result">
-      <div class="container">
+      <div
+        class="sleep-fit-test__loading"
+        hidden
+        aria-busy="true"
+        aria-live="polite"
+      >
+        <div class="container sleep-fit-test__loading-content">
+          <div class="sleep-fit-test__loading-heading">
+            <h2 class="sleep-fit-test__loading-title">Analyzing …</h2>
+            <p class="sleep-fit-test__loading-desc">당신의 수면 데이터를 분석하고 있습니다.</p>
+          </div>
+          <div
+            class="sleep-fit-test__loading-bar"
+            role="progressbar"
+            aria-label="수면 데이터 분석"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="0"
+          >
+            <span class="sleep-fit-test__loading-bar-fill"></span>
+          </div>
+        </div>
       </div>
     </section>
-    <section class="sleep-fit-structure">
-      <div class="container">
+    <div class="sleep-fit-transition" hidden>
+    <section class="sleep-fit-result" hidden>
+      <article class="sleep-fit-result__panel" data-result="soft" hidden>
+        <div class="sleep-fit-result__content">
+          <div class="heading-3tier sleep-fit-result__heading">
+            <p class="heading-3tier__sub-title">Your Sleep Match</p>
+            <h2 class="heading-3tier__title">Soft Relief</h2>
+            <p class="heading-3tier__desc">압력은 부드럽게 흩어지고, 몸은 편안하게</p>
+          </div>
+          <div class="btn-tab-group sleep-fit-result__tags">
+            <span class="btn btn-tab is-active">60kg 미만</span>
+            <span class="btn btn-tab is-active">옆으로 누워 자는 편</span>
+            <span class="btn btn-tab is-active">어깨가 불편함</span>
+          </div>
+          <p class="sleep-fit-result__desc">
+            체중이 비교적 가볍거나 옆으로 누워 자는 경우,<br />
+            어깨와 골반처럼 돌출된 부위에 압력이 집중되기 쉽습니다.<br /><br />
+            Soft Relief는 몸의 굴곡을 부드럽게 받아들여<br />
+            이러한 압력을 넓게 분산하도록 설계했습니다.
+          </p>
+        </div>
+        <div class="sleep-fit-result__media">
+          <img
+            class="sleep-fit-result__image"
+            src="../../assets/images/sleep-fit-test_soft-result.webp"
+            alt=""
+          />
+        </div>
+      </article>
+
+      <article class="sleep-fit-result__panel" data-result="balance" hidden>
+        <div class="sleep-fit-result__content">
+          <div class="heading-3tier sleep-fit-result__heading">
+            <p class="heading-3tier__sub-title">Your Sleep Match</p>
+            <h2 class="heading-3tier__title">Balance Move</h2>
+            <p class="heading-3tier__desc">뒤척임은 가볍게, 지지감은 균형 있게</p>
+          </div>
+          <div class="btn-tab-group sleep-fit-result__tags">
+            <span class="btn btn-tab is-active">60kg 이상 90kg 미만</span>
+            <span class="btn btn-tab is-active">어깨가 불편함</span>
+          </div>
+          <p class="sleep-fit-result__desc">
+            수면 중 자세를 자주 바꾸는 사람에게는 몸을 지나치게<br />
+            붙잡지 않으면서도 빠르게 반응하는 매트리스가 필요합니다.<br /><br />
+            Balance Move는 탄성과 복원력을 중심으로 설계해 자연스러운<br />
+            움직임을 지원합니다.
+          </p>
+        </div>
+        <div class="sleep-fit-result__media">
+          <img
+            class="sleep-fit-result__image"
+            src="../../assets/images/sleep-fit-test_balance-result.webp"
+            alt=""
+          />
+        </div>
+      </article>
+
+      <article class="sleep-fit-result__panel" data-result="firm" hidden>
+        <div class="sleep-fit-result__content">
+          <div class="heading-3tier sleep-fit-result__heading">
+            <p class="heading-3tier__sub-title">Your Sleep Match</p>
+            <h2 class="heading-3tier__title">Firm Support</h2>
+            <p class="heading-3tier__desc">몸의 중심은 탄탄하게, 자세는 안정적으로</p>
+          </div>
+          <div class="btn-tab-group sleep-fit-result__tags">
+            <span class="btn btn-tab is-active">90kg 이상</span>
+            <span class="btn btn-tab is-active">엎드려서 자는 편</span>
+            <span class="btn btn-tab is-active">허리나 골반이 불편해요</span>
+          </div>
+          <p class="sleep-fit-result__desc">
+            체중이 비교적 높거나 한 자세로 오래 자는 사람은 허리와 골반이<br />
+            과도하게 내려앉지 않도록 안정적인 중심<br /><br />
+            지지가 필요합니다. Firm Support는 허리와 골반 부위의 지지력을<br />
+            강화해 몸의 균형을 받쳐줍니다.
+          </p>
+        </div>
+        <div class="sleep-fit-result__media">
+          <img
+            class="sleep-fit-result__image"
+            src="../../assets/images/sleep-fit-test_frim-result.webp"
+            alt=""
+          />
+        </div>
+      </article>
+    </section>
+    <section class="sleep-fit-structure" hidden>
+      <div class="sleep-fit-structure__panel">
+        <div class="sleep-fit-structure__content">
+          <div class="heading-3tier sleep-fit-structure__heading">
+            <p class="heading-3tier__sub-title">Your Sleep Match</p>
+            <h2 class="heading-3tier__title">Soft Relief</h2>
+            <p class="heading-3tier__desc">
+              이러한 부드러운 지지감은 서로 다른 역할을<br />
+              가진 세 가지 내부층의 조합에서 완성됩니다.
+            </p>
+          </div>
+        </div>
+        <div class="sleep-fit-structure__media">
+          <img
+            class="sleep-fit-structure__image"
+            src="../../assets/images/sleep-fit-test_soft-structure.webp"
+            data-image-soft="../../assets/images/sleep-fit-test_soft-structure.webp"
+            data-image-balance="../../assets/images/sleep-fit-test_balance-structure.webp"
+            data-image-firm="../../assets/images/sleep-fit-test_firm-structure.webp"
+            alt=""
+          />
+          <div class="sleep-fit-structure__feature sleep-fit-structure__feature--top">
+            <p class="sleep-fit-structure__feature-title">Soft Memory Foam</p>
+            <p class="sleep-fit-structure__feature-text">어깨와 골반의 체압을 부드럽게 분산시킵니다.</p>
+          </div>
+          <div class="sleep-fit-structure__feature sleep-fit-structure__feature--middle">
+            <p class="sleep-fit-structure__feature-title">High-Resilience Support Foam</p>
+            <p class="sleep-fit-structure__feature-text">몸이 지나치게 가라앉지 않도록 지지합니다.</p>
+          </div>
+          <div class="sleep-fit-structure__feature sleep-fit-structure__feature--bottom">
+            <p class="sleep-fit-structure__feature-title">Soft Zoned Pocket Spring</p>
+            <p class="sleep-fit-structure__feature-text">어깨는 부드럽게, 허리와 골반은 안정적으로 받쳐줍니다.</p>
+          </div>
+        </div>
       </div>
     </section>
+    </div>
     <section class="sleep-fit-cta">
-      <div class="container">
+      <div class="section-cta">
+        <div class="container section-cta__container">
+          <div class="section-cta__content">
+            <h2 class="section-cta__title">다른 유형의 매트리스와 편안함을 비교해 보세요</h2>
+            <p class="section-cta__desc">원하는 쿠션감과 지지력을 비교해 보세요.</p>
+            <a class="btn btn-medium section-cta__button" href="../product.html?category=mattress">
+              <span>자세히 보기</span>
+              <span class="btn-medium__arrow" aria-hidden="true">&gt;</span>
+            </a>
+          </div>
+        </div>
       </div>
     </section>
   </main>

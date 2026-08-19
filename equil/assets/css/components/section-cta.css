@@ -46,12 +46,12 @@
 
 @media (min-width: 48rem) and (max-width: 63.9375rem) {
   .section-cta__title {
-    font-size: 2rem; /* 32px */
+    font-size: clamp(1.5rem, 3.128vw, 2rem); /* 32px */
   }
 }
 
 @media (max-width: 47.9375rem) {
   .section-cta__title {
-    font-size: 1.5rem; /* 24px */
+    font-size: clamp(0.875rem, 3.129vw, 1.5rem); /* 24px */
   }
 }
