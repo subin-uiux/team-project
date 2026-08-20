@@ -589,7 +589,7 @@ html {
   height: var(--heating-mat-tech-technology-circle-inactive);
   border-radius: 50%;
   overflow: hidden;
-  opacity: 0.5;
+  opacity: 0.3;
   transform: translateY(var(--heating-mat-tech-technology-circle-offset-y));
   transition:
     width 0.9s ease,
@@ -607,7 +607,7 @@ html {
 .heating-mat-tech-technology__swiper .swiper-slide-next .heating-mat-tech-technology__slide-media {
   width: var(--heating-mat-tech-technology-circle-inactive);
   height: var(--heating-mat-tech-technology-circle-inactive);
-  opacity: 0.5;
+  opacity: 0.2;
 }
 
 .heating-mat-tech-technology__slide-image {

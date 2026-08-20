@@ -74,98 +74,159 @@
     const desc = section.querySelector('.heating-mat-tech-product-overview__desc');
     if (!title || !desc) return;
 
+    const TITLE_FADE_UP_DURATION = 1.6;
     const charClass = 'heating-mat-tech-product-overview__char';
     const titleChars = splitTextChars(title, charClass);
     const descChars = splitTextChars(desc, charClass);
-    const allChars = [...titleChars, ...descChars];
-    if (!allChars.length) return;
+    if (!titleChars.length && !descChars.length) return;
 
-    const charStagger =
-      FADE_UP_DURATION / Math.max(allChars.length * 2.5, 1);
+    const titleStagger =
+      TITLE_FADE_UP_DURATION / Math.max(titleChars.length * 2.5, 1);
+    const descStagger =
+      FADE_UP_DURATION / Math.max(descChars.length * 2.5, 1);
 
     let pinTrigger = null;
     let fadeTl = null;
     let hasPlayed = false;
-    let isLocked = true;
+    let hasCompleted = false;
 
-    gsap.set(allChars, { opacity: 0, y: 40 });
-
-    const playFadeUp = () => {
-      if (hasPlayed) return;
-      hasPlayed = true;
-
-      fadeTl = gsap.timeline({
-        onComplete: () => {
-          isLocked = false;
-          gsap.set(allChars, { clearProps: 'will-change' });
-        },
-      });
-
-      fadeTl.to(allChars, {
-        opacity: 1,
-        y: 0,
-        duration: FADE_UP_DURATION,
-        ease: 'power3.out',
-        stagger: allChars.length > 1 ? charStagger : 0,
-      });
+    const setInitialVisualState = () => {
+      gsap.set([...titleChars, ...descChars], { opacity: 0, y: 40 });
     };
 
-    const showFinalState = () => {
+    const setFinalVisualState = () => {
       if (fadeTl) {
         fadeTl.kill();
         fadeTl = null;
       }
 
-      gsap.set(allChars, { opacity: 1, y: 0, clearProps: 'will-change' });
-      hasPlayed = true;
-      isLocked = false;
+      gsap.set([...titleChars, ...descChars], {
+        opacity: 1,
+        y: 0,
+        clearProps: 'will-change',
+      });
     };
 
-    const releasePin = () => {
+    const holdAtPinStart = () => {
+      if (!pinTrigger || hasCompleted) return;
+      pinTrigger.scroll(pinTrigger.start);
+    };
+
+    const releasePinForNaturalScroll = () => {
       if (!pinTrigger) return;
 
-      pinTrigger.kill(false);
+      const scrollY = window.scrollY;
+      const beforeTop = section.getBoundingClientRect().top;
+
+      pinTrigger.kill(true);
       pinTrigger = null;
+      ScrollTrigger.refresh();
+
+      const afterTop = section.getBoundingClientRect().top;
+      window.scrollTo(0, scrollY + (afterTop - beforeTop));
+      window.removeEventListener('wheel', onWheel);
     };
+
+    const playFadeUp = () => {
+      if (hasPlayed || hasCompleted) return;
+      hasPlayed = true;
+      setInitialVisualState();
+
+      fadeTl = gsap.timeline({
+        onComplete: () => {
+          hasCompleted = true;
+          gsap.set([...titleChars, ...descChars], { clearProps: 'will-change' });
+          releasePinForNaturalScroll();
+        },
+      });
+
+      if (titleChars.length) {
+        fadeTl.to(titleChars, {
+          opacity: 1,
+          y: 0,
+          duration: TITLE_FADE_UP_DURATION,
+          ease: 'power3.out',
+          stagger: titleChars.length > 1 ? titleStagger : 0,
+        });
+      }
+
+      if (descChars.length) {
+        fadeTl.to(descChars, {
+          opacity: 1,
+          y: 0,
+          duration: FADE_UP_DURATION,
+          ease: 'power3.out',
+          stagger: descChars.length > 1 ? descStagger : 0,
+        });
+      }
+    };
+
+    const onWheel = (event) => {
+      if (hasCompleted || !pinTrigger) return;
+      if (event.deltaY <= 0) return;
+
+      const isPinned = pinTrigger.isActive;
+      const approaching = section.getBoundingClientRect().top <= 1;
+      if (!isPinned && !approaching) return;
+
+      event.preventDefault();
+      holdAtPinStart();
+      playFadeUp();
+    };
+
+    setInitialVisualState();
 
     pinTrigger = ScrollTrigger.create({
       trigger: section,
       start: 'top top',
-      end: '+=10%',
+      end: '+=1',
       pin: true,
       pinSpacing: true,
       anticipatePin: 1,
       invalidateOnRefresh: true,
       onEnter: () => {
-        if (hasPlayed) {
-          showFinalState();
-          releasePin();
+        if (hasCompleted) {
+          setFinalVisualState();
           return;
         }
 
-        isLocked = true;
         playFadeUp();
+        holdAtPinStart();
       },
       onEnterBack: () => {
-        showFinalState();
-        releasePin();
+        if (hasCompleted) {
+          setFinalVisualState();
+        }
       },
-      onLeave: () => {
-        if (hasPlayed) releasePin();
+      onLeave: (self) => {
+        if (hasCompleted) return;
+        self.scroll(self.start);
+        playFadeUp();
       },
-      onLeaveBack: () => {
-        if (hasPlayed) releasePin();
+      onUpdate: (self) => {
+        if (hasCompleted) return;
+        if (self.scroll() > self.start) {
+          self.scroll(self.start);
+        }
       },
     });
 
-    const onWheel = (event) => {
-      if (!pinTrigger || !pinTrigger.isActive) return;
-      if (!isLocked) return;
+    window.addEventListener('wheel', onWheel, { passive: false });
 
-      event.preventDefault();
+    const refreshWhenReady = () => {
+      if (hasCompleted) return;
+      ScrollTrigger.refresh();
     };
 
-    window.addEventListener('wheel', onWheel, { passive: false });
+    requestAnimationFrame(() => {
+      requestAnimationFrame(refreshWhenReady);
+    });
+
+    if (document.fonts?.ready) {
+      document.fonts.ready.then(refreshWhenReady);
+    }
+
+    window.addEventListener('load', refreshWhenReady, { once: true });
   };
 
   const PRODUCT_IMAGES = [
