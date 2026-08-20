@@ -638,7 +638,25 @@
     const callouts = Array.from(
       section.querySelectorAll('.heating-mat-tech-controller__callout')
     );
+    const hotspots = Array.from(
+      section.querySelectorAll('.heating-mat-tech-controller__hotspots .sleep-fit-structure__hotspot')
+    );
+    const slides = Array.from(
+      section.querySelectorAll('.heating-mat-tech-controller__slide')
+    );
+    const dots = Array.from(
+      section.querySelectorAll('.heating-mat-tech-controller__dot')
+    );
+    const slidesViewport = section.querySelector(
+      '.heating-mat-tech-controller__slides'
+    );
+    const slidesTrack = section.querySelector(
+      '.heating-mat-tech-controller__slides-track'
+    );
     if (!title || !desc || !callouts.length) return;
+
+    const compactMq = window.matchMedia('(max-width: 63.9375rem)');
+    const isCompactView = () => compactMq.matches;
 
     const charClass = 'heating-mat-tech-controller__char';
     const headingChars = [
@@ -657,7 +675,19 @@
     const NEXT_CALLOUT_AT = 0.4;
 
     let sequenceTl = null;
+    let slideTween = null;
     let hasPlayed = false;
+    let currentIndex = 0;
+    let startX = 0;
+    let startY = 0;
+
+    const SLIDE_DURATION = 0.65;
+    const SLIDE_EASE = 'power3.inOut';
+
+    const getSlideOffset = () => {
+      if (!slidesViewport) return 0;
+      return -currentIndex * slidesViewport.clientWidth;
+    };
 
     const calloutData = callouts.map((callout) => {
       const dot = callout.querySelector(
@@ -693,9 +723,67 @@
       });
     };
 
+    const goToCompact = (index, animate = true) => {
+      if (!slides.length || !slidesTrack) return;
+
+      const nextIndex = (index + slides.length) % slides.length;
+      if (nextIndex === currentIndex && animate) return;
+
+      currentIndex = nextIndex;
+
+      hotspots.forEach((hotspot, hotspotIndex) => {
+        hotspot.classList.toggle('is-active', hotspotIndex === currentIndex);
+      });
+
+      slides.forEach((slide, slideIndex) => {
+        slide.classList.toggle('is-active', slideIndex === currentIndex);
+        slide.setAttribute('aria-hidden', slideIndex === currentIndex ? 'false' : 'true');
+      });
+
+      dots.forEach((dot, dotIndex) => {
+        dot.classList.toggle('is-active', dotIndex === currentIndex);
+      });
+
+      if (slideTween) {
+        slideTween.kill();
+        slideTween = null;
+      }
+
+      const targetX = getSlideOffset();
+
+      if (animate && isCompactView()) {
+        slideTween = gsap.to(slidesTrack, {
+          x: targetX,
+          duration: SLIDE_DURATION,
+          ease: SLIDE_EASE,
+          overwrite: true,
+          onComplete: () => {
+            slideTween = null;
+          },
+        });
+      } else {
+        gsap.set(slidesTrack, { x: targetX });
+      }
+    };
+
     const playSequence = () => {
       if (hasPlayed) return;
       hasPlayed = true;
+
+      if (isCompactView()) {
+        gsap.to(headingChars, {
+          opacity: 1,
+          y: 0,
+          duration: FADE_UP_DURATION,
+          ease: 'power3.out',
+          stagger: headingChars.length > 1 ? headingStagger : 0,
+          onComplete: () => {
+            gsap.set(headingChars, { clearProps: 'will-change' });
+          },
+        });
+        goToCompact(0, false);
+        return;
+      }
 
       sequenceTl = gsap.timeline({
         delay: 1,
@@ -758,7 +846,13 @@
         sequenceTl = null;
       }
 
-      setFinalVisualState();
+      if (isCompactView()) {
+        gsap.set(headingChars, { opacity: 1, y: 0, clearProps: 'will-change' });
+        goToCompact(currentIndex, false);
+      } else {
+        setFinalVisualState();
+      }
+
       hasPlayed = true;
     };
 
@@ -778,6 +872,84 @@
         if (hasPlayed) showFinalState();
       },
     });
+
+    hotspots.forEach((hotspot) => {
+      hotspot.addEventListener('click', () => {
+        if (!isCompactView()) return;
+        const index = Number(hotspot.dataset.index);
+        if (Number.isNaN(index)) return;
+        goToCompact(index);
+      });
+    });
+
+    dots.forEach((dot) => {
+      dot.addEventListener('click', () => {
+        if (!isCompactView()) return;
+        const index = Number(dot.dataset.index);
+        if (Number.isNaN(index)) return;
+        goToCompact(index);
+      });
+    });
+
+    if (slidesViewport) {
+      slidesViewport.addEventListener(
+        'touchstart',
+        (event) => {
+          if (!isCompactView()) return;
+          startX = event.changedTouches[0].clientX;
+          startY = event.changedTouches[0].clientY;
+        },
+        { passive: true }
+      );
+
+      slidesViewport.addEventListener(
+        'touchend',
+        (event) => {
+          if (!isCompactView()) return;
+
+          const endX = event.changedTouches[0].clientX;
+          const endY = event.changedTouches[0].clientY;
+          const deltaX = endX - startX;
+          const deltaY = endY - startY;
+
+          if (Math.abs(deltaX) < 40 || Math.abs(deltaX) < Math.abs(deltaY)) {
+            return;
+          }
+
+          if (deltaX < 0) {
+            goToCompact(currentIndex + 1);
+          } else {
+            goToCompact(currentIndex - 1);
+          }
+        },
+        { passive: true }
+      );
+    }
+
+    compactMq.addEventListener('change', () => {
+      if (isCompactView()) {
+        if (sequenceTl) {
+          sequenceTl.kill();
+          sequenceTl = null;
+        }
+        gsap.set(headingChars, { opacity: 1, y: 0, clearProps: 'will-change' });
+        goToCompact(currentIndex, false);
+        hasPlayed = true;
+      } else if (hasPlayed) {
+        setFinalVisualState();
+        if (slidesTrack) gsap.set(slidesTrack, { x: 0 });
+      }
+      ScrollTrigger.refresh();
+    });
+
+    window.addEventListener('resize', () => {
+      if (!isCompactView() || !slidesTrack) return;
+      gsap.set(slidesTrack, { x: getSlideOffset() });
+    });
+
+    if (isCompactView()) {
+      goToCompact(0, false);
+    }
   };
 
   const initHeatingMatTechCertification = () => {
