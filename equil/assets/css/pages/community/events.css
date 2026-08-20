@@ -91,3 +91,111 @@
 .event-list__item.is-hidden {
   display: none;
 }
+
+/* ---------- Tablet: 768–1023px ---------- */
+@media (min-width: 48rem) and (max-width: 63.9375rem) {
+  .event-hero {
+    padding-top: 5rem; /* 80px */
+    padding-bottom: 3.75rem; /* 60px */
+  }
+
+  .event-hero__container {
+    gap: 2.5rem; /* 40px */
+  }
+
+  .event-hero__title {
+    font-family: var(--font-paperlogy);
+    font-weight: 700;
+    font-size: clamp(1.313rem, 2.737vw, 1.75rem); /* 28px, tab/subtitle01 */
+  }
+
+  .event-hero__media {
+    width: 100vw;
+    max-width: 100vw;
+    height: clamp(9.988rem, 20.821vw, 13.3125rem); /* 213px */
+    margin-inline: calc(50% - 50vw);
+  }
+
+  .event-list .btn-tab {
+    font-size: 0.875rem; /* 14px — tablet btn-tab */
+  }
+
+  .event-list__list {
+    gap: 1.25rem; /* 20px */
+  }
+
+  .event-list__item {
+    flex: 0 0 calc((100% - 1.25rem) / 2);
+    width: calc((100% - 1.25rem) / 2);
+    max-width: calc((100% - 1.25rem) / 2);
+  }
+
+  .event-list__item .card-event {
+    width: 100%;
+  }
+
+  .event-list__item .card-event__media {
+    width: 100%;
+    max-width: none;
+    height: clamp(10.777rem, 22.483vw, 14.375rem); /* 230px */
+  }
+
+  .event-list__item .card-event__title {
+    font-size: clamp(0.844rem, 1.76vw, 1.125rem); /* 18px, tab/body03 */
+  }
+}
+
+/* ---------- Mobile: 320–767px ---------- */
+@media (max-width: 47.9375rem) {
+  .event-hero {
+    padding-top: 3.75rem; /* 60px */
+    padding-bottom: 2.5rem; /* 40px */
+  }
+
+  .event-hero__container {
+    gap: 1.875rem; /* 30px */
+  }
+
+  .event-hero__title {
+    font-family: var(--font-paperlogy);
+    font-weight: 700;
+    font-size: clamp(0.75rem, 3.129vw, 1.5rem); /* 24px, mo/subtitle01 */
+  }
+
+  .event-hero__media {
+    width: 100vw;
+    max-width: 100vw;
+    height: clamp(5.554rem, 27.771vw, 13.3125rem); /* 213px */
+    margin-inline: calc(50% - 50vw);
+  }
+
+  .event-list .btn-tab {
+    font-size: 0.875rem; /* 14px — mobile btn-tab */
+  }
+
+  .event-list__list {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 1.875rem; /* 30px */
+  }
+
+  .event-list__item {
+    flex: none;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .event-list__item .card-event {
+    width: 100%;
+  }
+
+  .event-list__item .card-event__media {
+    width: 100%;
+    max-width: none;
+    height: clamp(7.642rem, 38.201vw, 18.3125rem); /* 293px */
+  }
+
+  .event-list__item .card-event__title {
+    font-size: clamp(0.75rem, 2.608vw, 1.25rem); /* 20px, mo/body01 */
+  }
+}
