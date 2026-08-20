@@ -204,6 +204,220 @@
     });
   };
 
+  const initPillowTechZonesCompact = (section, pillowIn, callouts) => {
+    const media = section.querySelector('.pillow-tech-zones__media');
+    const captionName = section.querySelector('.pillow-tech-zones__caption-name');
+    const captionDesc = section.querySelector('.pillow-tech-zones__caption-desc');
+    const dots = Array.from(section.querySelectorAll('.pillow-tech-zones__dots .scroll-feature__dot'));
+    const IMAGE_FADE_DURATION = 1.6;
+    const FADE_UP_DURATION = 1.26;
+    const DOT_MOVE_DURATION = 1;
+    const LAST_INDEX = callouts.length - 1;
+    const SWIPE_THRESHOLD = 40;
+    const CHAR_CLASS = 'pillow-tech-zones__char';
+
+    let currentIndex = 0;
+    let hasRevealed = false;
+    let pointerStartX = null;
+    let captionTween = null;
+    let markerTween = null;
+
+    const zoneData = callouts.map((callout) => ({
+      left: callout.style.left || getComputedStyle(callout).left,
+      top: callout.style.top || getComputedStyle(callout).top,
+      leftPercent: callout.classList.contains('pillow-tech-zones__callout--right')
+        ? '78%'
+        : callout.classList.contains('pillow-tech-zones__callout--left')
+          ? '22%'
+          : '50%',
+      topPercent: callout.classList.contains('pillow-tech-zones__callout--right')
+        ? '48%'
+        : callout.classList.contains('pillow-tech-zones__callout--left')
+          ? '75%'
+          : '40%',
+      name: callout.querySelector('.pillow-tech-zones__callout-name')?.textContent.trim() || '',
+      desc: callout.querySelector('.pillow-tech-zones__callout-desc')?.textContent.trim() || '',
+    }));
+
+    const marker = document.createElement('span');
+    marker.className = 'pillow-tech-zones__callout-dot pillow-tech-zones__marker';
+    marker.setAttribute('aria-hidden', 'true');
+    media?.appendChild(marker);
+
+    gsap.set(pillowIn, { opacity: 0 });
+    gsap.set(marker, {
+      left: zoneData[0].leftPercent,
+      top: zoneData[0].topPercent,
+      opacity: 0,
+    });
+    callouts.forEach((callout) => callout.classList.remove('is-active'));
+
+    const splitCaptionChars = (element) => {
+      if (!element) return [];
+
+      const walk = (node) => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const chars = Array.from(node.textContent);
+          const fragment = document.createDocumentFragment();
+
+          chars.forEach((char) => {
+            if (/^\s$/.test(char)) {
+              fragment.appendChild(document.createTextNode(char));
+              return;
+            }
+
+            const span = document.createElement('span');
+            span.className = CHAR_CLASS;
+            span.textContent = char;
+            fragment.appendChild(span);
+          });
+
+          node.parentNode.replaceChild(fragment, node);
+          return;
+        }
+
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          Array.from(node.childNodes).forEach(walk);
+        }
+      };
+
+      Array.from(element.childNodes).forEach(walk);
+      return Array.from(element.querySelectorAll(`.${CHAR_CLASS}`));
+    };
+
+    const playCaptionFadeUp = (index) => {
+      if (!captionName || !captionDesc) return;
+
+      if (captionTween) {
+        captionTween.kill();
+        captionTween = null;
+      }
+
+      captionName.textContent = zoneData[index].name;
+      captionDesc.textContent = zoneData[index].desc;
+
+      const chars = [
+        ...splitCaptionChars(captionName),
+        ...splitCaptionChars(captionDesc),
+      ];
+      if (!chars.length) return;
+
+      const charStagger = FADE_UP_DURATION / Math.max(chars.length * 2.5, 1);
+
+      gsap.set(chars, { opacity: 0, y: 40 });
+      captionTween = gsap.to(chars, {
+        opacity: 1,
+        y: 0,
+        duration: FADE_UP_DURATION,
+        ease: 'power3.out',
+        stagger: chars.length > 1 ? charStagger : 0,
+        onComplete: () => {
+          gsap.set(chars, { clearProps: 'will-change' });
+          captionTween = null;
+        },
+      });
+    };
+
+    const moveMarker = (index, animate) => {
+      const nextPos = {
+        left: zoneData[index].leftPercent,
+        top: zoneData[index].topPercent,
+      };
+
+      if (markerTween) {
+        markerTween.kill();
+        markerTween = null;
+      }
+
+      if (!animate) {
+        gsap.set(marker, nextPos);
+        return;
+      }
+
+      markerTween = gsap.to(marker, {
+        ...nextPos,
+        duration: DOT_MOVE_DURATION,
+        ease: 'power2.inOut',
+        onComplete: () => {
+          markerTween = null;
+        },
+      });
+    };
+
+    const activateZone = (index, animate = true) => {
+      if (index === currentIndex && animate && hasRevealed) return;
+
+      currentIndex = index;
+      moveMarker(index, animate && hasRevealed);
+      playCaptionFadeUp(index);
+
+      dots.forEach((dot, i) => {
+        const isActive = i === index;
+        dot.classList.toggle('is-active', isActive);
+        dot.setAttribute('aria-current', isActive ? 'true' : 'false');
+      });
+    };
+
+    const revealCutaway = () => {
+      if (hasRevealed) return;
+
+      gsap.to(pillowIn, {
+        opacity: 1,
+        duration: IMAGE_FADE_DURATION,
+        ease: 'none',
+        onComplete: () => {
+          hasRevealed = true;
+          section.classList.add('is-ready');
+          gsap.to(marker, { opacity: 1, duration: 0.2, ease: 'power2.out' });
+          activateZone(currentIndex, false);
+        },
+      });
+    };
+
+    activateZone(0, false);
+
+    ScrollTrigger.create({
+      trigger: section,
+      start: 'top 75%',
+      once: true,
+      onEnter: revealCutaway,
+    });
+
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        if (!hasRevealed) return;
+        activateZone(index, true);
+      });
+    });
+
+    if (!media) return;
+
+    media.addEventListener('pointerdown', (event) => {
+      pointerStartX = event.clientX;
+    });
+
+    media.addEventListener('pointerup', (event) => {
+      if (pointerStartX === null || !hasRevealed) {
+        pointerStartX = null;
+        return;
+      }
+
+      const deltaX = event.clientX - pointerStartX;
+      pointerStartX = null;
+
+      if (Math.abs(deltaX) < SWIPE_THRESHOLD) return;
+
+      if (deltaX < 0 && currentIndex < LAST_INDEX) {
+        activateZone(currentIndex + 1, true);
+        return;
+      }
+
+      if (deltaX > 0 && currentIndex > 0) {
+        activateZone(currentIndex - 1, true);
+      }
+    });
+  };
+
   const initPillowTechZones = () => {
     const section = document.querySelector('.pillow-tech-zones');
     if (!section) return;
@@ -213,6 +427,12 @@
       section.querySelectorAll('.pillow-tech-zones__callout')
     );
     if (!pillowIn || callouts.length !== 3) return;
+
+    const compactMq = window.matchMedia('(max-width: 63.9375rem)');
+    if (compactMq.matches) {
+      initPillowTechZonesCompact(section, pillowIn, callouts);
+      return;
+    }
 
     const FADE_UP_DURATION = 1.26;
     const IMAGE_FADE_DURATION = 1.6;

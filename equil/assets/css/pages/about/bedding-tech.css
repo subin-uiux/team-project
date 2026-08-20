@@ -94,6 +94,69 @@
 }
 
 /* ========================================
+   bedding-tech-overview
+   ======================================== */
+
+.bedding-tech-overview {
+  display: none;
+}
+
+.bedding-tech-overview__container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bedding-tech-overview__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.bedding-tech-overview__title {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: 600; /* Semibold */
+  line-height: 150%;
+  color: var(--color-brand-dark);
+}
+
+.bedding-tech-overview__char {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+@media (max-width: 63.9375rem) {
+  .bedding-tech-overview {
+    display: block;
+    width: 100%;
+    background-color: var(--color-brand-light-2);
+  }
+}
+
+@media (min-width: 48rem) and (max-width: 63.9375rem) {
+  .bedding-tech-overview {
+    height: 25rem; /* 400px */
+  }
+
+  .bedding-tech-overview__title {
+    font-size: clamp(1.5rem, 3.128vw, 2rem); /* 32px */
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .bedding-tech-overview {
+    height: 16.875rem; /* 270px */
+  }
+
+  .bedding-tech-overview__title {
+    font-size: clamp(0.75rem, 3.651vw, 1.75rem); /* 28px */
+  }
+}
+
+/* ========================================
    bedding-tech-design
    ======================================== */
 
@@ -174,6 +237,33 @@
   will-change: transform, opacity;
 }
 
+@media (max-width: 63.9375rem) {
+  .bedding-tech-design {
+    height: 37.5rem; /* 600px */
+  }
+
+  .bedding-tech-design__title {
+    display: none;
+  }
+}
+
+@media (min-width: 48rem) and (max-width: 63.9375rem) {
+  .bedding-tech-design__desc {
+    font-size: clamp(1.032rem, 2.151vw, 1.375rem); /* 22px */
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .bedding-tech-design__desc {
+    font-size: clamp(0.75rem, 2.347vw, 1.125rem); /* 18px */
+  }
+}
+
+.bedding-tech-design__char {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
 /* ========================================
    bedding-tech-process
    ======================================== */
@@ -230,7 +320,7 @@
   top: 50%;
   left: 50%;
   z-index: 2;
-  width: 86.75rem; /* 1388px */
+  width: 72rem; /* 1152px */
   max-width: none;
   height: auto;
   opacity: 0;
@@ -246,7 +336,7 @@
   margin: 0;
   transform: translate(-50%, -50%);
   font-family: var(--font-suit);
-  font-weight: var(--fw-suit-bold); /* 600 */
+  font-weight: 800;
   font-size: 5rem; /* 80px */
   line-height: 130%;
   color: var(--color-brand-dark);
@@ -273,7 +363,7 @@
   flex-direction: column;
   justify-content: flex-end;
   padding: 0 var(--grid-margin) 1.875rem; /* 30px */
-  background-color: var(--color-brand-light-3);
+  background-color: var(--color-brand-light-2);
 }
 
 .bedding-tech-seasonal__stage {
@@ -305,7 +395,15 @@
   height: 65vh;
   padding: 1.875rem; /* 30px */
   overflow: hidden;
-  background-color: var(--color-brand-light-2);
+  background-color: var(--color-white);
+}
+
+.bedding-tech-seasonal__copy {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .bedding-tech-seasonal__media {
@@ -346,4 +444,148 @@
   font-size: 0.9375rem; /* 15px */
   line-height: 150%;
   color: var(--color-brand-dark);
+}
+
+.bedding-tech-seasonal__arrow,
+.bedding-tech-seasonal__pagination {
+  display: none;
+}
+
+@media (max-width: 63.9375rem) {
+  .bedding-tech-seasonal {
+    height: auto;
+    justify-content: flex-start;
+    padding: 5rem var(--grid-margin); /* 80px */
+    touch-action: pan-y;
+  }
+
+  .bedding-tech-seasonal__heading {
+    max-width: none;
+  }
+
+  .bedding-tech-seasonal__cards {
+    display: grid;
+    margin-top: 3.125rem; /* 50px */
+    gap: 0;
+  }
+
+  .bedding-tech-seasonal__card {
+    grid-area: 1 / 1;
+    width: 100%;
+    height: auto;
+    padding: 0;
+    pointer-events: none;
+  }
+
+  .bedding-tech-seasonal__card.is-active {
+    pointer-events: auto;
+  }
+
+  .bedding-tech-seasonal__copy {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 1.875rem; /* 30px */
+  }
+
+  .bedding-tech-seasonal__title {
+    font-size: clamp(1.315rem, 2.737vw, 1.75rem); /* 28px */
+  }
+
+  .bedding-tech-seasonal__desc {
+    margin-top: 1.5rem; /* 24px */
+    font-size: clamp(0.844rem, 1.76vw, 1.125rem); /* 18px */
+    height: 4.375rem; /* 70px */
+  }
+
+  .bedding-tech-seasonal__media {
+    position: relative;
+    top: auto;
+    left: auto;
+    z-index: 2;
+    width: 100%;
+    height: 33.6875rem; /* 539px */
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.6s ease-in-out;
+    will-change: opacity;
+  }
+
+  .bedding-tech-seasonal__card.is-active .bedding-tech-seasonal__media {
+    z-index: 3;
+    opacity: 1;
+  }
+
+  .bedding-tech-seasonal__arrow {
+    display: block;
+    position: absolute;
+    top: 50%;
+    z-index: 3;
+    width: 3.125rem; /* 50px */
+    height: 3.125rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    transform: translateY(-50%);
+    cursor: pointer;
+  }
+
+  .bedding-tech-seasonal__arrow--prev {
+    left: 1.25rem; /* 20px */
+  }
+
+  .bedding-tech-seasonal__arrow--next {
+    right: 1.25rem; /* 20px */
+  }
+
+  .bedding-tech-seasonal__arrow.is-hidden {
+    display: none;
+  }
+
+  .bedding-tech-seasonal__arrow-icon {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .bedding-tech-seasonal__pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.9375rem; /* 15px */
+    margin-top: 0.875rem; /* 14px */
+  }
+
+  .bedding-tech-seasonal__dot {
+    width: 0.375rem; /* 6px */
+    height: 0.375rem; /* 6px */
+    padding: 0;
+    border: 0;
+    border-radius: 6.25rem;
+    background-color: var(--color-brand-light-1);
+    cursor: pointer;
+  }
+
+  .bedding-tech-seasonal__dot.is-active {
+    width: 1.25rem; /* 20px */
+    background-color: #737373;
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .bedding-tech-seasonal__copy {
+    padding: 1.25rem; /* 20px */
+  }
+
+  .bedding-tech-seasonal__title {
+    font-size: clamp(0.75rem, 3.129vw, 1.5rem); /* 24px */
+  }
+
+  .bedding-tech-seasonal__desc {
+    font-size: clamp(0.75rem, 2.086vw, 1rem); /* 16px */
+    height: 6.5625rem; /* 105px */
+  }
+
+  .bedding-tech-seasonal__media {
+    height: 25rem; /* 400px */
+  }
 }

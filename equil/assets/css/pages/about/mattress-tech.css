@@ -390,6 +390,10 @@
     height: 100%;
   }
 
+  .mattress-tech-research__arrow.is-hidden {
+    display: none;
+  }
+
   .mattress-tech-research__dots {
     position: absolute;
     left: 50%;
@@ -812,6 +816,10 @@
   .mattress-tech-support-layers__arrow--next {
     right: 1.25rem; /* 20px */
   }
+
+  .mattress-tech-support-layers__arrow.is-hidden {
+    display: none;
+  }
 }
 
 @media (min-width: 48rem) and (max-width: 63.9375rem) {
@@ -1177,6 +1185,10 @@
 
   .mattress-tech-process__arrow--next {
     right: 1.25rem; /* 20px */
+  }
+
+  .mattress-tech-process__arrow.is-hidden {
+    display: none;
   }
 
   .mattress-tech-process__dots {
