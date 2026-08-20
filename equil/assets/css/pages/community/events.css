@@ -107,6 +107,7 @@
     font-family: var(--font-paperlogy);
     font-weight: 700;
     font-size: 1.75rem; /* 28px — Subtitle01 tablet */
+    letter-spacing: normal;
   }
 
   .event-hero__media {
@@ -148,5 +149,58 @@
   .event-list__item .card-event__title {
     font-weight: 400;
     font-size: 1.125rem; /* 18px — Body03 tablet */
+  }
+}
+
+/* Mobile: 320–767px */
+@media (max-width: 47.9375rem) {
+  .event-hero {
+    padding-top: 5rem; /* 80px */
+    padding-bottom: 2.5rem; /* 40px — image ↔ tabs */
+  }
+
+  .event-hero__title {
+    font-family: var(--font-paperlogy);
+    font-weight: 700;
+    font-size: 1.5rem; /* 24px — Mobile/Subtitle01 */
+    letter-spacing: normal;
+  }
+
+  .event-hero__media {
+    width: 100vw;
+    max-width: none;
+    height: 13.3125rem; /* 213px */
+    margin-left: calc(50% - 50vw);
+  }
+
+  .event-list .btn-tab {
+    padding: 0.3125rem 1.25rem; /* 5px 20px */
+    font-weight: 400;
+    font-size: clamp(0.75rem, 2.086vw, 1rem); /* 16px */
+  }
+
+  .event-list__container {
+    gap: 0.625rem; /* 10px — tabs ↔ cards */
+  }
+
+  .event-list__list {
+    gap: 1.25rem; /* 20px */
+  }
+
+  .event-list__item {
+    flex: 0 0 100%;
+    width: 100%;
+    max-width: none;
+  }
+
+  .event-list__item .card-event__media {
+    height: auto;
+    aspect-ratio: 546 / 431;
+  }
+
+  .event-list__item .card-event__title {
+    padding: 0.625rem 0 1.25rem; /* 10px 20px — 상하 */
+    font-weight: 400;
+    font-size: clamp(0.75rem, 2.608vw, 1.25rem); /* 20px — Body01 mobile @767 */
   }
 }

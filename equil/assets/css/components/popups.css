@@ -240,8 +240,8 @@ body.is-popup-open {
 /* Tablet: 768–1023px — News popup */
 @media (min-width: 48rem) and (max-width: 63.9375rem) {
   .popup-news {
-    width: 45.5625rem; /* 729px */
-    height: 58.26rem; /* 932.16px */
+    width: min(100%, 45.5625rem); /* 729px */
+    height: auto;
     max-width: 100%;
     max-height: 100%;
     padding: 1.875rem 0 1.875rem 1.25rem; /* 30px 20px — 오른쪽은 inner */
@@ -264,9 +264,10 @@ body.is-popup-open {
   }
 
   .popup-news__media {
-    width: 48.75rem; /* 780px */
+    width: min(100%, 48.75rem); /* 780px */
     max-width: 100%;
-    height: 16.9375rem; /* 271px */
+    height: auto;
+    aspect-ratio: 780 / 271;
     margin-block: 0.875rem; /* 14px */
   }
 
@@ -324,3 +325,54 @@ body.is-popup-open {
     font-size: 0.875rem; /* 14px — Body05 tablet */
   }
 }
+
+/* Mobile: 320–767px — News popup size/image responsive */
+@media (max-width: 47.9375rem) {
+  .popup-news {
+    width: min(100%, 25rem); /* 400px */
+    height: auto;
+    max-height: 100%;
+    padding: 1.25rem 0 1.25rem 1.875rem; /* 20px 30px — 오른쪽은 inner */
+  }
+
+  .popup-news__inner {
+    gap: 0;
+    padding-right: 1.875rem; /* 30px */
+  }
+
+  .popup-news__close {
+    top: 0.5rem;
+    right: 1.875rem; /* 30px */
+  }
+
+  .popup-news__header {
+    gap: 0.5rem; /* 8px — title ↔ date */
+    padding-bottom: 0.625rem; /* 10px — date ↔ line */
+  }
+
+  .popup-news__title {
+    font-size: 1.25rem; /* 20px — Mobile/Subtitle03 */
+    font-weight: 600;
+  }
+
+  .popup-news__date,
+  .popup-news__text {
+    font-size: 1rem; /* 16px — Mobile/Body03 */
+    font-weight: 400;
+  }
+
+  .popup-news__media {
+    width: min(100%, 21.25rem); /* 340px */
+    height: auto;
+    aspect-ratio: 340 / 280;
+    margin-inline: auto;
+    margin-top: 0.9375rem; /* 15px — line ↔ image */
+    margin-bottom: 1.5625rem; /* 25px — image ↔ body */
+  }
+
+  .popup-news__body {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+

@@ -9,7 +9,6 @@
 
 .news-hero__title {
   margin: 0;
-  letter-spacing: 0.1em; /* 10% */
   text-align: center;
   color: var(--color-text-dark);
 }
@@ -116,6 +115,7 @@
     font-family: var(--font-paperlogy);
     font-weight: 700;
     font-size: 1.75rem; /* 28px — Subtitle01 tablet */
+    letter-spacing: normal;
   }
 
   .news-list {
@@ -153,5 +153,78 @@
     font-size: 1.25rem; /* 20px — Body02 tablet */
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+}
+
+/* Mobile: 320–767px */
+@media (max-width: 47.9375rem) {
+  .news-hero {
+    padding-top: 5rem; /* 80px */
+    padding-bottom: 2.5rem; /* 40px */
+  }
+
+  .news-hero__title {
+    font-family: var(--font-paperlogy);
+    font-weight: 700;
+    font-size: 1.5rem; /* 24px — Mobile/Subtitle01 */
+    letter-spacing: normal;
+  }
+
+  .news-list__item {
+    height: auto;
+  }
+
+  .news-list__link {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 1.5625rem; /* 25px — number ↔ image */
+    row-gap: 0.625rem; /* 10px — image ↔ title */
+    align-items: start;
+    height: auto;
+    padding: 1.25rem 0; /* 20px */
+  }
+
+  .news-list__number {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .news-list__media {
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0;
+    padding: 0;
+  }
+
+  .news-list__image-frame {
+    width: 22.6875rem; /* 363px */
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: 363 / 137.73;
+  }
+
+  .news-list__content {
+    grid-column: 2;
+    grid-row: 2;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 0.625rem; /* 10px — title ↔ date */
+    min-width: 0;
+  }
+
+  .news-list__title {
+    min-width: 0;
+    overflow: visible;
+    font-weight: 400;
+    font-size: clamp(0.75rem, 2.086vw, 1rem); /* 16px — Body03 mobile @767 */
+    text-overflow: unset;
+    white-space: normal;
+  }
+
+  .news-list__number,
+  .news-list__date {
+    font-weight: 400;
+    font-size: clamp(0.75rem, 1.825vw, 0.875rem); /* 14px — Body05 mobile @767 */
   }
 }
