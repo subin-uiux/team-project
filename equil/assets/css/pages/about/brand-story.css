@@ -439,7 +439,7 @@
 
 @media (max-width: 47.9375rem) {
   .brand-story-hero__title {
-    font-size: clamp(0.75rem, 3.911vw, 1.875rem); /* 30px, mo/hero-title */
+    font-size: clamp(1.364rem, 6.818vw, 1.875rem); /* 30px, mo/hero-title */
   }
 
   .brand-story-philosophy__heading .heading-3tier__sub-title {
@@ -455,11 +455,11 @@
   }
 
   .brand-story-philosophy__detail-title {
-    font-size: clamp(0.75rem, 3.129vw, 1.5rem); /* 24px, mo/subtitle02 */
+    font-size: clamp(1.091rem, 5.455vw, 1.5rem); /* 24px, mo/subtitle02 */
   }
 
   .brand-story-philosophy__detail-text {
-    font-size: clamp(0.75rem, 2.086vw, 1rem); /* 16px, mo/body03 */
+    font-size: clamp(0.75rem, 3.636vw, 1rem); /* 16px, mo/body03 */
   }
 }
 

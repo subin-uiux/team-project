@@ -152,7 +152,7 @@
   }
 
   .bedding-tech-overview__title {
-    font-size: clamp(0.75rem, 3.651vw, 1.75rem); /* 28px */
+    font-size: clamp(1.273rem, 6.364vw, 1.75rem); /* 28px */
   }
 }
 
@@ -255,7 +255,7 @@
 
 @media (max-width: 47.9375rem) {
   .bedding-tech-design__desc {
-    font-size: clamp(0.75rem, 2.347vw, 1.125rem); /* 18px */
+    font-size: clamp(0.818rem, 4.091vw, 1.125rem); /* 18px */
   }
 }
 
@@ -577,11 +577,11 @@
   }
 
   .bedding-tech-seasonal__title {
-    font-size: clamp(0.75rem, 3.129vw, 1.5rem); /* 24px */
+    font-size: clamp(1.091rem, 5.455vw, 1.5rem); /* 24px */
   }
 
   .bedding-tech-seasonal__desc {
-    font-size: clamp(0.75rem, 2.086vw, 1rem); /* 16px */
+    font-size: clamp(0.75rem, 3.636vw, 1rem); /* 16px */
     height: 6.5625rem; /* 105px */
   }
 

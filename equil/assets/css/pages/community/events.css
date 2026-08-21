@@ -161,13 +161,13 @@
   .event-hero__title {
     font-family: var(--font-paperlogy);
     font-weight: 700;
-    font-size: clamp(0.75rem, 3.129vw, 1.5rem); /* 24px, mo/subtitle01 */
+    font-size: clamp(1.091rem, 5.455vw, 1.5rem); /* 24px, mo/subtitle01 */
   }
 
   .event-hero__media {
     width: 100vw;
     max-width: 100vw;
-    height: clamp(5.554rem, 27.771vw, 13.3125rem); /* 213px */
+    height: clamp(9.682rem, 48.409vw, 13.3125rem); /* 213px */
     margin-inline: calc(50% - 50vw);
   }
 
@@ -194,11 +194,11 @@
   .event-list__item .card-event__media {
     width: 100%;
     max-width: none;
-    height: clamp(7.642rem, 38.201vw, 18.3125rem); /* 293px */
+    height: clamp(13.318rem, 66.591vw, 18.3125rem); /* 293px */
   }
 
   .event-list__item .card-event__title {
-    font-size: clamp(0.75rem, 2.608vw, 1.25rem); /* 20px, mo/body01 */
+    font-size: clamp(0.909rem, 4.545vw, 1.25rem); /* 20px, mo/body01 */
 
   }
 }
