@@ -42,10 +42,12 @@
       }
     };
 
+    const getImageFile = (src) => (src || '').split('/').pop().split('?')[0];
+
     const setImage = (index) => {
       const nextSrc = SLEEP_POSITION_IMAGES[index];
-      if (!nextSrc || image.getAttribute('src') === nextSrc) return;
-      if (!media) return;
+      if (!nextSrc || !media) return;
+      if (getImageFile(image.src) === getImageFile(nextSrc)) return;
 
       if (imageTween) {
         imageTween.kill();
@@ -70,7 +72,7 @@
           ease: 'power2.inOut',
           onComplete: () => {
             if (revealImage !== nextRevealImage) return;
-            image.src = nextSrc;
+            image.setAttribute('src', nextSrc);
             cleanupRevealImage();
             imageTween = null;
           },
@@ -101,6 +103,7 @@
 
       const prevPanel = panels[prevIndex];
       const nextPanel = panels[index];
+      if (!nextPanel) return;
 
       if (!animate) {
         if (transitionTl) {
@@ -117,10 +120,15 @@
           const isActive = panelIndex === index;
           panel.classList.toggle('is-active', isActive);
           panel.hidden = !isActive;
-          gsap.set(panel, { opacity: 1, y: 0, clearProps: 'will-change' });
+          gsap.set(panel, {
+            opacity: isActive ? 1 : 0,
+            y: 0,
+            visibility: isActive ? 'visible' : 'hidden',
+            clearProps: isActive ? 'will-change' : '',
+          });
         });
 
-        image.src = SLEEP_POSITION_IMAGES[index];
+        image.setAttribute('src', SLEEP_POSITION_IMAGES[index]);
         gsap.set(image, { opacity: 1 });
         isTransitioning = false;
         return;
@@ -144,6 +152,7 @@
 
       if (prevPanel && prevIndex !== index) {
         prevPanel.classList.remove('is-active');
+        gsap.set(prevPanel, { visibility: 'visible' });
 
         transitionTl.to(
           prevPanel,
@@ -154,7 +163,11 @@
             ease: 'power2.in',
             onComplete: () => {
               prevPanel.hidden = true;
-              gsap.set(prevPanel, { y: 0 });
+              gsap.set(prevPanel, {
+                y: 0,
+                opacity: 0,
+                visibility: 'hidden',
+              });
             },
           },
           0
@@ -166,6 +179,7 @@
           panel.classList.toggle('is-active', panelIndex === index);
         });
         nextPanel.hidden = false;
+        gsap.set(nextPanel, { visibility: 'visible' });
       });
 
       transitionTl.fromTo(
@@ -201,6 +215,7 @@
     window.initScrollFeature({
       sectionSelector: '.pillow-tech-structure',
       hotspotPositions: HOTSPOT_POSITIONS,
+      pinOnCompact: true,
     });
   };
 

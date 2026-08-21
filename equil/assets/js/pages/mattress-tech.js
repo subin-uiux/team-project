@@ -96,18 +96,11 @@
     const dots = Array.from(
       section.querySelectorAll('.mattress-tech-research__dot')
     );
-    const prevArrow = section.querySelector(
-      '.mattress-tech-research__arrow--prev'
-    );
-    const nextArrow = section.querySelector(
-      '.mattress-tech-research__arrow--next'
-    );
     if (!slides.length || !video || !gauge || !currentEl) return;
 
     const RESEARCH_SLIDE_DURATION = 2;
     const RESEARCH_SLIDE_EASE = 'power2.inOut';
     const compactQuery = window.matchMedia('(max-width: 63.9375rem)');
-    const isHorizontal = () => compactQuery.matches;
 
     let currentIndex = 0;
     let isAnimating = false;
@@ -138,6 +131,9 @@
       return chars;
     });
 
+    const getVisibleChars = (chars) =>
+      chars.filter((char) => char.getClientRects().length > 0);
+
     const resetSlideText = (index) => {
       const chars = contentCharsBySlide[index] || [];
       gsap.killTweensOf(chars);
@@ -161,15 +157,19 @@
       isTextAnimating = false;
       contentCharsBySlide.forEach((chars, i) => {
         gsap.killTweensOf(chars);
-        gsap.set(chars, {
-          opacity: i === index ? 1 : 0,
-          y: i === index ? 0 : 40,
-        });
+        if (i !== index) {
+          gsap.set(chars, { opacity: 0, y: 40 });
+          return;
+        }
+
+        const visibleChars = getVisibleChars(chars);
+        gsap.set(chars, { opacity: 0, y: 40 });
+        gsap.set(visibleChars, { opacity: 1, y: 0 });
       });
     };
 
     const animateSlideText = (index) => {
-      const chars = contentCharsBySlide[index] || [];
+      const chars = getVisibleChars(contentCharsBySlide[index] || []);
       if (!chars.length) {
         isTextAnimating = false;
         return;
@@ -196,11 +196,6 @@
         duration: FADE_UP_DURATION,
         ease: 'power3.out',
         stagger: chars.length > 1 ? charStagger : 0,
-        onUpdate() {
-          if (isTextAnimating && this.progress() >= 0.5) {
-            isTextAnimating = false;
-          }
-        },
         onComplete: () => {
           textTween = null;
           isTextAnimating = false;
@@ -220,12 +215,7 @@
           dot.removeAttribute('aria-current');
         }
       });
-      prevArrow?.classList.toggle('is-hidden', index <= 0);
-      nextArrow?.classList.toggle('is-hidden', index >= LAST_SLIDE_INDEX);
     };
-
-    const getSlideAxis = () => (isHorizontal() ? 'x' : 'y');
-    const getOffAxis = () => (isHorizontal() ? 'y' : 'x');
 
     const stopTimers = () => {
       if (autoTimer) {
@@ -273,14 +263,12 @@
 
     const resetSlides = (activeIndex) => {
       currentIndex = activeIndex;
-      const axis = getSlideAxis();
-      const offAxis = getOffAxis();
       slides.forEach((slide, index) => {
         const isActive = index === activeIndex;
         slide.classList.toggle('is-active', isActive);
         gsap.set(slide, {
-          [axis]: isActive ? '0%' : '100%',
-          [offAxis]: '0%',
+          x: '0%',
+          y: isActive ? '0%' : '100%',
           zIndex: isActive ? 2 : 1,
         });
       });
@@ -369,8 +357,6 @@
       const currentSlide = slides[currentIndex];
       const nextSlide = slides[nextIndex];
       const isForward = nextIndex > currentIndex;
-      const axis = getSlideAxis();
-      const offAxis = getOffAxis();
       const currentTo = isForward ? '-100%' : '100%';
       const nextFrom = isForward ? '100%' : '-100%';
 
@@ -383,13 +369,13 @@
         resetSlideText(nextIndex);
       }
 
-      gsap.set(nextSlide, { [axis]: nextFrom, [offAxis]: '0%', zIndex: 2 });
-      gsap.set(currentSlide, { [offAxis]: '0%', zIndex: 1 });
+      gsap.set(nextSlide, { x: '0%', y: nextFrom, zIndex: 2 });
+      gsap.set(currentSlide, { x: '0%', zIndex: 1 });
 
       gsap
         .timeline({
           onComplete: () => {
-            gsap.set(currentSlide, { [axis]: nextFrom, [offAxis]: '0%' });
+            gsap.set(currentSlide, { x: '0%', y: nextFrom });
             resetSlideText(currentIndex);
             currentIndex = nextIndex;
             isAnimating = false;
@@ -399,7 +385,7 @@
         .to(
           currentSlide,
           {
-            [axis]: currentTo,
+            y: currentTo,
             duration: RESEARCH_SLIDE_DURATION,
             ease: RESEARCH_SLIDE_EASE,
           },
@@ -407,9 +393,9 @@
         )
         .fromTo(
           nextSlide,
-          { [axis]: nextFrom },
+          { y: nextFrom },
           {
-            [axis]: '0%',
+            y: '0%',
             duration: RESEARCH_SLIDE_DURATION,
             ease: RESEARCH_SLIDE_EASE,
           },
@@ -462,7 +448,7 @@
     };
 
     const onWheel = (event) => {
-      if (!pinTrigger || !pinTrigger.isActive) return;
+      if (!pinTrigger?.isActive) return;
 
       if (isAnimating || isTextAnimating) {
         event.preventDefault();
@@ -493,42 +479,103 @@
       goTo(currentIndex - 1);
     };
 
+    let touchStartY = null;
+    let touchGestureHandled = false;
+    const TOUCH_THRESHOLD = 40;
+
+    const onTouchStart = (event) => {
+      if (!pinTrigger?.isActive || !event.touches?.length) return;
+      touchStartY = event.touches[0].clientY;
+      touchGestureHandled = false;
+    };
+
+    const onTouchMove = (event) => {
+      if (
+        touchStartY === null ||
+        !pinTrigger?.isActive ||
+        !event.touches?.length
+      ) {
+        return;
+      }
+
+      const deltaY = event.touches[0].clientY - touchStartY;
+      const goingDown = deltaY < 0;
+
+      if (isAnimating || isTextAnimating) {
+        event.preventDefault();
+        return;
+      }
+
+      if (!isLocked) return;
+
+      if (goingDown && currentIndex >= LAST_SLIDE_INDEX) {
+        if (Math.abs(deltaY) >= TOUCH_THRESHOLD) {
+          finishForward();
+        }
+        return;
+      }
+
+      if (!goingDown && currentIndex <= 0) {
+        if (Math.abs(deltaY) >= TOUCH_THRESHOLD) {
+          finishBackward();
+        }
+        return;
+      }
+
+      event.preventDefault();
+
+      if (touchGestureHandled) return;
+      if (Math.abs(deltaY) < TOUCH_THRESHOLD) return;
+
+      touchGestureHandled = true;
+      if (goingDown) goTo(currentIndex + 1);
+      else goTo(currentIndex - 1);
+    };
+
+    const onTouchEnd = () => {
+      touchStartY = null;
+      touchGestureHandled = false;
+    };
+
     resetAllSlideText();
 
     pinTrigger = ScrollTrigger.create({
       trigger: section,
       start: 'top top',
-      end: '+=100%',
+      end: '+=120%',
       pin: true,
+      pinSpacing: true,
       anticipatePin: 1,
       invalidateOnRefresh: true,
       onEnter: () => activate(0),
       onEnterBack: () => activate(LAST_SLIDE_INDEX),
       onLeave: deactivate,
       onLeaveBack: deactivate,
+      onUpdate: (self) => {
+        /* PC와 동일: 잠금 중에는 pin 구간을 스크롤로 통과하지 못함 */
+        if (!isLocked) return;
+        if (self.scroll() !== self.start) {
+          self.scroll(self.start);
+        }
+      },
     });
 
-    section.addEventListener('wheel', onWheel, { passive: false });
-
-    prevArrow?.addEventListener('click', () => {
-      if (isAnimating || isTextAnimating) return;
-      goTo(currentIndex - 1);
-    });
-
-    nextArrow?.addEventListener('click', () => {
-      if (isAnimating || isTextAnimating) return;
-      goTo(currentIndex + 1);
-    });
+    window.addEventListener('wheel', onWheel, { passive: false });
+    section.addEventListener('touchstart', onTouchStart, { passive: true });
+    section.addEventListener('touchmove', onTouchMove, { passive: false });
+    section.addEventListener('touchend', onTouchEnd, { passive: true });
+    section.addEventListener('touchcancel', onTouchEnd, { passive: true });
 
     dots.forEach((dot, index) => {
       dot.addEventListener('click', () => {
-        if (isAnimating || isTextAnimating) return;
+        if (!isLocked || isAnimating || isTextAnimating) return;
         goTo(index);
       });
     });
 
     const onCompactChange = () => {
       resetSlides(currentIndex);
+      ScrollTrigger.refresh();
     };
 
     if (typeof compactQuery.addEventListener === 'function') {
@@ -849,12 +896,6 @@
     const cards = Array.from(
       section.querySelectorAll('.mattress-tech-support-layers__card')
     );
-    const prevButton = section.querySelector(
-      '.mattress-tech-support-layers__arrow--prev'
-    );
-    const nextButton = section.querySelector(
-      '.mattress-tech-support-layers__arrow--next'
-    );
     if (!heading || !tabs.length || cards.length !== 3) return;
 
     const FADE_DURATION = 0.35;
@@ -940,11 +981,6 @@
           gsap.set(card, { opacity: isActive ? 1 : 0 });
         }
       });
-      prevButton?.classList.toggle('is-hidden', currentCardIndex <= 0);
-      nextButton?.classList.toggle(
-        'is-hidden',
-        currentCardIndex >= cards.length - 1
-      );
     };
 
     const cardsWrap = section.querySelector(
@@ -994,69 +1030,12 @@
       });
     };
 
-    const goToCard = (index) => {
-      if (!compactQuery.matches || isTransitioning) return;
-
-      const nextIndex = Math.max(0, Math.min(cards.length - 1, index));
-      if (nextIndex === currentCardIndex) return;
-
-      isTransitioning = true;
-      const outgoing = cards[currentCardIndex];
-      const incoming = cards[nextIndex];
-
-      incoming.classList.add('is-active');
-      gsap.set(incoming, { opacity: 0 });
-
-      if (transitionTl) {
-        transitionTl.kill();
-      }
-
-      transitionTl = gsap.timeline({
-        onComplete: () => {
-          outgoing.classList.remove('is-active');
-          gsap.set(outgoing, { opacity: 0 });
-          currentCardIndex = nextIndex;
-          isTransitioning = false;
-          transitionTl = null;
-          updateCardVisibility();
-        },
-      });
-
-      transitionTl.to(
-        outgoing,
-        {
-          opacity: 0,
-          duration: FADE_DURATION,
-          ease: 'power2.out',
-        },
-        0
-      );
-
-      transitionTl.to(
-        incoming,
-        {
-          opacity: 1,
-          duration: FADE_DURATION,
-          ease: 'power2.out',
-        },
-        0
-      );
-    };
-
     tabs.forEach((tab) => {
       tab.addEventListener('click', () => {
         const index = Number(tab.dataset.index);
         if (Number.isNaN(index)) return;
         switchTab(index);
       });
-    });
-
-    prevButton?.addEventListener('click', () => {
-      goToCard(currentCardIndex - 1);
-    });
-
-    nextButton?.addEventListener('click', () => {
-      goToCard(currentCardIndex + 1);
     });
 
     compactQuery.addEventListener('change', updateCardVisibility);
@@ -1069,6 +1048,8 @@
     '허리와 골반을 중심으로 탄탄하게 받칩니다.',
   ];
 
+  const PRESSURE_BG_KEYS = ['soft', 'balance', 'firm'];
+
   const initMattressTechPressure = () => {
     const section = document.querySelector('.mattress-tech-pressure');
     if (!section) return;
@@ -1079,15 +1060,31 @@
     const tabs = Array.from(
       section.querySelectorAll('.mattress-tech-pressure__tab')
     );
-    if (!title || !desc || !line || !tabs.length) return;
+    const bgOrigin = section.querySelector(
+      '.mattress-tech-pressure__bg--origin'
+    );
+    const bgLayers = {
+      soft: section.querySelector('.mattress-tech-pressure__bg--soft'),
+      balance: section.querySelector('.mattress-tech-pressure__bg--balance'),
+      firm: section.querySelector('.mattress-tech-pressure__bg--firm'),
+    };
+    if (!title || !desc || !line || !tabs.length || !bgOrigin) return;
+    if (!bgLayers.soft || !bgLayers.balance || !bgLayers.firm) return;
 
     const TITLE_HOLD = 1;
     const TITLE_FADE_OUT = 0.6;
     const LINE_DURATION = 0.8;
+    const BG_INTRO_DURATION = 3.2;
+    const BG_FADE_OUT_DURATION = 0.6;
+    const BG_ORIGIN_HOLD = 0.25;
+    const BG_FADE_IN_DURATION = 2;
+    const BG_INTRO_DELAY = 1.1;
     const compactQuery = window.matchMedia('(max-width: 63.9375rem)');
     let currentIndex = 0;
     let lineTween = null;
+    let bgTween = null;
     let introPlayed = false;
+    let softRevealed = false;
 
     const titleChars = splitChars(title, 'mattress-tech-pressure__char');
     const titleStagger =
@@ -1095,6 +1092,19 @@
 
     gsap.set(titleChars, { opacity: 0, y: 40 });
     gsap.set(line, { scaleX: 0, transformOrigin: 'left center' });
+    gsap.set(bgOrigin, { opacity: 1 });
+    gsap.set([bgLayers.soft, bgLayers.balance, bgLayers.firm], {
+      opacity: 0,
+      scale: 1,
+    });
+
+    /* soft / balance / firm 프리로드 */
+    Object.values(bgLayers).forEach((img) => {
+      if (!img.complete) {
+        const preload = new Image();
+        preload.src = img.currentSrc || img.src;
+      }
+    });
 
     const playLine = () => {
       if (lineTween) {
@@ -1118,9 +1128,81 @@
       });
     };
 
+    const getLayerByIndex = (index) => bgLayers[PRESSURE_BG_KEYS[index]];
+
+    const transitionBgViaOrigin = (nextIndex) => {
+      const nextLayer = getLayerByIndex(nextIndex);
+      if (!nextLayer) return;
+
+      if (bgTween) {
+        bgTween.kill();
+        bgTween = null;
+      }
+
+      const stateLayers = [bgLayers.soft, bgLayers.balance, bgLayers.firm];
+
+      Object.entries(bgLayers).forEach(([key, layer]) => {
+        layer.classList.toggle('is-active', key === PRESSURE_BG_KEYS[nextIndex]);
+      });
+
+      bgTween = gsap.timeline({
+        onComplete: () => {
+          bgTween = null;
+        },
+      });
+
+      /* 1) 현재 상태 이미지 내려 origin만 보이게 */
+      bgTween.to(stateLayers, {
+        opacity: 0,
+        scale: 1,
+        duration: BG_FADE_OUT_DURATION,
+        ease: 'sine.inOut',
+      });
+
+      /* 2) 기본 사진 유지 텀 */
+      bgTween.to({}, { duration: BG_ORIGIN_HOLD });
+
+      /* 3) 선택한 탭 이미지 다시 페이드인 */
+      bgTween.fromTo(
+        nextLayer,
+        { opacity: 0, scale: 1 },
+        {
+          opacity: 1,
+          scale: 1.02,
+          duration: BG_FADE_IN_DURATION,
+          ease: 'sine.inOut',
+        }
+      );
+    };
+
+    const revealSoftIntro = () => {
+      if (softRevealed) return;
+      softRevealed = true;
+
+      if (bgTween) {
+        bgTween.kill();
+        bgTween = null;
+      }
+
+      bgLayers.soft.classList.add('is-active');
+      bgTween = gsap.to(bgLayers.soft, {
+        opacity: 1,
+        scale: 1.02,
+        duration: BG_INTRO_DURATION,
+        ease: 'sine.inOut',
+        onComplete: () => {
+          bgTween = null;
+        },
+      });
+    };
+
     const switchTab = (index) => {
       if (index === currentIndex || !PRESSURE_DESCS[index]) return;
+      if (!softRevealed) {
+        softRevealed = true;
+      }
 
+      transitionBgViaOrigin(index);
       currentIndex = index;
       setActiveTab(index);
       desc.textContent = PRESSURE_DESCS[index];
@@ -1143,6 +1225,8 @@
           gsap.set(titleChars, { clearProps: 'will-change' });
         },
       });
+
+      introTl.add(revealSoftIntro, BG_INTRO_DELAY);
 
       if (!compactQuery.matches) {
         introTl.to(
@@ -1193,12 +1277,6 @@
     const heading = section.querySelector('.mattress-tech-process__heading');
     const items = Array.from(
       section.querySelectorAll('.mattress-tech-process__item')
-    );
-    const prevButton = section.querySelector(
-      '.mattress-tech-process__arrow--prev'
-    );
-    const nextButton = section.querySelector(
-      '.mattress-tech-process__arrow--next'
     );
     const dots = Array.from(
       section.querySelectorAll('.mattress-tech-process__dot')
@@ -1283,11 +1361,6 @@
           dot.removeAttribute('aria-current');
         }
       });
-      prevButton?.classList.toggle('is-hidden', currentItemIndex <= 0);
-      nextButton?.classList.toggle(
-        'is-hidden',
-        currentItemIndex >= items.length - 1
-      );
     };
 
     const goToItem = (index) => {
@@ -1417,14 +1490,6 @@
         onEnter: playItems,
       });
     }
-
-    prevButton?.addEventListener('click', () => {
-      goToItem(currentItemIndex - 1);
-    });
-
-    nextButton?.addEventListener('click', () => {
-      goToItem(currentItemIndex + 1);
-    });
 
     dots.forEach((dot, index) => {
       dot.addEventListener('click', () => {

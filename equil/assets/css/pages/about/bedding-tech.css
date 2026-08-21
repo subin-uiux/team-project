@@ -80,7 +80,7 @@
 
 @media (max-width: 47.9375rem) {
   .bedding-tech-hero {
-    --hero-end-height: 400px;
+    --hero-end-height: 244px;
   }
 
   .bedding-tech-hero__title {
@@ -89,7 +89,7 @@
   }
 
   .bedding-tech-hero__desc {
-    font-size: 1.125rem; /* 18px */
+    display: none;
   }
 }
 
@@ -274,6 +274,13 @@
   background-color: var(--color-white);
 }
 
+@media (max-width: 63.9375rem) {
+  .bedding-tech-process {
+    height: auto;
+    min-height: 0;
+  }
+}
+
 /* ========================================
    bedding-tech-wool
    ======================================== */
@@ -446,7 +453,6 @@
   color: var(--color-brand-dark);
 }
 
-.bedding-tech-seasonal__arrow,
 .bedding-tech-seasonal__pagination {
   display: none;
 }
@@ -513,38 +519,6 @@
   .bedding-tech-seasonal__card.is-active .bedding-tech-seasonal__media {
     z-index: 3;
     opacity: 1;
-  }
-
-  .bedding-tech-seasonal__arrow {
-    display: block;
-    position: absolute;
-    top: 50%;
-    z-index: 3;
-    width: 3.125rem; /* 50px */
-    height: 3.125rem;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    transform: translateY(-50%);
-    cursor: pointer;
-  }
-
-  .bedding-tech-seasonal__arrow--prev {
-    left: 1.25rem; /* 20px */
-  }
-
-  .bedding-tech-seasonal__arrow--next {
-    right: 1.25rem; /* 20px */
-  }
-
-  .bedding-tech-seasonal__arrow.is-hidden {
-    display: none;
-  }
-
-  .bedding-tech-seasonal__arrow-icon {
-    display: block;
-    width: 100%;
-    height: 100%;
   }
 
   .bedding-tech-seasonal__pagination {

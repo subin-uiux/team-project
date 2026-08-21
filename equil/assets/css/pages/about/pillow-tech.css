@@ -80,7 +80,7 @@
 
 @media (max-width: 47.9375rem) {
   .pillow-tech-hero {
-    --hero-end-height: 400px;
+    --hero-end-height: 244px;
   }
 
   .pillow-tech-hero__title {
@@ -89,7 +89,7 @@
   }
 
   .pillow-tech-hero__desc {
-    font-size: 1.125rem; /* 18px */
+    display: none;
   }
 }
 
@@ -102,7 +102,7 @@
   height: 67.5rem; /* 1080px */
   display: flex;
   align-items: center;
-  background-color: var(--color-white);
+  background-color: var(--color-brand-light-2);
 }
 
 .pillow-tech-sleep-position__container {
@@ -112,7 +112,9 @@
 }
 
 .pillow-tech-sleep-position__panel {
-  display: flex;
+  display: grid;
+  grid-template-columns: 6fr 4fr;
+  grid-template-rows: 1fr auto;
   height: 36.625rem; /* 586px */
   border-radius: 1.875rem; /* 30px */
   overflow: hidden;
@@ -120,21 +122,36 @@
 
 .pillow-tech-sleep-position__media {
   position: relative;
-  flex: 6;
+  grid-column: 1;
+  grid-row: 1 / -1;
   min-width: 0;
   height: 100%;
   overflow: hidden;
 }
 
 .pillow-tech-sleep-position__content {
-  flex: 4;
+  grid-column: 2;
+  grid-row: 1;
   min-width: 0;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-  padding: 3.75rem; /* 60px */
-  background-color: var(--color-brand-light-2);
+  padding: 3.75rem 3.75rem 0; /* 60px */
+  background-color: var(--color-white);
+}
+
+.pillow-tech-sleep-position__tabs {
+  grid-column: 2;
+  grid-row: 2;
+  gap: 0.9375rem; /* 15px */
+  padding: 1.25rem 3.75rem 3.75rem; /* 20px 60px 60px */
+  background-color: var(--color-white);
+}
+
+.pillow-tech-sleep-position__title-mobile,
+.pillow-tech-sleep-position__sub-title-mobile,
+.pillow-tech-sleep-position__tab-label-mobile {
+  display: none;
 }
 
 .pillow-tech-sleep-position__image {
@@ -159,15 +176,22 @@
 
 .pillow-tech-sleep-position__text {
   position: relative;
+  display: grid;
+  flex: 1;
+  min-height: 0;
 }
 
 .pillow-tech-sleep-position__panel-item {
+  grid-area: 1 / 1;
   margin: 0;
   will-change: opacity, transform;
 }
 
+/* UA [hidden]{display:none} 덮어써서 페이드 전환이 보이게 함 */
 .pillow-tech-sleep-position__panel-item[hidden] {
-  display: none;
+  display: block;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .pillow-tech-sleep-position__panel-title {
@@ -188,16 +212,29 @@
   color: var(--color-brand-dark);
 }
 
-.pillow-tech-sleep-position__tabs {
-  gap: 0.9375rem; /* 15px */
-}
-
 .pillow-tech-sleep-position__tabs .btn-tab {
+  position: relative;
+  z-index: 1;
   font-family: var(--font-suit);
+  font-weight: 500;
 }
 
 .pillow-tech-sleep-position__tabs .btn-tab:not(.is-active):hover {
   background-color: var(--color-white);
+}
+
+@media (max-width: 47.9375rem) {
+  .pillow-tech-sleep-position__title-pc,
+  .pillow-tech-sleep-position__sub-title-pc,
+  .pillow-tech-sleep-position__tab-label-pc {
+    display: none;
+  }
+
+  .pillow-tech-sleep-position__title-mobile,
+  .pillow-tech-sleep-position__sub-title-mobile,
+  .pillow-tech-sleep-position__tab-label-mobile {
+    display: inline;
+  }
 }
 
 @media (max-width: 63.9375rem) {
@@ -208,61 +245,86 @@
     padding-bottom: 5rem; /* 80px */
   }
 
+  .pillow-tech-sleep-position__heading .heading-3tier__desc {
+    display: none;
+  }
+
   .pillow-tech-sleep-position__panel {
+    display: flex;
     flex-direction: column;
+    align-items: stretch;
     height: auto;
     border-radius: 0;
     overflow: visible;
   }
 
+  .pillow-tech-sleep-position__tabs {
+    order: 1;
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+    gap: 0.5rem; /* 8px — mobile */
+    margin: 0 0 0.875rem; /* 14px — 버튼 ↔ 이미지 (mobile) */
+    padding: 0;
+    background-color: transparent;
+  }
+
+  .pillow-tech-sleep-position__tabs .btn-tab {
+    padding: 0.375rem 0.625rem; /* 6px 10px — mobile */
+    font-weight: 500;
+  }
+
   .pillow-tech-sleep-position__media {
+    order: 2;
     flex: none;
+    grid-column: auto;
+    grid-row: auto;
     width: 100%;
     height: auto;
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 4 / 3;
     border-radius: 1.875rem; /* 30px */
   }
 
   .pillow-tech-sleep-position__content {
-    flex: none;
-    height: auto;
-    margin-top: 1.25rem; /* 20px */
+    order: 3;
+    grid-column: auto;
+    grid-row: auto;
+    margin-top: 1.25rem; /* 20px — 이미지 ↔ 설명 */
     padding: 0;
     background-color: transparent;
   }
 
   .pillow-tech-sleep-position__panel-title {
-    font-size: 1.5rem; /* 24px */
+    font-size: 1.375rem; /* 22px — mobile */
   }
 
   .pillow-tech-sleep-position__panel-desc {
     font-size: 1rem; /* 16px */
   }
-
-  .pillow-tech-sleep-position__tabs {
-    display: flex;
-    flex-wrap: nowrap;
-    width: 100%;
-  }
 }
 
 @media (min-width: 48rem) and (max-width: 63.9375rem) {
   .pillow-tech-sleep-position__container {
-    gap: 1.875rem; /* 30px */
+    gap: 1.875rem; /* 30px — 3단 타이틀 ↔ 버튼 */
   }
 
-  .pillow-tech-sleep-position__content {
-    gap: 1.875rem; /* 30px */
+  .pillow-tech-sleep-position__tabs {
+    gap: 0.625rem; /* 10px */
+    margin-bottom: 1.25rem; /* 20px — 버튼 ↔ 이미지 */
+  }
+
+  .pillow-tech-sleep-position__tabs .btn-tab {
+    padding: 0.5rem 1rem; /* 8px 16px */
+  }
+
+  .pillow-tech-sleep-position__panel-title {
+    font-size: 1.5rem; /* 24px — tablet 기존 */
   }
 }
 
 @media (max-width: 47.9375rem) {
   .pillow-tech-sleep-position__container {
-    gap: 1.25rem; /* 20px */
-  }
-
-  .pillow-tech-sleep-position__content {
-    gap: 0.9375rem; /* 15px */
+    gap: 1.25rem; /* 20px — 3단 타이틀 ↔ 버튼 */
   }
 }
 
@@ -280,6 +342,26 @@
 .pillow-tech-structure .scroll-feature__hotspot {
   left: 32%;
   top: 62%;
+}
+
+@media (max-width: 63.9375rem) {
+  .pillow-tech-structure:has(> .scroll-feature) {
+    height: 100vh;
+  }
+
+  .pillow-tech-structure .scroll-feature {
+    height: 100%;
+    min-height: 100vh;
+    justify-content: center;
+    padding-block: 2.5rem; /* 40px — pin 뷰포트 맞춤 */
+    box-sizing: border-box;
+  }
+
+  .pillow-tech-structure .scroll-feature__media,
+  .pillow-tech-structure .scroll-feature--media-end .scroll-feature__media {
+    height: 40vh;
+    flex: 0 0 40vh;
+  }
 }
 
 /* ========================================
