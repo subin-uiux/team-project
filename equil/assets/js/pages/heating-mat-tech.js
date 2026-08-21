@@ -74,98 +74,159 @@
     const desc = section.querySelector('.heating-mat-tech-product-overview__desc');
     if (!title || !desc) return;
 
+    const TITLE_FADE_UP_DURATION = 1.6;
     const charClass = 'heating-mat-tech-product-overview__char';
     const titleChars = splitTextChars(title, charClass);
     const descChars = splitTextChars(desc, charClass);
-    const allChars = [...titleChars, ...descChars];
-    if (!allChars.length) return;
+    if (!titleChars.length && !descChars.length) return;
 
-    const charStagger =
-      FADE_UP_DURATION / Math.max(allChars.length * 2.5, 1);
+    const titleStagger =
+      TITLE_FADE_UP_DURATION / Math.max(titleChars.length * 2.5, 1);
+    const descStagger =
+      FADE_UP_DURATION / Math.max(descChars.length * 2.5, 1);
 
     let pinTrigger = null;
     let fadeTl = null;
     let hasPlayed = false;
-    let isLocked = true;
+    let hasCompleted = false;
 
-    gsap.set(allChars, { opacity: 0, y: 40 });
-
-    const playFadeUp = () => {
-      if (hasPlayed) return;
-      hasPlayed = true;
-
-      fadeTl = gsap.timeline({
-        onComplete: () => {
-          isLocked = false;
-          gsap.set(allChars, { clearProps: 'will-change' });
-        },
-      });
-
-      fadeTl.to(allChars, {
-        opacity: 1,
-        y: 0,
-        duration: FADE_UP_DURATION,
-        ease: 'power3.out',
-        stagger: allChars.length > 1 ? charStagger : 0,
-      });
+    const setInitialVisualState = () => {
+      gsap.set([...titleChars, ...descChars], { opacity: 0, y: 40 });
     };
 
-    const showFinalState = () => {
+    const setFinalVisualState = () => {
       if (fadeTl) {
         fadeTl.kill();
         fadeTl = null;
       }
 
-      gsap.set(allChars, { opacity: 1, y: 0, clearProps: 'will-change' });
-      hasPlayed = true;
-      isLocked = false;
+      gsap.set([...titleChars, ...descChars], {
+        opacity: 1,
+        y: 0,
+        clearProps: 'will-change',
+      });
     };
 
-    const releasePin = () => {
+    const holdAtPinStart = () => {
+      if (!pinTrigger || hasCompleted) return;
+      pinTrigger.scroll(pinTrigger.start);
+    };
+
+    const releasePinForNaturalScroll = () => {
       if (!pinTrigger) return;
 
-      pinTrigger.kill(false);
+      const scrollY = window.scrollY;
+      const beforeTop = section.getBoundingClientRect().top;
+
+      pinTrigger.kill(true);
       pinTrigger = null;
+      ScrollTrigger.refresh();
+
+      const afterTop = section.getBoundingClientRect().top;
+      window.scrollTo(0, scrollY + (afterTop - beforeTop));
+      window.removeEventListener('wheel', onWheel);
     };
+
+    const playFadeUp = () => {
+      if (hasPlayed || hasCompleted) return;
+      hasPlayed = true;
+      setInitialVisualState();
+
+      fadeTl = gsap.timeline({
+        onComplete: () => {
+          hasCompleted = true;
+          gsap.set([...titleChars, ...descChars], { clearProps: 'will-change' });
+          releasePinForNaturalScroll();
+        },
+      });
+
+      if (titleChars.length) {
+        fadeTl.to(titleChars, {
+          opacity: 1,
+          y: 0,
+          duration: TITLE_FADE_UP_DURATION,
+          ease: 'power3.out',
+          stagger: titleChars.length > 1 ? titleStagger : 0,
+        });
+      }
+
+      if (descChars.length) {
+        fadeTl.to(descChars, {
+          opacity: 1,
+          y: 0,
+          duration: FADE_UP_DURATION,
+          ease: 'power3.out',
+          stagger: descChars.length > 1 ? descStagger : 0,
+        });
+      }
+    };
+
+    const onWheel = (event) => {
+      if (hasCompleted || !pinTrigger) return;
+      if (event.deltaY <= 0) return;
+
+      const isPinned = pinTrigger.isActive;
+      const approaching = section.getBoundingClientRect().top <= 1;
+      if (!isPinned && !approaching) return;
+
+      event.preventDefault();
+      holdAtPinStart();
+      playFadeUp();
+    };
+
+    setInitialVisualState();
 
     pinTrigger = ScrollTrigger.create({
       trigger: section,
       start: 'top top',
-      end: '+=10%',
+      end: '+=1',
       pin: true,
       pinSpacing: true,
       anticipatePin: 1,
       invalidateOnRefresh: true,
       onEnter: () => {
-        if (hasPlayed) {
-          showFinalState();
-          releasePin();
+        if (hasCompleted) {
+          setFinalVisualState();
           return;
         }
 
-        isLocked = true;
         playFadeUp();
+        holdAtPinStart();
       },
       onEnterBack: () => {
-        showFinalState();
-        releasePin();
+        if (hasCompleted) {
+          setFinalVisualState();
+        }
       },
-      onLeave: () => {
-        if (hasPlayed) releasePin();
+      onLeave: (self) => {
+        if (hasCompleted) return;
+        self.scroll(self.start);
+        playFadeUp();
       },
-      onLeaveBack: () => {
-        if (hasPlayed) releasePin();
+      onUpdate: (self) => {
+        if (hasCompleted) return;
+        if (self.scroll() > self.start) {
+          self.scroll(self.start);
+        }
       },
     });
 
-    const onWheel = (event) => {
-      if (!pinTrigger || !pinTrigger.isActive) return;
-      if (!isLocked) return;
+    window.addEventListener('wheel', onWheel, { passive: false });
 
-      event.preventDefault();
+    const refreshWhenReady = () => {
+      if (hasCompleted) return;
+      ScrollTrigger.refresh();
     };
 
-    window.addEventListener('wheel', onWheel, { passive: false });
+    requestAnimationFrame(() => {
+      requestAnimationFrame(refreshWhenReady);
+    });
+
+    if (document.fonts?.ready) {
+      document.fonts.ready.then(refreshWhenReady);
+    }
+
+    window.addEventListener('load', refreshWhenReady, { once: true });
   };
 
   const PRODUCT_IMAGES = [
@@ -234,28 +295,40 @@
 
     const SLIDE_SPEED = 900;
     const slides = Array.from(swiperEl.querySelectorAll('.swiper-slide'));
+    const swiperArea = section.querySelector(
+      '.heating-mat-tech-technology__swiper-area'
+    );
+    const compactMq = window.matchMedia('(max-width: 63.9375rem)');
+    const isCompactView = () => compactMq.matches;
 
     const CIRCLE_ACTIVE = 600;
     const CIRCLE_OFFSET_Y = 60;
 
-    const getCircleSize = () => CIRCLE_ACTIVE;
+    const getCircleSize = () => {
+      if (isCompactView() && swiperArea) {
+        return swiperArea.clientWidth || CIRCLE_ACTIVE;
+      }
+      return CIRCLE_ACTIVE;
+    };
 
     const getCircleTarget = () => {
-      if (sticky) {
-        const stickyRect = sticky.getBoundingClientRect();
+      const stickyRect = sticky.getBoundingClientRect();
+
+      if (isCompactView() && swiperArea) {
+        const mediaRect = swiperArea.getBoundingClientRect();
         return {
-          x: stickyRect.width / 2,
-          y: stickyRect.height / 2 - CIRCLE_OFFSET_Y,
+          x: mediaRect.left - stickyRect.left + mediaRect.width / 2,
+          y: mediaRect.top - stickyRect.top + mediaRect.height / 2,
           width: stickyRect.width,
           height: stickyRect.height,
         };
       }
 
       return {
-        x: window.innerWidth / 2,
-        y: window.innerHeight / 2 - CIRCLE_OFFSET_Y,
-        width: window.innerWidth,
-        height: window.innerHeight,
+        x: stickyRect.width / 2,
+        y: stickyRect.height / 2 - CIRCLE_OFFSET_Y,
+        width: stickyRect.width,
+        height: stickyRect.height,
       };
     };
 
@@ -376,15 +449,21 @@
       entryLockUntil = Date.now() + ENTRY_LOCK_MS;
     };
 
-    const getTrackStep = () => sticky?.clientWidth || window.innerWidth;
+    const getTrackStep = () => {
+      if (isCompactView()) {
+        return swiperArea?.clientWidth || sticky?.clientWidth || window.innerWidth;
+      }
+      return sticky?.clientWidth || window.innerWidth;
+    };
 
     const getTrackOffset = (index) => {
-      const step = getTrackStep() * 0.5;
+      const step = isCompactView() ? getTrackStep() : getTrackStep() * 0.5;
+      if (isCompactView()) return -index * step;
       return (0.5 - index) * step;
     };
 
     const syncTrackLayout = (animate = false) => {
-      const step = getTrackStep() * 0.5;
+      const step = isCompactView() ? getTrackStep() : getTrackStep() * 0.5;
 
       slides.forEach((slide) => {
         slide.style.width = `${step}px`;
@@ -483,6 +562,37 @@
       nextEl.addEventListener('click', () => goToSlide(currentIndex + 1));
     }
 
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    swiperEl.addEventListener(
+      'touchstart',
+      (event) => {
+        if (!isCompactView() || !content.classList.contains('is-visible')) return;
+        touchStartX = event.changedTouches[0].clientX;
+        touchStartY = event.changedTouches[0].clientY;
+      },
+      { passive: true },
+    );
+
+    swiperEl.addEventListener(
+      'touchend',
+      (event) => {
+        if (!isCompactView() || !content.classList.contains('is-visible')) return;
+
+        const deltaX = event.changedTouches[0].clientX - touchStartX;
+        const deltaY = event.changedTouches[0].clientY - touchStartY;
+        if (Math.abs(deltaX) < 40 || Math.abs(deltaX) < Math.abs(deltaY)) return;
+
+        if (deltaX < 0) {
+          goToSlide(currentIndex + 1);
+        } else {
+          goToSlide(currentIndex - 1);
+        }
+      },
+      { passive: true },
+    );
+
     const LAST_INDEX = slides.length - 1;
 
     const shouldLockSwiperScroll = () => {
@@ -573,6 +683,11 @@
       updateIntroFrame(introComplete ? 1 : 0);
       syncTrackLayout(false);
     });
+    compactMq.addEventListener('change', () => {
+      syncTrackLayout(false);
+      updateIntroFrame(introComplete ? 1 : 0);
+      ScrollTrigger.refresh();
+    });
   };
 
   const initHeatingMatTechController = () => {
@@ -584,7 +699,25 @@
     const callouts = Array.from(
       section.querySelectorAll('.heating-mat-tech-controller__callout')
     );
+    const hotspots = Array.from(
+      section.querySelectorAll('.heating-mat-tech-controller__hotspots .sleep-fit-structure__hotspot')
+    );
+    const slides = Array.from(
+      section.querySelectorAll('.heating-mat-tech-controller__slide')
+    );
+    const dots = Array.from(
+      section.querySelectorAll('.heating-mat-tech-controller__dot')
+    );
+    const slidesViewport = section.querySelector(
+      '.heating-mat-tech-controller__slides'
+    );
+    const slidesTrack = section.querySelector(
+      '.heating-mat-tech-controller__slides-track'
+    );
     if (!title || !desc || !callouts.length) return;
+
+    const compactMq = window.matchMedia('(max-width: 63.9375rem)');
+    const isCompactView = () => compactMq.matches;
 
     const charClass = 'heating-mat-tech-controller__char';
     const headingChars = [
@@ -603,7 +736,19 @@
     const NEXT_CALLOUT_AT = 0.4;
 
     let sequenceTl = null;
+    let slideTween = null;
     let hasPlayed = false;
+    let currentIndex = 0;
+    let startX = 0;
+    let startY = 0;
+
+    const SLIDE_DURATION = 0.65;
+    const SLIDE_EASE = 'power3.inOut';
+
+    const getSlideOffset = () => {
+      if (!slidesViewport) return 0;
+      return -currentIndex * slidesViewport.clientWidth;
+    };
 
     const calloutData = callouts.map((callout) => {
       const dot = callout.querySelector(
@@ -639,9 +784,67 @@
       });
     };
 
+    const goToCompact = (index, animate = true) => {
+      if (!slides.length || !slidesTrack) return;
+
+      const nextIndex = (index + slides.length) % slides.length;
+      if (nextIndex === currentIndex && animate) return;
+
+      currentIndex = nextIndex;
+
+      hotspots.forEach((hotspot, hotspotIndex) => {
+        hotspot.classList.toggle('is-active', hotspotIndex === currentIndex);
+      });
+
+      slides.forEach((slide, slideIndex) => {
+        slide.classList.toggle('is-active', slideIndex === currentIndex);
+        slide.setAttribute('aria-hidden', slideIndex === currentIndex ? 'false' : 'true');
+      });
+
+      dots.forEach((dot, dotIndex) => {
+        dot.classList.toggle('is-active', dotIndex === currentIndex);
+      });
+
+      if (slideTween) {
+        slideTween.kill();
+        slideTween = null;
+      }
+
+      const targetX = getSlideOffset();
+
+      if (animate && isCompactView()) {
+        slideTween = gsap.to(slidesTrack, {
+          x: targetX,
+          duration: SLIDE_DURATION,
+          ease: SLIDE_EASE,
+          overwrite: true,
+          onComplete: () => {
+            slideTween = null;
+          },
+        });
+      } else {
+        gsap.set(slidesTrack, { x: targetX });
+      }
+    };
+
     const playSequence = () => {
       if (hasPlayed) return;
       hasPlayed = true;
+
+      if (isCompactView()) {
+        gsap.to(headingChars, {
+          opacity: 1,
+          y: 0,
+          duration: FADE_UP_DURATION,
+          ease: 'power3.out',
+          stagger: headingChars.length > 1 ? headingStagger : 0,
+          onComplete: () => {
+            gsap.set(headingChars, { clearProps: 'will-change' });
+          },
+        });
+        goToCompact(0, false);
+        return;
+      }
 
       sequenceTl = gsap.timeline({
         delay: 1,
@@ -704,7 +907,13 @@
         sequenceTl = null;
       }
 
-      setFinalVisualState();
+      if (isCompactView()) {
+        gsap.set(headingChars, { opacity: 1, y: 0, clearProps: 'will-change' });
+        goToCompact(currentIndex, false);
+      } else {
+        setFinalVisualState();
+      }
+
       hasPlayed = true;
     };
 
@@ -724,6 +933,84 @@
         if (hasPlayed) showFinalState();
       },
     });
+
+    hotspots.forEach((hotspot) => {
+      hotspot.addEventListener('click', () => {
+        if (!isCompactView()) return;
+        const index = Number(hotspot.dataset.index);
+        if (Number.isNaN(index)) return;
+        goToCompact(index);
+      });
+    });
+
+    dots.forEach((dot) => {
+      dot.addEventListener('click', () => {
+        if (!isCompactView()) return;
+        const index = Number(dot.dataset.index);
+        if (Number.isNaN(index)) return;
+        goToCompact(index);
+      });
+    });
+
+    if (slidesViewport) {
+      slidesViewport.addEventListener(
+        'touchstart',
+        (event) => {
+          if (!isCompactView()) return;
+          startX = event.changedTouches[0].clientX;
+          startY = event.changedTouches[0].clientY;
+        },
+        { passive: true }
+      );
+
+      slidesViewport.addEventListener(
+        'touchend',
+        (event) => {
+          if (!isCompactView()) return;
+
+          const endX = event.changedTouches[0].clientX;
+          const endY = event.changedTouches[0].clientY;
+          const deltaX = endX - startX;
+          const deltaY = endY - startY;
+
+          if (Math.abs(deltaX) < 40 || Math.abs(deltaX) < Math.abs(deltaY)) {
+            return;
+          }
+
+          if (deltaX < 0) {
+            goToCompact(currentIndex + 1);
+          } else {
+            goToCompact(currentIndex - 1);
+          }
+        },
+        { passive: true }
+      );
+    }
+
+    compactMq.addEventListener('change', () => {
+      if (isCompactView()) {
+        if (sequenceTl) {
+          sequenceTl.kill();
+          sequenceTl = null;
+        }
+        gsap.set(headingChars, { opacity: 1, y: 0, clearProps: 'will-change' });
+        goToCompact(currentIndex, false);
+        hasPlayed = true;
+      } else if (hasPlayed) {
+        setFinalVisualState();
+        if (slidesTrack) gsap.set(slidesTrack, { x: 0 });
+      }
+      ScrollTrigger.refresh();
+    });
+
+    window.addEventListener('resize', () => {
+      if (!isCompactView() || !slidesTrack) return;
+      gsap.set(slidesTrack, { x: getSlideOffset() });
+    });
+
+    if (isCompactView()) {
+      goToCompact(0, false);
+    }
   };
 
   const initHeatingMatTechCertification = () => {
@@ -749,9 +1036,79 @@
     initFadeUp(heading, targets, 'heating-mat-tech-safety__char');
   };
 
+  const initHeatingMatTechProblemSlider = () => {
+    const section = document.querySelector('.heating-mat-tech-problem');
+    if (!section) return;
+
+    const track = section.querySelector('.heating-mat-tech-problem__cards');
+    const cards = [...section.querySelectorAll('.heating-mat-tech-problem__card')];
+    const dots = [...section.querySelectorAll('.heating-mat-tech-problem__dot')];
+    if (!track || !cards.length) return;
+
+    const mobileQuery = window.matchMedia('(max-width: 47.9375rem)');
+    let currentIndex = 0;
+    let startX = 0;
+    let startY = 0;
+
+    const isMobile = () => mobileQuery.matches;
+
+    const goTo = (index) => {
+      currentIndex = (index + cards.length) % cards.length;
+
+      if (isMobile()) {
+        track.style.transform = `translate3d(-${currentIndex * 100}%, 0, 0)`;
+      } else {
+        track.style.transform = '';
+      }
+
+      dots.forEach((dot, dotIndex) => {
+        dot.classList.toggle('is-active', dotIndex === currentIndex);
+      });
+    };
+
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        if (!isMobile()) return;
+        goTo(index);
+      });
+    });
+
+    track.addEventListener(
+      'touchstart',
+      (event) => {
+        if (!isMobile()) return;
+        startX = event.changedTouches[0].clientX;
+        startY = event.changedTouches[0].clientY;
+      },
+      { passive: true },
+    );
+
+    track.addEventListener(
+      'touchend',
+      (event) => {
+        if (!isMobile()) return;
+
+        const deltaX = event.changedTouches[0].clientX - startX;
+        const deltaY = event.changedTouches[0].clientY - startY;
+        if (Math.abs(deltaX) < 40 || Math.abs(deltaX) < Math.abs(deltaY)) return;
+
+        if (deltaX < 0) {
+          goTo(currentIndex + 1);
+        } else {
+          goTo(currentIndex - 1);
+        }
+      },
+      { passive: true },
+    );
+
+    mobileQuery.addEventListener('change', () => goTo(isMobile() ? currentIndex : 0));
+    goTo(0);
+  };
+
   const start = () => {
     const init = () => {
       initHeatingMatTechHero();
+      initHeatingMatTechProblemSlider();
       initHeatingMatTechProductOverview();
       initHeatingMatTechProduct();
       initHeatingMatTechTechnology();

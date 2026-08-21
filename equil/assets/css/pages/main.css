@@ -2,6 +2,19 @@
    main-scroll (hero + problem 통합 pin)
    ======================================== */
 
+html {
+  overflow-x: clip;
+}
+
+body {
+  overflow-x: clip;
+  max-width: 100%;
+}
+
+.pin-spacer {
+  max-width: 100% !important;
+}
+
 .main-scroll {
   width: 100%;
   max-width: 120rem; /* 1920px */
@@ -842,15 +855,19 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
 .main-pillow-solution {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  gap: 2.5rem; /* 40px — heading ↔ cards */
+  box-sizing: border-box;
   width: 100%;
   max-width: 120rem; /* 1920px */
   height: 100vh;
   margin-inline: auto;
+  padding-block: 6.25rem; /* 100px 위아래 */
 }
 
 .main-pillow-solution__container {
   display: flex;
-  flex: 1 1 auto;
+  flex: 0 0 auto;
   align-items: center;
   justify-content: center;
 }
@@ -868,6 +885,7 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
   max-width: calc(100% - (var(--grid-margin) * 2));
   height: 37.5rem; /* 600px */
   margin-inline: auto;
+  overflow: hidden;
 }
 
 .main-pillow-solution__card {
@@ -1010,13 +1028,11 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
 
 @media (min-width: 48rem) and (max-width: 63.9375rem) {
   .main-pillow-solution {
-    box-sizing: border-box;
     height: 100%;
-    padding: 6.25rem 0; /* 100px 위아래 */
+    padding-block: 6.25rem; /* 100px 위아래 */
   }
 
   .main-pillow-solution__container {
-    flex: 0 0 auto;
     justify-content: center;
   }
 
@@ -1051,7 +1067,7 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
     max-width: calc(100% - (var(--grid-margin) * 2));
     height: 37.5rem; /* 600px */
     gap: 0;
-    margin-top: 2.5rem;
+    margin-top: 0;
     overflow: hidden;
   }
 
@@ -1097,19 +1113,17 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
     align-items: center;
     justify-content: center;
     gap: 0.9375rem; /* 15px */
-    margin-top: 1.25rem; /* 20px */
+    margin-top: 0;
   }
 }
 
 @media (max-width: 47.9375rem) {
   .main-pillow-solution {
-    box-sizing: border-box;
     height: 100%;
-    padding: 6.25rem 0; /* 100px 위아래 */
+    padding-block: 6.25rem; /* 100px 위아래 */
   }
 
   .main-pillow-solution__container {
-    flex: 0 0 auto;
     justify-content: center;
   }
 
@@ -1144,7 +1158,7 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
     max-width: calc(100% - (var(--grid-margin) * 2));
     height: 37.5rem; /* 600px */
     gap: 0;
-    margin-top: 2.5rem;
+    margin-top: 0;
     overflow: hidden;
   }
 
@@ -1190,7 +1204,7 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
     align-items: center;
     justify-content: center;
     gap: 0.9375rem; /* 15px */
-    margin-top: 1.25rem; /* 20px */
+    margin-top: 0;
   }
 }
 
@@ -1319,6 +1333,7 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
   width: 100%;
   max-width: 120rem; /* 1920px */
   margin-inline: auto;
+  overflow-x: clip;
 }
 
 .main-bedding-solution__panel {
@@ -1406,75 +1421,67 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
 
 @media (max-width: 63.9375rem) {
   .main-bedding-solution {
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    padding: 6.25rem 0; /* 100px 위아래 */
+    height: auto;
   }
 
   .main-bedding-solution__viewport {
-    position: relative;
+    display: flex;
+    flex-direction: column;
     width: 100%;
-    overflow: hidden;
+    overflow: visible;
   }
 
   .main-bedding-solution__panel,
   .main-bedding-solution__panel--media-start {
+    box-sizing: border-box;
     flex-direction: column;
-    align-items: center;
-    gap: 2.5rem; /* 40px — copy ↔ image */
+    align-items: stretch;
+    gap: 1.25rem; /* 20px — content ↔ image */
     width: 100%;
-    height: auto;
-  }
-
-  .main-bedding-solution__panel {
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-
-  .main-bedding-solution__panel:not(.is-active) {
-    visibility: hidden;
-  }
-
-  .main-bedding-solution.is-ready .main-bedding-solution__panel {
-    visibility: visible;
-  }
-
-  .main-bedding-solution__panel.is-active {
-    position: relative;
+    height: 100%;
+    /* min-height: 100vh; */
+    padding: 6.25rem 0; /* 100px 위아래 */
   }
 
   .main-bedding-solution__content,
   .main-bedding-solution__panel--media-start .main-bedding-solution__content {
     flex: none;
-    align-items: center;
     justify-content: center;
     width: 100%;
-    text-align: center;
+    padding-inline: var(--grid-margin);
+  }
+
+  .main-bedding-solution__content {
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .main-bedding-solution__panel--media-start .main-bedding-solution__content {
+    align-items: flex-start;
+    text-align: left;
   }
 
   .main-bedding-solution__copy {
-    align-items: center;
+    align-items: inherit;
     width: fit-content;
     max-width: 100%;
-    margin-inline: auto;
+    margin-inline: 0;
   }
 
-  .main-bedding-solution__title,
-  .main-bedding-solution__panel--media-start .main-bedding-solution__title {
+  .main-bedding-solution__title {
     font-weight: 700;
     font-size: 1.5rem; /* 24px, mo/subtitle01 */
-    text-align: center;
+    text-align: right;
   }
 
-  .main-bedding-solution__text,
-  .main-bedding-solution__panel--media-start .main-bedding-solution__text {
+  .main-bedding-solution__text {
     font-size: 1.125rem; /* 18px, mo/body02 */
-    text-align: center;
+    text-align: right;
+  }
+
+  .main-bedding-solution__panel--media-start .main-bedding-solution__title,
+  .main-bedding-solution__panel--media-start .main-bedding-solution__text {
+    text-align: left;
   }
 
   .main-bedding-solution__media {
@@ -1485,15 +1492,6 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
 
   .main-bedding-solution__image {
     height: 29.5625rem; /* 473px */
-  }
-
-  .main-bedding-solution__nav {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 0.9375rem; /* 15px */
-    margin-top: 1.25rem; /* 20px */
   }
 }
 
@@ -1567,7 +1565,7 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
   flex-direction: column;
   justify-content: center;
   gap: 2.5rem; /* 40px */
-  height: 100%;
+  height: 100vh;
 }
 
 .main-sleep-fit__header {
@@ -1655,40 +1653,68 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
 }
 
 @media (max-width: 63.9375rem) {
+  .main-sleep-fit,
+  .main-sleep-fit__viewport {
+    height: 100vh;
+  }
+
   .main-sleep-fit__container {
-    justify-content: center;
-    align-items: center;
-    height: 100%;
+    justify-content: flex-start;
+    gap: 2.5rem;
   }
 
   .main-sleep-fit__header {
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1.25rem; /* 20px */
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 0;
     width: 100%;
-    height: 100%;
-    text-align: center;
   }
 
   .main-sleep-fit__copy {
-    text-align: center;
-    color: var(--color-brand-light-1);
+    text-align: left;
   }
 
   .main-sleep-fit__title {
-    font-size: 1.75rem; /* 28px, mo/subtitle02 */
-    font-weight: 400;
-    line-height: 1.5;
-    color: var(--color-brand-light-1);
-    text-align: center;
+    font-family: var(--font-suit);
+    font-weight: var(--fw-suit-bold); /* 600, mo/subtitle02 */
+    font-size: 1.5rem; /* 24px */
+    line-height: 1.3;
+    color: var(--color-brand-dark);
+    text-align: left;
+  }
+
+  .main-sleep-fit__brand {
+    font-family: inherit;
+    font-weight: inherit;
+    font-size: inherit;
+    letter-spacing: inherit;
   }
 
   .main-sleep-fit__text {
+    display: block;
+    margin: 0.625rem 0 0; /* 10px */
+    font-weight: 400;
+    font-size: 1rem; /* 16px, mo/body03 */
+    color: var(--color-brand-dark);
+    text-align: left;
+  }
+
+  .main-sleep-fit__text-detail {
     display: none;
   }
 
+  .main-sleep-fit__button {
+    margin-top: 1.25rem; /* 20px */
+  }
+
   .main-sleep-fit__frame {
+    display: block;
+    width: 100%;
+    height: 31.875rem; /* 510px */
+  }
+
+  .main-sleep-fit__overlay {
     display: none;
   }
 }

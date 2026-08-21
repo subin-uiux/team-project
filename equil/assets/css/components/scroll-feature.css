@@ -217,6 +217,7 @@
     height: auto;
     padding: 5rem var(--grid-margin); /* 80px */
     box-sizing: border-box;
+    touch-action: pan-y;
   }
 
   .scroll-feature:not(.scroll-feature--media-end) .scroll-feature__content {
@@ -306,6 +307,10 @@
 
   .scroll-feature__arrow--next {
     right: 1.25rem; /* 20px */
+  }
+
+  .scroll-feature__arrow.is-hidden {
+    display: none;
   }
 
   .scroll-feature__dots {

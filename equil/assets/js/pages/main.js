@@ -970,245 +970,6 @@
     );
   };
 
-  const initMainBeddingSolution = () => {
-    const section = document.querySelector('.main-bedding-solution');
-    const viewport = section?.querySelector('.main-bedding-solution__viewport');
-    const panels = gsap.utils.toArray('.main-bedding-solution__panel', section);
-    const navItems = gsap.utils.toArray('.main-bedding-solution__nav-item', section);
-    const compactMq = window.matchMedia('(max-width: 63.9375rem)');
-    if (!section || !viewport || panels.length < 2 || !compactMq.matches) return;
-
-    const LAST_INDEX = panels.length - 1;
-    const SLIDE_DURATION = 0.9;
-    const SLIDE_EASE = 'power2.inOut';
-    const FADE_UP_DURATION = 1.26;
-    const FADE_UP_Y = 40;
-    const charClass = 'main-bedding-solution__char';
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    let currentIndex = 0;
-    let isAnimating = false;
-    let slideTween = null;
-    let fadeTween = null;
-
-    const splitChars = (element) => {
-      const walk = (node) => {
-        if (node.nodeType === Node.TEXT_NODE) {
-          const chars = Array.from(node.textContent);
-          const fragment = document.createDocumentFragment();
-
-          chars.forEach((char) => {
-            if (/^\s$/.test(char)) {
-              fragment.appendChild(document.createTextNode(char));
-              return;
-            }
-
-            const span = document.createElement('span');
-            span.className = charClass;
-            span.textContent = char;
-            fragment.appendChild(span);
-          });
-
-          node.parentNode.replaceChild(fragment, node);
-          return;
-        }
-
-        if (node.nodeType === Node.ELEMENT_NODE) {
-          if (node.tagName === 'BR') return;
-          Array.from(node.childNodes).forEach(walk);
-        }
-      };
-
-      Array.from(element.childNodes).forEach(walk);
-      return Array.from(element.querySelectorAll(`.${charClass}`));
-    };
-
-    const panelChars = panels.map((panel) => {
-      const copy = panel.querySelector('.main-bedding-solution__copy');
-      const targets = [
-        copy?.querySelector('.main-bedding-solution__title'),
-        copy?.querySelector('.main-bedding-solution__text'),
-      ].filter(Boolean);
-
-      return targets.flatMap((element) => splitChars(element));
-    });
-
-    const setActiveNav = (index) => {
-      navItems.forEach((btn, navIndex) => {
-        btn.classList.toggle('is-active', navIndex === index);
-      });
-    };
-
-    const setActivePanel = (index) => {
-      panels.forEach((panel, panelIndex) => {
-        panel.classList.toggle('is-active', panelIndex === index);
-      });
-    };
-
-    const setPanelsImmediate = (index) => {
-      panels.forEach((panel, panelIndex) => {
-        gsap.set(panel, {
-          xPercent: panelIndex === index ? 0 : panelIndex < index ? -100 : 100,
-        });
-      });
-    };
-
-    const playCopyFadeUp = (index) => {
-      if (fadeTween) {
-        fadeTween.kill();
-        fadeTween = null;
-      }
-
-      panelChars.forEach((chars, panelIndex) => {
-        if (!chars.length) return;
-
-        if (panelIndex !== index) {
-          gsap.set(chars, { opacity: 0, y: FADE_UP_Y });
-          return;
-        }
-
-        if (reduceMotion) {
-          gsap.set(chars, { opacity: 1, y: 0 });
-          return;
-        }
-
-        const stagger = FADE_UP_DURATION / Math.max(chars.length * 2.5, 1);
-
-        gsap.set(chars, { opacity: 0, y: FADE_UP_Y });
-        fadeTween = gsap.to(chars, {
-          opacity: 1,
-          y: 0,
-          duration: FADE_UP_DURATION,
-          ease: 'power3.out',
-          stagger: chars.length > 1 ? stagger : 0,
-        });
-      });
-    };
-
-    const wrapIndex = (index) => {
-      const count = LAST_INDEX + 1;
-      return ((index % count) + count) % count;
-    };
-
-    const isWrapForward = (fromIndex, toIndex) => {
-      if (fromIndex === LAST_INDEX && toIndex === 0) return true;
-      if (fromIndex === 0 && toIndex === LAST_INDEX) return false;
-      return toIndex > fromIndex;
-    };
-
-    const goTo = (index) => {
-      const safeIndex = wrapIndex(index);
-      if (isAnimating || safeIndex === currentIndex) return false;
-
-      if (slideTween) {
-        slideTween.kill();
-        slideTween = null;
-      }
-
-      if (reduceMotion) {
-        currentIndex = safeIndex;
-        setPanelsImmediate(safeIndex);
-        setActiveNav(safeIndex);
-        setActivePanel(safeIndex);
-        playCopyFadeUp(safeIndex);
-        return true;
-      }
-
-      const isForward = isWrapForward(currentIndex, safeIndex);
-      const currentPanel = panels[currentIndex];
-      const nextPanel = panels[safeIndex];
-
-      isAnimating = true;
-      gsap.set(nextPanel, { xPercent: isForward ? 100 : -100 });
-      setActiveNav(safeIndex);
-      setActivePanel(safeIndex);
-      playCopyFadeUp(safeIndex);
-
-      slideTween = gsap.timeline({
-        onComplete: () => {
-          isAnimating = false;
-          slideTween = null;
-          currentIndex = safeIndex;
-          setPanelsImmediate(safeIndex);
-        },
-      });
-
-      slideTween
-        .to(
-          currentPanel,
-          {
-            xPercent: isForward ? -100 : 100,
-            duration: SLIDE_DURATION,
-            ease: SLIDE_EASE,
-          },
-          0,
-        )
-        .to(
-          nextPanel,
-          {
-            xPercent: 0,
-            duration: SLIDE_DURATION,
-            ease: SLIDE_EASE,
-          },
-          0,
-        );
-
-      return true;
-    };
-
-    panelChars.forEach((chars) => {
-      if (!chars.length) return;
-      gsap.set(chars, reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: FADE_UP_Y });
-    });
-
-    setPanelsImmediate(0);
-    setActiveNav(0);
-    setActivePanel(0);
-    section.classList.add('is-ready');
-
-    ScrollTrigger.create({
-      trigger: section,
-      start: 'top 90%',
-      once: true,
-      onEnter: () => {
-        playCopyFadeUp(0);
-      },
-    });
-
-    navItems.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const index = Number(btn.dataset.index);
-        if (Number.isNaN(index)) return;
-        goTo(index);
-      });
-    });
-
-    let touchStartX = 0;
-
-    viewport.addEventListener(
-      'touchstart',
-      (event) => {
-        touchStartX = event.changedTouches[0]?.clientX ?? 0;
-      },
-      { passive: true },
-    );
-
-    viewport.addEventListener(
-      'touchend',
-      (event) => {
-        if (isAnimating) return;
-
-        const touchEndX = event.changedTouches[0]?.clientX ?? 0;
-        const deltaX = touchStartX - touchEndX;
-        if (Math.abs(deltaX) < 40) return;
-
-        if (deltaX > 0) goTo(currentIndex + 1);
-        if (deltaX < 0) goTo(currentIndex - 1);
-      },
-      { passive: true },
-    );
-  };
-
   const initMainBeddingOverviewFadeUp = () => {
     const heading = document.querySelector('.main-bedding-overview__heading');
     if (!heading) return;
@@ -1362,10 +1123,8 @@
     if (!section || !viewport || !media || !frame || !header) return;
 
     const LAST_INDEX = 1;
-    const SLIDE_DURATION = 1.1; /* 풀스크린 이미지가 1680×520으로 줄어드는 속도 */
+    const SLIDE_DURATION = 1.1; /* 풀스크린 이미지가 프레임 크기로 줄어드는 속도 */
     const SLIDE_EASE = 'power2.inOut';
-    const OVERLAY_DURATION = 0.9; /* 모바일/태블릿 오버레이 페이드 */
-    const OVERLAY_OPACITY = 0.4;
     const FADE_UP_DURATION = 1.26; /* main-sleep-fit__header fadeUp 속도 */
     const FADE_UP_EASE = 'power3.out';
     const ENTRY_LOCK_MS = 800;
@@ -1375,7 +1134,6 @@
     let currentIndex = 0;
     let isAnimating = false;
     let entryLockUntil = 0;
-    let hasAutoPlayed = false;
     let slideTween = null;
     let scrollTrigger = null;
 
@@ -1409,17 +1167,13 @@
     };
 
     const applyOverlayState = (expanded) => {
-      if (!overlay) return;
+      if (!overlay || isCompact()) return;
       gsap.set(overlay, {
-        opacity: expanded && isCompact() ? OVERLAY_OPACITY : 0,
+        opacity: 0,
       });
     };
 
     const applyMediaState = (expanded) => {
-      if (isCompact()) {
-        gsap.set(media, getFullProps());
-        return;
-      }
       gsap.set(media, expanded ? getShrunkProps() : getFullProps());
     };
 
@@ -1506,37 +1260,18 @@
 
       if (expanded) {
         gsap.set(header, { opacity: 0, y: 40 });
-
-        if (isCompact()) {
-          gsap.set(media, getFullProps());
-          if (overlay) {
-            gsap.set(overlay, { opacity: 0 });
-            slideTween.to(overlay, {
-              opacity: OVERLAY_OPACITY,
-              duration: OVERLAY_DURATION,
-              ease: 'power2.out',
-            }, 0);
-          }
-          slideTween.to(header, {
-            opacity: 1,
-            y: 0,
-            duration: FADE_UP_DURATION,
-            ease: FADE_UP_EASE,
-          }, 0);
-        } else {
-          if (overlay) gsap.set(overlay, { opacity: 0 });
-          slideTween.to(media, {
-            ...getShrunkProps(),
-            duration: SLIDE_DURATION,
-            ease: SLIDE_EASE,
-          }, 0);
-          slideTween.to(header, {
-            opacity: 1,
-            y: 0,
-            duration: FADE_UP_DURATION,
-            ease: FADE_UP_EASE,
-          }, SLIDE_DURATION);
-        }
+        if (overlay) gsap.set(overlay, { opacity: 0 });
+        slideTween.to(media, {
+          ...getShrunkProps(),
+          duration: SLIDE_DURATION,
+          ease: SLIDE_EASE,
+        }, 0);
+        slideTween.to(header, {
+          opacity: 1,
+          y: 0,
+          duration: FADE_UP_DURATION,
+          ease: FADE_UP_EASE,
+        }, SLIDE_DURATION);
       } else {
         slideTween.to(header, {
           opacity: 0,
@@ -1544,22 +1279,11 @@
           duration: HEADER_OUT_DURATION,
           ease: 'power2.in',
         }, 0);
-
-        if (isCompact()) {
-          if (overlay) {
-            slideTween.to(overlay, {
-              opacity: 0,
-              duration: HEADER_OUT_DURATION,
-              ease: 'power2.in',
-            }, 0);
-          }
-        } else {
-          slideTween.to(media, {
-            ...getFullProps(),
-            duration: SLIDE_DURATION,
-            ease: SLIDE_EASE,
-          }, HEADER_OUT_DURATION);
-        }
+        slideTween.to(media, {
+          ...getFullProps(),
+          duration: SLIDE_DURATION,
+          ease: SLIDE_EASE,
+        }, HEADER_OUT_DURATION);
       }
 
       if (scrollTrigger) {
@@ -1619,6 +1343,7 @@
       };
 
       viewport.addEventListener('wheel', onWheel, { passive: false });
+      section.addEventListener('wheel', onWheel, { passive: false });
     };
 
     applyIndex(0, { animate: false });
@@ -1628,16 +1353,12 @@
       return;
     }
 
-    const playExpand = () => {
-      if (currentIndex >= LAST_INDEX && !isAnimating) return;
-      goTo(LAST_INDEX);
-    };
-
     scrollTrigger = ScrollTrigger.create({
       trigger: section,
       start: 'top top',
-      end: () => `+=${viewport.offsetHeight}`,
-      pin: viewport,
+      end: () => `+=${section.offsetHeight}`,
+      pin: true,
+      pinSpacing: true,
       scrub: false,
       anticipatePin: 1,
       invalidateOnRefresh: true,
@@ -1647,19 +1368,13 @@
       },
       onEnter: () => {
         entryLockUntil = Date.now() + ENTRY_LOCK_MS;
-        if (hasAutoPlayed) return;
-        hasAutoPlayed = true;
         applyIndex(0, { animate: false });
-        requestAnimationFrame(() => {
-          playExpand();
-        });
       },
       onEnterBack: () => {
         entryLockUntil = Date.now() + ENTRY_LOCK_MS;
         applyIndex(LAST_INDEX, { animate: false });
       },
       onLeaveBack: () => {
-        hasAutoPlayed = false;
         applyIndex(0, { animate: false });
       },
     });
@@ -1682,7 +1397,6 @@
       initMainScroll();
       initMainMattressSolution();
       initMainPillowSolution();
-      initMainBeddingSolution();
       initMainSleepFit();
       initMainBeddingOverviewFadeUp();
       initMainSleepBalanceFadeDown();

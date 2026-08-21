@@ -38,6 +38,41 @@
     window.initTechHero('bedding-tech-hero');
   };
 
+  const initBeddingTechOverview = () => {
+    const section = document.querySelector('.bedding-tech-overview');
+    if (!section) return;
+    if (window.matchMedia('(min-width: 64rem)').matches) return;
+
+    const title = section.querySelector('.bedding-tech-overview__title');
+    if (!title) return;
+
+    const TITLE_FADE_UP_DURATION = 1.6;
+    const charClass = 'bedding-tech-overview__char';
+    const titleChars = splitTextChars(title, charClass);
+    if (!titleChars.length) return;
+
+    const titleStagger =
+      TITLE_FADE_UP_DURATION / Math.max(titleChars.length * 2.5, 1);
+
+    gsap.set(titleChars, { opacity: 0, y: 40 });
+
+    gsap.to(titleChars, {
+      opacity: 1,
+      y: 0,
+      duration: TITLE_FADE_UP_DURATION,
+      ease: 'power3.out',
+      stagger: titleChars.length > 1 ? titleStagger : 0,
+      scrollTrigger: {
+        trigger: section,
+        start: 'top 90%',
+        once: true,
+      },
+      onComplete: () => {
+        gsap.set(titleChars, { clearProps: 'will-change' });
+      },
+    });
+  };
+
   const initBeddingTechDesign = () => {
     const section = document.querySelector('.bedding-tech-design');
     if (!section) return;
@@ -50,9 +85,10 @@
     if (!overlay || !title || !descs.length) return;
 
     const POST_HERO_FADE_UP_DURATION = 2;
+    const isCompact = window.matchMedia('(max-width: 63.9375rem)').matches;
 
     const charClass = 'bedding-tech-design__char';
-    const titleChars = splitTextChars(title, charClass);
+    const titleChars = isCompact ? [] : splitTextChars(title, charClass);
     const descChars = descs.flatMap((desc) => splitTextChars(desc, charClass));
     const allChars = [...titleChars, ...descChars];
     const charStagger =
@@ -364,37 +400,304 @@
     const section = document.querySelector('.bedding-tech-seasonal');
     if (!section) return;
 
+    const heading = section.querySelector('.bedding-tech-seasonal__heading');
+    const cards = Array.from(
+      section.querySelectorAll('.bedding-tech-seasonal__card')
+    );
     const medias = Array.from(
       section.querySelectorAll('.bedding-tech-seasonal__media')
     );
+    const arrows = Array.from(
+      section.querySelectorAll('.bedding-tech-seasonal__arrow')
+    );
+    const dots = Array.from(
+      section.querySelectorAll('.bedding-tech-seasonal__dot')
+    );
     if (!medias.length) return;
 
-    gsap.set(medias, { top: '0%' });
+    const compactMq = window.matchMedia('(max-width: 63.9375rem)');
+    const isCompact = () => compactMq.matches;
+    const LAST_INDEX = cards.length - 1;
+    const SWIPE_THRESHOLD = 40;
+    const TRANSITION_DURATION = 1;
+    const FADE_OUT_RATIO = 0.55;
+    const fadeOutDuration = TRANSITION_DURATION * FADE_OUT_RATIO;
+    let currentIndex = 0;
+    let mediaStarted = false;
+    let arrowsShown = false;
+    let compactRevealed = !compactMq.matches;
+    let compactCover = null;
+    let isTransitioning = false;
+    let transitionTl = null;
+    let pointerStartX = null;
+    let pointerStartY = null;
 
-    gsap
-      .timeline({
-        defaults: { ease: 'none' },
-        scrollTrigger: {
-          trigger: section,
-          start: 'top top',
-          end: () => `+=${window.innerHeight * 2}`,
-          scrub: true,
-          pin: true,
-          pinSpacing: true,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-        },
-      })
-      .to(medias, {
-        top: '35%',
-        duration: 0.2,
-        stagger: 0.1,
+    const getCopy = (card) =>
+      card.querySelector('.bedding-tech-seasonal__copy');
+
+    const showCard = (index) => {
+      currentIndex = index;
+      cards.forEach((card, i) => {
+        card.classList.toggle('is-active', i === index);
       });
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('is-active', i === index);
+      });
+      arrows.forEach((arrow) => {
+        const isPrev = arrow.classList.contains(
+          'bedding-tech-seasonal__arrow--prev'
+        );
+        const isNext = arrow.classList.contains(
+          'bedding-tech-seasonal__arrow--next'
+        );
+        if (isPrev) arrow.classList.toggle('is-hidden', index <= 0);
+        if (isNext) arrow.classList.toggle('is-hidden', index >= LAST_INDEX);
+      });
+    };
+
+    const goTo = (index) => {
+      if (!isCompact() || !compactRevealed || isTransitioning) return;
+      const nextIndex = Math.max(0, Math.min(LAST_INDEX, index));
+      if (nextIndex === currentIndex) return;
+
+      const prevCopy = getCopy(cards[currentIndex]);
+      const nextCopy = getCopy(cards[nextIndex]);
+
+      if (transitionTl) {
+        transitionTl.kill();
+        transitionTl = null;
+      }
+
+      isTransitioning = true;
+      showCard(nextIndex);
+
+      transitionTl = gsap.timeline({
+        onComplete: () => {
+          isTransitioning = false;
+          transitionTl = null;
+        },
+      });
+
+      if (prevCopy) {
+        transitionTl.to(
+          prevCopy,
+          {
+            opacity: 0,
+            y: -8,
+            duration: fadeOutDuration,
+            ease: 'power2.in',
+            onComplete: () => {
+              gsap.set(prevCopy, { y: 0 });
+            },
+          },
+          0
+        );
+      }
+
+      if (nextCopy) {
+        transitionTl.fromTo(
+          nextCopy,
+          { opacity: 0, y: 12 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: TRANSITION_DURATION,
+            ease: 'power2.out',
+          }
+        );
+      }
+    };
+
+    const showArrows = () => {
+      if (arrowsShown || !arrows.length) return;
+      arrowsShown = true;
+      gsap.to(arrows, {
+        opacity: 1,
+        duration: 0.45,
+        ease: 'power2.out',
+      });
+    };
+
+    const coverActiveMedia = () => {
+      if (compactCover) return compactCover;
+
+      const card = cards[currentIndex];
+      const media = medias[currentIndex];
+      if (!card || !media) return null;
+
+      const coverHeight = card.offsetHeight;
+      const copy = getCopy(card);
+      const restTop = copy ? copy.offsetHeight : 0;
+      const restHeight = media.offsetHeight;
+
+      gsap.set(card, { minHeight: coverHeight });
+      gsap.set(media, {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: coverHeight,
+      });
+
+      compactCover = { card, media, restTop, restHeight };
+      return compactCover;
+    };
+
+    if (isCompact()) {
+      showCard(0);
+      gsap.set(arrows, { opacity: 0 });
+      cards.forEach((card, index) => {
+        const copy = getCopy(card);
+        if (!copy) return;
+        gsap.set(copy, {
+          opacity: index === 0 ? 1 : 0,
+          y: 0,
+        });
+      });
+      coverActiveMedia();
+    } else {
+      gsap.set(medias, { top: '0%' });
+    }
+
+    const playMediaReveal = () => {
+      if (isCompact()) {
+        const cover = coverActiveMedia();
+        if (!cover) {
+          compactRevealed = true;
+          showArrows();
+          return;
+        }
+
+        gsap.to(cover.media, {
+          top: cover.restTop,
+          height: cover.restHeight,
+          duration: 1,
+          ease: 'power2.inOut',
+          onComplete: () => {
+            gsap.set(cover.media, {
+              clearProps: 'position,top,left,width,height',
+            });
+            gsap.set(cover.card, { clearProps: 'minHeight' });
+            compactRevealed = true;
+            showArrows();
+          },
+        });
+        return;
+      }
+
+      gsap.to(medias, {
+        top: '35%',
+        duration: 1,
+        ease: 'power2.inOut',
+        stagger: 0.5,
+      });
+    };
+
+    section.addEventListener('click', (event) => {
+      if (!isCompact()) return;
+      const prev = event.target.closest('.bedding-tech-seasonal__arrow--prev');
+      const next = event.target.closest('.bedding-tech-seasonal__arrow--next');
+      const dot = event.target.closest('.bedding-tech-seasonal__dot');
+
+      if (prev) {
+        goTo(currentIndex - 1);
+        return;
+      }
+
+      if (next) {
+        goTo(currentIndex + 1);
+        return;
+      }
+
+      if (dot) {
+        const index = dots.indexOf(dot);
+        if (index >= 0) goTo(index);
+      }
+    });
+
+    const cardsEl = section.querySelector('.bedding-tech-seasonal__cards');
+    if (cardsEl) {
+      cardsEl.addEventListener('pointerdown', (event) => {
+        if (!isCompact()) return;
+        if (event.target.closest('.bedding-tech-seasonal__arrow')) return;
+        if (event.pointerType === 'mouse' && event.button !== 0) return;
+        pointerStartX = event.clientX;
+        pointerStartY = event.clientY;
+      });
+
+      cardsEl.addEventListener('pointerup', (event) => {
+        if (!isCompact() || pointerStartX === null) return;
+        const deltaX = event.clientX - pointerStartX;
+        const deltaY = event.clientY - pointerStartY;
+        pointerStartX = null;
+        pointerStartY = null;
+        if (Math.abs(deltaX) < SWIPE_THRESHOLD) return;
+        if (Math.abs(deltaX) <= Math.abs(deltaY)) return;
+        if (deltaX < 0) goTo(currentIndex + 1);
+        if (deltaX > 0) goTo(currentIndex - 1);
+      });
+
+      cardsEl.addEventListener('pointercancel', () => {
+        pointerStartX = null;
+        pointerStartY = null;
+      });
+    }
+
+    if (!heading) {
+      ScrollTrigger.create({
+        trigger: section,
+        start: 'top 80%',
+        once: true,
+        onEnter: playMediaReveal,
+      });
+      return;
+    }
+
+    const targets = [
+      heading.querySelector('.heading-3tier__sub-title'),
+      heading.querySelector('.heading-3tier__title'),
+      heading.querySelector('.heading-3tier__desc'),
+    ].filter(Boolean);
+
+    const headingChars = targets.flatMap((element) =>
+      splitTextChars(element, 'heading-3tier__char')
+    );
+    const charStagger =
+      FADE_UP_DURATION / Math.max(headingChars.length * 2.5, 1);
+
+    gsap.set(headingChars, { opacity: 0, y: 40 });
+
+    gsap.to(headingChars, {
+      opacity: 1,
+      y: 0,
+      duration: FADE_UP_DURATION,
+      ease: 'power3.out',
+      stagger: headingChars.length > 1 ? charStagger : 0,
+      scrollTrigger: {
+        trigger: heading,
+        start: 'top 90%',
+        once: true,
+      },
+      onUpdate() {
+        if (!mediaStarted && this.progress() >= 0.5) {
+          mediaStarted = true;
+          playMediaReveal();
+        }
+      },
+      onComplete: () => {
+        gsap.set(headingChars, { clearProps: 'will-change' });
+        if (!mediaStarted) {
+          mediaStarted = true;
+          playMediaReveal();
+        }
+      },
+    });
   };
 
   const start = () => {
     const init = () => {
       initBeddingTechHero();
+      initBeddingTechOverview();
       initBeddingTechDesign();
       initBeddingTechProcess();
       initBeddingTechWool();
