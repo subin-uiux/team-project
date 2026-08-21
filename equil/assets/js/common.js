@@ -161,27 +161,8 @@
       const chars = splitHeadingChars(title, charClass);
       if (!chars.length) return;
 
-      const section = title.closest('section');
-      const charStagger =
-        FADE_UP_DURATION / Math.max(chars.length * 2.5, 1);
-
+      /* 재생은 scroll-feature.js revealTitle에서 담당 (중복 tween 방지) */
       gsap.set(chars, { opacity: 0, y: 40 });
-
-      gsap.to(chars, {
-        opacity: 1,
-        y: 0,
-        duration: FADE_UP_DURATION,
-        ease: 'power3.out',
-        stagger: chars.length > 1 ? charStagger : 0,
-        scrollTrigger: {
-          trigger: section || title,
-          start: 'top 90%',
-          once: true,
-        },
-        onComplete: () => {
-          gsap.set(chars, { clearProps: 'will-change' });
-        },
-      });
     });
   };
 

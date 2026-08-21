@@ -417,15 +417,15 @@
   }
 
   .brand-story-philosophy__heading .heading-3tier__sub-title {
-    font-size: clamp(0.844rem, 1.76vw, 1.125rem); /* 18px, tab/p-body03 */
+    font-size: 1.125rem; /* 18px, tab/p-body03 */
   }
 
   .brand-story-philosophy__heading .heading-3tier__title {
-    font-size: clamp(1.5rem, 3.128vw, 2rem); /* 32px, tab/title03 */
+    font-size: 2rem; /* 32px, tab/title03 */
   }
 
   .brand-story-philosophy__heading .heading-3tier__desc {
-    font-size: clamp(0.938rem, 1.955vw, 1.25rem); /* 20px, tab/body02 */
+    font-size: 1.25rem; /* 20px, tab/body02 */
   }
 
   .brand-story-philosophy__detail-title {
@@ -443,15 +443,15 @@
   }
 
   .brand-story-philosophy__heading .heading-3tier__sub-title {
-    font-size: clamp(0.75rem, 2.086vw, 1rem); /* 16px, mo/p-body03 */
+    font-size: 1rem; /* 16px, mo/p-body03 */
   }
 
   .brand-story-philosophy__heading .heading-3tier__title {
-    font-size: clamp(0.875rem, 3.651vw, 1.75rem); /* 28px, mo/title03 */
+    font-size: 1.75rem; /* 28px, mo/title03 */
   }
 
   .brand-story-philosophy__heading .heading-3tier__desc {
-    font-size: clamp(0.75rem, 2.086vw, 1rem); /* 16px, mo/body03 */
+    font-size: 1rem; /* 16px, mo/body03 */
   }
 
   .brand-story-philosophy__detail-title {

@@ -26,9 +26,9 @@ alwaysApply: true
 
 | 요소 | 폰트 | weight | size | 상단 간격 |
 |------|------|--------|------|-----------|
-| sub-title | Paperlogy | 400 | 22px (`--fs-body-02`) | — |
-| title | SUIT | 600 | 40px (`--fs-title`) | sub-title 아래 14px |
-| desc | SUIT | 300 | 20px (`--fs-body-03`) | title 아래 12px |
+| sub-title | Paperlogy | 400 | PC 22 / Tab 18 / Mo 16 | — |
+| title | SUIT | 600 | PC 40 / Tab 32 / Mo 28 | sub-title 아래 14px |
+| desc | SUIT | 300 | PC 22 / Tab 20 / Mo 16 | title 아래 12px |
 
 - sub-title 색: `var(--color-brand-point)`
 - title·desc 색: `var(--color-brand-dark)`

@@ -452,17 +452,54 @@
     setupCompactSwipe();
     activateFeature(0, false);
 
+    const splitTitleChars = (title) => {
+      const existing = title.querySelectorAll('.scroll-feature__char');
+      if (existing.length) return Array.from(existing);
+
+      const walk = (node) => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const chars = Array.from(node.textContent);
+          const fragment = document.createDocumentFragment();
+
+          chars.forEach((char) => {
+            if (/^\s$/.test(char)) {
+              fragment.appendChild(document.createTextNode(char));
+              return;
+            }
+
+            const span = document.createElement('span');
+            span.className = 'scroll-feature__char';
+            span.textContent = char;
+            fragment.appendChild(span);
+          });
+
+          node.parentNode.replaceChild(fragment, node);
+          return;
+        }
+
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          if (node.tagName === 'BR') return;
+          Array.from(node.childNodes).forEach(walk);
+        }
+      };
+
+      Array.from(title.childNodes).forEach(walk);
+      return Array.from(title.querySelectorAll('.scroll-feature__char'));
+    };
+
     const revealTitle = () => {
       const title = section.querySelector('.scroll-feature__title--ko');
       if (!title || title.dataset.revealed === 'true') return;
 
-      const chars = title.querySelectorAll('.scroll-feature__char');
+      const chars = splitTitleChars(title);
       if (!chars.length) return;
 
       title.dataset.revealed = 'true';
       const charStagger =
         1.26 / Math.max(chars.length * 2.5, 1);
 
+      gsap.killTweensOf(chars);
+      gsap.set(chars, { opacity: 0, y: 40 });
       gsap.to(chars, {
         opacity: 1,
         y: 0,
@@ -473,6 +510,25 @@
           gsap.set(chars, { clearProps: 'will-change' });
         },
       });
+    };
+
+    let titleRevealTrigger = null;
+
+    const enableCompactTitleReveal = () => {
+      if (titleRevealTrigger) return;
+
+      titleRevealTrigger = ScrollTrigger.create({
+        trigger: section,
+        start: 'top 90%',
+        once: true,
+        onEnter: revealTitle,
+      });
+    };
+
+    const disableCompactTitleReveal = () => {
+      if (!titleRevealTrigger) return;
+      titleRevealTrigger.kill();
+      titleRevealTrigger = null;
     };
 
     const isSectionPinnedInView = () => {
@@ -561,10 +617,11 @@
     const syncPinToViewport = () => {
       if (isCompactView()) {
         disableDesktopPin();
-        revealTitle();
+        enableCompactTitleReveal();
         return;
       }
 
+      disableCompactTitleReveal();
       enableDesktopPin();
     };
 

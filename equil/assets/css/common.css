@@ -311,7 +311,7 @@ a {
   margin: 0;
   font-family: var(--font-paperlogy);
   font-weight: 400;
-  font-size: var(--fs-body-02); /* 22px */
+  font-size: 1rem; /* 16px — mobile */
   line-height: 130%;
   color: var(--color-brand-point);
 }
@@ -320,7 +320,7 @@ a {
   margin: 0.875rem 0 0; /* 14px */
   font-family: var(--font-suit);
   font-weight: 600;
-  font-size: var(--fs-title); /* 40px */
+  font-size: 1.75rem; /* 28px — mobile */
   line-height: 130%;
   color: var(--color-brand-dark);
 }
@@ -329,7 +329,7 @@ a {
   margin: 0.75rem 0 0; /* 12px */
   font-family: var(--font-suit);
   font-weight: 300;
-  font-size: var(--fs-body-03); /* 20px */
+  font-size: 1rem; /* 16px — mobile */
   line-height: 130%;
   color: var(--color-brand-dark);
 }
@@ -341,29 +341,29 @@ a {
 
 @media (min-width: 48rem) and (max-width: 63.9375rem) {
   .heading-3tier__sub-title {
-    font-size: clamp(0.844rem, 1.76vw, 1.125rem); /* 18px */
+    font-size: 1.125rem; /* 18px */
   }
 
   .heading-3tier__title {
-    font-size: clamp(1.5rem, 3.128vw, 2rem); /* 32px */
+    font-size: 2rem; /* 32px */
   }
 
   .heading-3tier__desc {
-    font-size: clamp(0.938rem, 1.955vw, 1.25rem); /* 20px */
+    font-size: 1.25rem; /* 20px */
   }
 }
 
-@media (max-width: 47.9375rem) {
+@media (min-width: 64rem) {
   .heading-3tier__sub-title {
-    font-size: clamp(0.75rem, 2.086vw, 1rem); /* 16px */
+    font-size: 1.375rem; /* 22px */
   }
 
   .heading-3tier__title {
-    font-size: clamp(0.875rem, 3.651vw, 1.75rem); /* 28px */
+    font-size: 2.5rem; /* 40px */
   }
 
   .heading-3tier__desc {
-    font-size: clamp(0.75rem, 2.086vw, 1rem); /* 16px */
+    font-size: 1.375rem; /* 22px */
   }
 }
 
