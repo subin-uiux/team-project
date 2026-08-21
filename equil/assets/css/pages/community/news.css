@@ -105,21 +105,21 @@
   color: var(--color-grey-600);
 }
 
-/* Tablet: 768–1023px */
-@media (min-width: 48rem) and (max-width: 63.9375rem) {
+/* ---------- Mobile: 320–767px ---------- */
+@media (max-width: 47.9375rem) {
   .news-hero {
-    padding-top: 5rem; /* 80px */
-    padding-bottom: 3.125rem; /* 50px */
+    padding-top: 3.75rem; /* 60px */
+    padding-bottom: 3.75rem; /* 60px */
   }
 
   .news-hero__title {
     font-family: var(--font-paperlogy);
     font-weight: 700;
-    font-size: 1.75rem; /* 28px — Subtitle01 tablet */
+    font-size: clamp(0.75rem, 3.129vw, 1.5rem); /* 24px, mo/subtitle01 */
   }
 
   .news-list {
-    padding-bottom: 6.25rem; /* 100px */
+    padding-bottom: 3.75rem; /* 60px */
   }
 
   .news-list__item {
@@ -127,31 +127,48 @@
   }
 
   .news-list__link {
-    gap: 1.25rem; /* 20px */
-    padding: 1.25rem 0; /* 20px — container margin과 맞춤 */
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    column-gap: 1.5625rem; /* 25px */
+    row-gap: 0.625rem; /* 10px */
+    align-items: start;
+    padding: 1.25rem 0; /* 20px */
+  }
+
+  .news-list__number {
+    grid-column: 1;
+    grid-row: 1;
+    font-size: 0.75rem; /* 12px */
   }
 
   .news-list__media {
+    grid-column: 2;
+    grid-row: 1;
+    width: 100%;
     padding: 0;
   }
 
   .news-list__image-frame {
-    width: 15.5625rem; /* 249px */
-    height: 5.875rem; /* 94px */
+    width: 100%;
+    height: clamp(3.598rem, 17.992vw, 8.625rem); /* 138px */
   }
 
-  .news-list__number,
-  .news-list__date {
-    font-weight: 400;
-    font-size: 0.875rem; /* 14px — Body05 tablet */
+  .news-list__content {
+    grid-column: 2;
+    grid-row: 2;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 0.25rem; /* 4px */
   }
 
   .news-list__title {
-    min-width: 0;
-    overflow: hidden;
-    font-weight: 400;
-    font-size: 1.25rem; /* 20px — Body02 tablet */
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    font-size: clamp(0.75rem, 2.086vw, 1rem); /* 16px, mo/body03 */
+  }
+
+  .news-list__date {
+    font-weight: 500;
+    font-size: 0.75rem; /* 12px */
   }
 }
