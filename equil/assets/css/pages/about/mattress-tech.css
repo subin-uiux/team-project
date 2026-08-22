@@ -402,7 +402,7 @@
 
   .mattress-tech-research__dot.is-active {
     width: 1.25rem; /* 20px */
-    background-color: #737373;
+    background-color: var(--color-brand-dark);
   }
 }
 
@@ -474,13 +474,20 @@
   text-align: center;
 }
 
+.mattress-tech-structure-overview__brand {
+  font-family: var(--font-paperlogy);
+  font-weight: 900;
+  font-size: inherit; /* 타이틀 크기 유지 */
+  letter-spacing: 0.1em; /* 로고와 동일 */
+}
+
 .mattress-tech-structure-overview__char {
   display: inline-block;
   will-change: transform, opacity;
 }
 
 .mattress-tech-structure-overview__emphasis {
-  font-weight: 800;
+  font-weight: 700;
   font-size: var(--fs-subtitle-lg); /* 36px */
 }
 
@@ -763,20 +770,25 @@
     display: block;
     position: relative;
     width: 100%;
+    aspect-ratio: 560 / 633;
   }
 
   .mattress-tech-support-layers__card.card-material {
+    position: absolute;
+    inset: 0;
     width: 100%;
-    height: auto;
-    aspect-ratio: 560 / 633;
+    height: 100%;
     padding: 0;
   }
 
   .mattress-tech-support-layers__card:not(.is-active) {
-    position: absolute;
-    inset: 0;
     opacity: 0;
     pointer-events: none;
+    visibility: hidden;
+  }
+
+  .mattress-tech-support-layers__card.is-active {
+    visibility: visible;
   }
 
   .mattress-tech-support-layers__card .card-material__overlay {

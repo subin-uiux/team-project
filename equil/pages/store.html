@@ -245,9 +245,7 @@
       </div>
 
       <div class="store-map__viewport">
-        <div class="store-map__canvas" id="store-kakao-map" aria-label="스토어 지도">
-          <!-- Kakao Map: store.js STORE_MAP_CONFIG (appKey/좌표 추후 교체) -->
-        </div>
+        <div class="store-map__canvas" id="store-kakao-map" aria-label="스토어 지도"></div>
 
         <aside class="store-map__panel" aria-label="스토어 정보">
           <span class="store-map__panel-handle" aria-hidden="true"></span>
@@ -316,6 +314,9 @@ EQUIL POP-UP STORE <span class="store-map__nowrap">성수동 2가</span></dd>
 
   <script src="../assets/js/common.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script
+    src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=05dc6c35e6b621696356b2eab9d1dae5&autoload=false"
+  ></script>
   <script src="../assets/js/pages/store.js"></script>
 </body>
 </html>

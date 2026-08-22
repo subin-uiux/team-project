@@ -64,8 +64,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 3.75rem; /* 60px */
-  height: 3.75rem;
+  width: 2.75rem; /* 44px */
+  height: 2.75rem;
   margin: 0;
   padding: 0;
   border: 0.0625rem solid rgba(255, 255, 255, 0.45);
@@ -280,10 +280,6 @@
 
   .store-hero__thumbs {
     height: clamp(3.655rem, 7.625vw, 4.875rem); /* 78px */
-  }
-
-  .store-hero__thumbs .swiper-slide {
-    width: clamp(11.016rem, 22.971vw, 14.6875rem); /* 235px */
   }
 
   .store-map__intro {

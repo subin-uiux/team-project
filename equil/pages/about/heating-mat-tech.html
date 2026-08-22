@@ -491,8 +491,9 @@
           >
         </div>
 
-        <ul class="heating-mat-tech-certification__items">
-          <li class="heating-mat-tech-certification__item">
+        <div class="heating-mat-tech-certification__slider">
+          <ul class="heating-mat-tech-certification__items">
+          <li class="heating-mat-tech-certification__item is-active">
             <div class="heating-mat-tech-certification__card">
               <img
                 class="heating-mat-tech-certification__check"
@@ -584,6 +585,38 @@
             >
           </li>
         </ul>
+        <nav
+          class="heating-mat-tech-certification__nav"
+          role="tablist"
+          aria-label="품질 검증 항목"
+        >
+          <button
+            type="button"
+            class="heating-mat-tech-certification__nav-item is-active"
+            data-index="0"
+            aria-label="유해물질 테스트"
+            aria-current="true"
+          ></button>
+          <button
+            type="button"
+            class="heating-mat-tech-certification__nav-item"
+            data-index="1"
+            aria-label="속건 테스트"
+          ></button>
+          <button
+            type="button"
+            class="heating-mat-tech-certification__nav-item"
+            data-index="2"
+            aria-label="견뢰도 테스트"
+          ></button>
+          <button
+            type="button"
+            class="heating-mat-tech-certification__nav-item"
+            data-index="3"
+            aria-label="KC 안전인증"
+          ></button>
+        </nav>
+        </div>
       </div>
     </section>
     <section class="heating-mat-tech-controller">

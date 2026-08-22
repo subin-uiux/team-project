@@ -1242,7 +1242,6 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
   }
 
   .main-pillow-solution__heading {
-    width: fit-content;
     max-width: 100%;
     margin-inline: auto;
     align-items: flex-start;
@@ -1263,6 +1262,9 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
     font-weight: 400;
     font-size: var(--fs-body-02); /* Body02 18px */
     text-align: left;
+    max-width: 100%;
+    word-break: keep-all;
+    text-wrap: pretty;
   }
 
   .main-pillow-solution__cards {

@@ -525,12 +525,12 @@
   }
 
   .sleep-fit-structure__feature-title {
-    font-size: clamp(0.75rem, 1.564vw, 1rem); /* 16px */
+    font-size: 1rem; /* 16px */
   }
 
   .sleep-fit-structure__feature-text {
     font-weight: 400;
-    font-size: clamp(0.75rem, 1.368vw, 0.875rem); /* 14px, mo/body04 */
+    font-size: 0.875rem; /* 14px, mo/body04 */
   }
 }
 
