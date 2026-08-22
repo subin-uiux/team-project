@@ -79,9 +79,13 @@
 
     const overlay = section.querySelector('.bedding-tech-design__overlay');
     const title = section.querySelector('.bedding-tech-design__title');
-    const descs = Array.from(
-      section.querySelectorAll('.bedding-tech-design__desc')
-    );
+    const mobileQuery = window.matchMedia('(max-width: 47.9375rem)');
+    const bodyMobile = section.querySelector('.bedding-tech-design__body-mobile');
+    const descs = mobileQuery.matches && bodyMobile
+      ? [bodyMobile]
+      : Array.from(
+          section.querySelectorAll('.bedding-tech-design__body-pc .bedding-tech-design__desc')
+        );
     if (!overlay || !title || !descs.length) return;
 
     const POST_HERO_FADE_UP_DURATION = 2;
@@ -136,6 +140,8 @@
     window.initScrollFeature({
       sectionSelector: '.bedding-tech-process',
       images: PROCESS_IMAGES,
+      pinOnCompact: true,
+      pinOnMobile: false,
     });
   };
 
@@ -199,7 +205,7 @@
           });
           gsap.set(titleChars, { opacity: 0, y: 40 });
           gsap.set(section, {
-            backgroundColor: 'var(--color-brand-light-3)',
+            backgroundColor: 'var(--color-brand-light-2)',
           });
         } else if (step === 1) {
           const splitX = getSplitX();
@@ -213,7 +219,7 @@
           });
           gsap.set(titleChars, { opacity: 0, y: 40 });
           gsap.set(section, {
-            backgroundColor: 'var(--color-brand-light-3)',
+            backgroundColor: 'var(--color-brand-light-2)',
           });
         } else {
           gsap.set([brandEq, brandUil, image], { opacity: 0 });
@@ -241,9 +247,6 @@
       if (step === 1) {
         const splitX = getSplitX();
         gsap.set(titleChars, { opacity: 0, y: 40 });
-        gsap.set(section, {
-          backgroundColor: 'var(--color-brand-light-3)',
-        });
         gsap.set([brandEq, brandUil], { opacity: 1 });
 
         transitionTl
@@ -286,15 +289,6 @@
             duration: 0.55,
             ease: 'power1.in',
           })
-          .to(
-            section,
-            {
-              backgroundColor: 'var(--color-brand-light-2)',
-              duration: 0.45,
-              ease: 'power1.inOut',
-            },
-            '-=0.15'
-          )
           .to(titleChars, {
             opacity: 1,
             y: 0,
@@ -313,15 +307,6 @@
           duration: 0.35,
           ease: 'power1.in',
         })
-        .to(
-          section,
-          {
-            backgroundColor: 'var(--color-brand-light-3)',
-            duration: 0.35,
-            ease: 'power1.inOut',
-          },
-          0
-        )
         .to(
           [brandEq, brandUil],
           {
@@ -407,9 +392,6 @@
     const medias = Array.from(
       section.querySelectorAll('.bedding-tech-seasonal__media')
     );
-    const arrows = Array.from(
-      section.querySelectorAll('.bedding-tech-seasonal__arrow')
-    );
     const dots = Array.from(
       section.querySelectorAll('.bedding-tech-seasonal__dot')
     );
@@ -424,7 +406,6 @@
     const fadeOutDuration = TRANSITION_DURATION * FADE_OUT_RATIO;
     let currentIndex = 0;
     let mediaStarted = false;
-    let arrowsShown = false;
     let compactRevealed = !compactMq.matches;
     let compactCover = null;
     let isTransitioning = false;
@@ -442,16 +423,6 @@
       });
       dots.forEach((dot, i) => {
         dot.classList.toggle('is-active', i === index);
-      });
-      arrows.forEach((arrow) => {
-        const isPrev = arrow.classList.contains(
-          'bedding-tech-seasonal__arrow--prev'
-        );
-        const isNext = arrow.classList.contains(
-          'bedding-tech-seasonal__arrow--next'
-        );
-        if (isPrev) arrow.classList.toggle('is-hidden', index <= 0);
-        if (isNext) arrow.classList.toggle('is-hidden', index >= LAST_INDEX);
       });
     };
 
@@ -508,16 +479,6 @@
       }
     };
 
-    const showArrows = () => {
-      if (arrowsShown || !arrows.length) return;
-      arrowsShown = true;
-      gsap.to(arrows, {
-        opacity: 1,
-        duration: 0.45,
-        ease: 'power2.out',
-      });
-    };
-
     const coverActiveMedia = () => {
       if (compactCover) return compactCover;
 
@@ -545,7 +506,6 @@
 
     if (isCompact()) {
       showCard(0);
-      gsap.set(arrows, { opacity: 0 });
       cards.forEach((card, index) => {
         const copy = getCopy(card);
         if (!copy) return;
@@ -564,7 +524,6 @@
         const cover = coverActiveMedia();
         if (!cover) {
           compactRevealed = true;
-          showArrows();
           return;
         }
 
@@ -579,7 +538,6 @@
             });
             gsap.set(cover.card, { clearProps: 'minHeight' });
             compactRevealed = true;
-            showArrows();
           },
         });
         return;
@@ -595,19 +553,7 @@
 
     section.addEventListener('click', (event) => {
       if (!isCompact()) return;
-      const prev = event.target.closest('.bedding-tech-seasonal__arrow--prev');
-      const next = event.target.closest('.bedding-tech-seasonal__arrow--next');
       const dot = event.target.closest('.bedding-tech-seasonal__dot');
-
-      if (prev) {
-        goTo(currentIndex - 1);
-        return;
-      }
-
-      if (next) {
-        goTo(currentIndex + 1);
-        return;
-      }
 
       if (dot) {
         const index = dots.indexOf(dot);
@@ -619,7 +565,6 @@
     if (cardsEl) {
       cardsEl.addEventListener('pointerdown', (event) => {
         if (!isCompact()) return;
-        if (event.target.closest('.bedding-tech-seasonal__arrow')) return;
         if (event.pointerType === 'mouse' && event.button !== 0) return;
         pointerStartX = event.clientX;
         pointerStartY = event.clientY;

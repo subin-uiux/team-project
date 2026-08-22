@@ -88,7 +88,7 @@
 
 @media (max-width: 47.9375rem) {
   .mattress-tech-hero {
-    --hero-end-height: 400px;
+    --hero-end-height: 244px;
   }
 
   .mattress-tech-hero__title {
@@ -97,7 +97,7 @@
   }
 
   .mattress-tech-hero__desc {
-    font-size: 1.125rem; /* 18px */
+    display: none;
   }
 
   /* ========================================
@@ -156,6 +156,10 @@
   color: var(--color-brand-dark);
 }
 
+.mattress-tech-copy__title-mobile {
+  display: none;
+}
+
 .mattress-tech-copy__char {
   display: inline-block;
   will-change: transform, opacity;
@@ -186,6 +190,16 @@
 
   .mattress-tech-copy__desc {
     font-size: 1rem; /* 16px */
+    line-height: 160%;
+    margin-top: 1.875rem; /* 30px */
+  }
+
+  .mattress-tech-copy__title-pc {
+    display: none;
+  }
+
+  .mattress-tech-copy__title-mobile {
+    display: inline;
   }
 }
 
@@ -266,6 +280,13 @@
   line-height: 150%;
 }
 
+.mattress-tech-research__desc-mobile {
+  display: none;
+  max-width: 21.25rem; /* 340px */
+  word-break: keep-all;
+  text-wrap: pretty;
+}
+
 .mattress-tech-research__label {
   margin-top: 1.875rem; /* 30px */
   font-family: var(--font-suit);
@@ -318,8 +339,6 @@
   color: var(--color-white);
 }
 
-.mattress-tech-research__nav,
-.mattress-tech-research__arrow,
 .mattress-tech-research__dots {
   display: none;
 }
@@ -357,40 +376,6 @@
   }
 
   .mattress-tech-research__progress {
-    display: none;
-  }
-
-  .mattress-tech-research__nav {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    z-index: 4;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-  }
-
-  .mattress-tech-research__arrow {
-    position: static;
-    z-index: 4;
-    display: block;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    transform: none;
-    pointer-events: auto;
-    cursor: pointer;
-  }
-
-  .mattress-tech-research__arrow img {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-
-  .mattress-tech-research__arrow.is-hidden {
     display: none;
   }
 
@@ -433,11 +418,6 @@
   .mattress-tech-research__label {
     font-size: 1.25rem; /* 20px */
   }
-
-  .mattress-tech-research__arrow {
-    width: 4.0625rem; /* 65px */
-    height: 4.0625rem; /* 65px */
-  }
 }
 
 @media (max-width: 47.9375rem) {
@@ -449,13 +429,16 @@
     font-size: 1rem; /* 16px */
   }
 
-  .mattress-tech-research__label {
-    font-size: 1rem; /* 16px */
+  .mattress-tech-research__desc-pc {
+    display: none;
   }
 
-  .mattress-tech-research__arrow {
-    width: 2.5rem; /* 40px */
-    height: 2.5rem; /* 40px */
+  .mattress-tech-research__desc-mobile {
+    display: inline-block;
+  }
+
+  .mattress-tech-research__label {
+    font-size: 1rem; /* 16px */
   }
 }
 
@@ -498,14 +481,16 @@
 }
 
 .mattress-tech-structure-overview__emphasis {
-  font-weight: 700;
-  font-size: 2.625rem; /* 42px */
+  font-weight: 800;
+  font-size: var(--fs-subtitle-lg); /* 36px */
 }
 
 .mattress-tech-structure-overview__image {
   width: 72rem; /* 1152px */
   max-width: none;
   height: auto;
+  transform-origin: center top;
+  will-change: transform, opacity, filter;
 }
 
 .mattress-tech-structure-overview__break {
@@ -529,11 +514,11 @@
 
 @media (max-width: 47.9375rem) {
   .mattress-tech-structure-overview__title {
-    font-size: 1.75rem; /* 28px */
+    font-size: 1.5rem; /* 24px */
   }
 
   .mattress-tech-structure-overview__emphasis {
-    font-size: 1.75rem; /* 28px */
+    font-size: 1.5rem; /* 24px */
   }
 
   .mattress-tech-structure-overview__break {
@@ -554,6 +539,13 @@
   width: 100%;
   height: 100vh;
   background-color: var(--color-white);
+}
+
+@media (max-width: 63.9375rem) {
+  .mattress-tech-top-layer {
+    height: auto;
+    min-height: 0;
+  }
 }
 
 /* ========================================
@@ -583,7 +575,6 @@
   color: var(--color-white);
   font-family: var(--font-suit);
   font-weight: 800;
-  font-size: 3.125rem; /* 50px */
   line-height: 100%;
   white-space: nowrap;
 }
@@ -625,9 +616,19 @@
   will-change: transform;
 }
 
+@media (min-width: 64rem) {
+  .mattress-tech-support-layers-overview__phrase {
+    font-size: clamp(
+      2.125rem,
+      calc(2.125rem + (100vw - 64.0625rem) * 16 / 895),
+      3.125rem
+    ); /* 34px @1025, 50px @1920 */
+  }
+}
+
 @media (max-width: 63.9375rem) {
   .mattress-tech-support-layers-overview__stage {
-    padding-inline: var(--grid-margin);
+    padding-inline: 1.25rem; /* 20px */
   }
 
   .mattress-tech-support-layers-overview__phrase {
@@ -642,14 +643,24 @@
 }
 
 @media (min-width: 48rem) and (max-width: 63.9375rem) {
+  .mattress-tech-support-layers-overview__stage {
+    padding-inline: 6.25rem; /* 100px */
+  }
+
   .mattress-tech-support-layers-overview__phrase {
-    font-size: 2rem; /* 32px */
+    width: auto;
+    max-width: calc(100% - 12.5rem); /* 100px × 2 */
+    font-size: clamp(
+      1.875rem,
+      calc(1.875rem + (100vw - 47.8125rem) * 0.625 / 16.1875),
+      2.5rem
+    ); /* 30px @765, 40px @1024 */
   }
 }
 
 @media (max-width: 47.9375rem) {
   .mattress-tech-support-layers-overview__phrase {
-    font-size: 1.75rem; /* 28px */
+    font-size: 1.375rem; /* 22px */
   }
 }
 
@@ -706,8 +717,7 @@
   white-space: nowrap;
 }
 
-.mattress-tech-support-layers__nav,
-.mattress-tech-support-layers__arrow {
+.mattress-tech-support-layers__dots {
   display: none;
 }
 
@@ -781,45 +791,6 @@
   .mattress-tech-support-layers__card .card-material__text {
     white-space: normal;
   }
-
-  .mattress-tech-support-layers__nav {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    display: block;
-    pointer-events: none;
-  }
-
-  .mattress-tech-support-layers__arrow {
-    position: absolute;
-    top: 50%;
-    z-index: 2;
-    display: block;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    transform: translateY(-50%);
-    pointer-events: auto;
-    cursor: pointer;
-  }
-
-  .mattress-tech-support-layers__arrow img {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-
-  .mattress-tech-support-layers__arrow--prev {
-    left: 1.25rem; /* 20px */
-  }
-
-  .mattress-tech-support-layers__arrow--next {
-    right: 1.25rem; /* 20px */
-  }
-
-  .mattress-tech-support-layers__arrow.is-hidden {
-    display: none;
-  }
 }
 
 @media (min-width: 48rem) and (max-width: 63.9375rem) {
@@ -829,11 +800,6 @@
 
   .mattress-tech-support-layers__header {
     gap: 1.875rem; /* 30px — 3단 타이틀 ↔ 탭 */
-  }
-
-  .mattress-tech-support-layers__arrow {
-    width: 4.0625rem; /* 65px */
-    height: 4.0625rem; /* 65px */
   }
 }
 
@@ -846,9 +812,35 @@
     gap: 1.25rem; /* 20px — 3단 타이틀 ↔ 탭 */
   }
 
-  .mattress-tech-support-layers__arrow {
-    width: 2.5rem; /* 40px */
-    height: 2.5rem; /* 40px */
+  .mattress-tech-support-layers__tabs.btn-tab-group {
+    gap: 0.625rem; /* 10px */
+  }
+
+  .mattress-tech-support-layers__tabs .btn-tab {
+    padding: 0.375rem 0.625rem; /* 6px 10px */
+  }
+
+  .mattress-tech-support-layers__dots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.9375rem; /* 15px */
+    margin-top: 0.875rem; /* 14px — 이미지 ↔ pagination */
+  }
+
+  .mattress-tech-support-layers__dot {
+    width: 0.375rem; /* 6px */
+    height: 0.375rem; /* 6px */
+    padding: 0;
+    border: 0;
+    border-radius: 6.25rem;
+    background-color: var(--color-brand-light-1);
+    cursor: pointer;
+  }
+
+  .mattress-tech-support-layers__dot.is-active {
+    width: 1.25rem; /* 20px */
+    background-color: #737373;
   }
 }
 
@@ -857,13 +849,40 @@
    ======================================== */
 
 .mattress-tech-pressure {
+  position: relative;
   display: flex;
   width: 100%;
   height: 100vh;
+  overflow: hidden;
   background-color: var(--color-brand-light-2);
 }
 
+.mattress-tech-pressure__media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.mattress-tech-pressure__bg {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+.mattress-tech-pressure__bg--origin {
+  opacity: 1;
+}
+
 .mattress-tech-pressure__container {
+  position: relative;
+  z-index: 1;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -1078,8 +1097,6 @@
   will-change: transform, opacity;
 }
 
-.mattress-tech-process__nav,
-.mattress-tech-process__arrow,
 .mattress-tech-process__dots {
   display: none;
 }
@@ -1142,65 +1159,21 @@
     pointer-events: none;
   }
 
+  .mattress-tech-process__body {
+    margin-top: 1.25rem; /* 20px — 이미지 ↔ 제목 */
+  }
+
   .mattress-tech-process__item-title,
   .mattress-tech-process__item-desc {
     font-size: 1rem; /* 16px */
   }
 
-  .mattress-tech-process__nav {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 2;
-    display: block;
-    height: 27.6875rem; /* 이미지 영역 */
-    pointer-events: none;
-  }
-
-  .mattress-tech-process__arrow {
-    position: absolute;
-    top: 50%;
-    z-index: 2;
-    display: block;
-    width: 2.5rem; /* 40px */
-    height: 2.5rem; /* 40px */
-    padding: 0;
-    border: 0;
-    background: transparent;
-    transform: translateY(-50%);
-    pointer-events: auto;
-    cursor: pointer;
-  }
-
-  .mattress-tech-process__arrow img {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-
-  .mattress-tech-process__arrow--prev {
-    left: 1.25rem; /* 20px */
-  }
-
-  .mattress-tech-process__arrow--next {
-    right: 1.25rem; /* 20px */
-  }
-
-  .mattress-tech-process__arrow.is-hidden {
-    display: none;
-  }
-
   .mattress-tech-process__dots {
-    position: absolute;
-    left: 50%;
-    bottom: 1.25rem; /* 20px */
-    z-index: 2;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.9375rem; /* 15px */
-    transform: translateX(-50%);
-    pointer-events: auto;
+    margin-top: 0.875rem; /* 14px — 본문 ↔ pagination */
   }
 
   .mattress-tech-process__dot {
@@ -1209,7 +1182,7 @@
     padding: 0;
     border: 0;
     border-radius: 6.25rem;
-    background-color: var(--color-white);
+    background-color: var(--color-brand-light-1);
     cursor: pointer;
   }
 
