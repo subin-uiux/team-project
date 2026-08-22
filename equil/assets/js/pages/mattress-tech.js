@@ -101,8 +101,12 @@
     const RESEARCH_SLIDE_DURATION = 2;
     const RESEARCH_SLIDE_EASE = 'power2.inOut';
     const SWIPE_THRESHOLD = 40;
+    const ENTRY_LOCK_MS = 400;
     const compactQuery = window.matchMedia('(max-width: 63.9375rem)');
+    const mobileQuery = window.matchMedia('(max-width: 47.9375rem)');
     const isHorizontal = () => compactQuery.matches;
+    const isMobileView = () => mobileQuery.matches;
+    const shouldPin = () => !isMobileView();
 
     let currentIndex = 0;
     let isAnimating = false;
@@ -117,6 +121,27 @@
     let skipTextAnimation = false;
     let touchStartY = null;
     let touchGestureHandled = false;
+    let pointerStartX = null;
+    let pointerStartY = null;
+    let entryLockUntil = 0;
+    let mobileRevealTrigger = null;
+    let pinListenersAttached = false;
+
+    const startEntryLock = () => {
+      entryLockUntil = Date.now() + ENTRY_LOCK_MS;
+    };
+
+    const isEntryLocked = () => Date.now() < entryLockUntil;
+
+    const isSectionStuckInViewport = () => {
+      const rect = section.getBoundingClientRect();
+      return rect.top <= 0.5 && rect.bottom >= window.innerHeight - 0.5;
+    };
+
+    const snapToPinStart = (trigger = pinTrigger) => {
+      if (!trigger) return;
+      window.scrollTo(0, trigger.start);
+    };
 
     const contentCharsBySlide = slides.map((slide) => {
       const content = slide.querySelector('.mattress-tech-research__content');
@@ -293,6 +318,25 @@
         animateSlideText(index);
       }
 
+      if (isMobileView()) {
+        if (index === 0) {
+          stopVideoSync = () => {
+            video.pause();
+          };
+          video.playbackRate = 1.8;
+          video.currentTime = 0;
+
+          getVideoDuration().then(() => {
+            if (currentIndex !== 0 || !isMobileView()) return;
+            const playPromise = video.play();
+            if (playPromise) {
+              playPromise.catch(() => {});
+            }
+          });
+        }
+        return;
+      }
+
       if (index === 0) {
         const onTimeUpdate = () => {
           if (
@@ -419,6 +463,7 @@
       isAnimating = false;
       skipTextAnimation = hasEnteredOnce;
       stopTimers();
+      startEntryLock();
       if (skipTextAnimation) {
         if (textTween) {
           textTween.kill();
@@ -459,9 +504,18 @@
     };
 
     const handleScrollIntent = (goingDown, event) => {
-      if (!pinTrigger?.isActive) return;
+      if (!pinTrigger) return;
 
-      if (isAnimating || isTextAnimating) {
+      const pinActive = pinTrigger.isActive;
+
+      if (
+        !pinActive &&
+        !(isLocked && isSectionStuckInViewport())
+      ) {
+        return;
+      }
+
+      if (isEntryLocked() || isAnimating || isTextAnimating) {
         event?.preventDefault?.();
         return;
       }
@@ -480,6 +534,10 @@
 
       event?.preventDefault?.();
 
+      if (!pinActive) {
+        snapToPinStart();
+      }
+
       if (goingDown) {
         goTo(currentIndex + 1);
         return;
@@ -492,69 +550,182 @@
       handleScrollIntent(event.deltaY > 0, event);
     };
 
-    const onTouchStart = (event) => {
+    const onPinTouchStart = (event) => {
       if (!pinTrigger?.isActive || !event.touches?.length) return;
       touchStartY = event.touches[0].clientY;
       touchGestureHandled = false;
     };
 
-    const onTouchMove = (event) => {
-      if (
-        touchStartY === null ||
-        !pinTrigger?.isActive ||
-        !event.touches?.length
-      ) {
-        return;
-      }
+    const onPinTouchMove = (event) => {
+      if (!pinTrigger?.isActive || !event.touches?.length) return;
 
-      const deltaY = event.touches[0].clientY - touchStartY;
-      const goingDown = deltaY < 0;
-
-      if (isAnimating || isTextAnimating) {
+      if (isEntryLocked() || isAnimating || isTextAnimating) {
         event.preventDefault();
         return;
       }
 
       if (!isLocked) return;
 
+      const deltaY =
+        touchStartY === null
+          ? 0
+          : event.touches[0].clientY - touchStartY;
+      const goingDown = deltaY < 0;
+
       if (goingDown && currentIndex === LAST_SLIDE_INDEX) return;
       if (!goingDown && currentIndex === 0) return;
 
       event.preventDefault();
 
-      if (touchGestureHandled) return;
+      if (touchStartY === null || touchGestureHandled) return;
       if (Math.abs(deltaY) < SWIPE_THRESHOLD) return;
 
       touchGestureHandled = true;
       handleScrollIntent(goingDown, event);
     };
 
-    const onTouchEnd = () => {
+    const onPinTouchEnd = () => {
       touchStartY = null;
       touchGestureHandled = false;
     };
 
+    const attachPinListeners = () => {
+      if (pinListenersAttached) return;
+      window.addEventListener('wheel', onWheel, { passive: false });
+      window.addEventListener('touchstart', onPinTouchStart, { passive: true });
+      window.addEventListener('touchmove', onPinTouchMove, { passive: false });
+      window.addEventListener('touchend', onPinTouchEnd, { passive: true });
+      window.addEventListener('touchcancel', onPinTouchEnd, { passive: true });
+      pinListenersAttached = true;
+    };
+
+    const detachPinListeners = () => {
+      if (!pinListenersAttached) return;
+      window.removeEventListener('wheel', onWheel);
+      window.removeEventListener('touchstart', onPinTouchStart);
+      window.removeEventListener('touchmove', onPinTouchMove);
+      window.removeEventListener('touchend', onPinTouchEnd);
+      window.removeEventListener('touchcancel', onPinTouchEnd);
+      touchStartY = null;
+      touchGestureHandled = false;
+      pinListenersAttached = false;
+    };
+
+    const enablePin = () => {
+      if (pinTrigger) return;
+
+      if (mobileRevealTrigger) {
+        mobileRevealTrigger.kill();
+        mobileRevealTrigger = null;
+      }
+
+      pinTrigger = ScrollTrigger.create({
+        trigger: section,
+        start: 'top top',
+        end: `+=${(LAST_SLIDE_INDEX + 2) * 100}%`,
+        pin: true,
+        pinSpacing: true,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+        onEnter: (self) => {
+          activate(0);
+          snapToPinStart(self);
+        },
+        onEnterBack: (self) => {
+          activate(LAST_SLIDE_INDEX);
+          snapToPinStart(self);
+        },
+        onLeave: deactivate,
+        onLeaveBack: deactivate,
+      });
+
+      attachPinListeners();
+    };
+
+    const disablePin = () => {
+      if (pinTrigger) {
+        pinTrigger.kill();
+        pinTrigger = null;
+        ScrollTrigger.refresh();
+      }
+      detachPinListeners();
+      isLocked = false;
+      stopTimers();
+      video.pause();
+    };
+
+    const enableMobileMode = () => {
+      disablePin();
+      isLocked = false;
+      isAnimating = false;
+      skipTextAnimation = false;
+      resetAllSlideText();
+      resetSlides(currentIndex);
+
+      if (mobileRevealTrigger) return;
+
+      mobileRevealTrigger = ScrollTrigger.create({
+        trigger: section,
+        start: 'top 85%',
+        once: true,
+        onEnter: () => {
+          startSlideTimers(currentIndex);
+        },
+      });
+    };
+
+    const onMobilePointerDown = (event) => {
+      if (!isMobileView()) return;
+      if (event.pointerType === 'mouse' && event.button !== 0) return;
+      pointerStartX = event.clientX;
+      pointerStartY = event.clientY;
+    };
+
+    const onMobilePointerUp = (event) => {
+      if (!isMobileView() || pointerStartX === null) return;
+
+      const deltaX = event.clientX - pointerStartX;
+      const deltaY = event.clientY - pointerStartY;
+      pointerStartX = null;
+      pointerStartY = null;
+
+      if (Math.abs(deltaX) < SWIPE_THRESHOLD) return;
+      if (Math.abs(deltaX) <= Math.abs(deltaY)) return;
+      if (isAnimating || isTextAnimating) return;
+
+      if (deltaX < 0 && currentIndex < LAST_SLIDE_INDEX) {
+        goTo(currentIndex + 1);
+        return;
+      }
+
+      if (deltaX > 0 && currentIndex > 0) {
+        goTo(currentIndex - 1);
+      }
+    };
+
+    const onMobilePointerCancel = () => {
+      pointerStartX = null;
+      pointerStartY = null;
+    };
+
+    const syncViewportMode = () => {
+      if (shouldPin()) {
+        if (mobileRevealTrigger) {
+          mobileRevealTrigger.kill();
+          mobileRevealTrigger = null;
+        }
+        enablePin();
+        return;
+      }
+
+      enableMobileMode();
+    };
+
     resetAllSlideText();
 
-    pinTrigger = ScrollTrigger.create({
-      trigger: section,
-      start: 'top top',
-      end: '+=100%',
-      pin: true,
-      pinSpacing: true,
-      anticipatePin: 1,
-      invalidateOnRefresh: true,
-      onEnter: () => activate(0),
-      onEnterBack: () => activate(LAST_SLIDE_INDEX),
-      onLeave: deactivate,
-      onLeaveBack: deactivate,
-    });
-
-    window.addEventListener('wheel', onWheel, { passive: false });
-    section.addEventListener('touchstart', onTouchStart, { passive: true });
-    section.addEventListener('touchmove', onTouchMove, { passive: false });
-    section.addEventListener('touchend', onTouchEnd, { passive: true });
-    section.addEventListener('touchcancel', onTouchEnd, { passive: true });
+    section.addEventListener('pointerdown', onMobilePointerDown);
+    section.addEventListener('pointerup', onMobilePointerUp);
+    section.addEventListener('pointercancel', onMobilePointerCancel);
 
     dots.forEach((dot, index) => {
       dot.addEventListener('click', () => {
@@ -563,14 +734,19 @@
       });
     });
 
-    const onCompactChange = () => {
+    syncViewportMode();
+
+    const onViewportChange = () => {
       resetSlides(currentIndex);
+      syncViewportMode();
     };
 
     if (typeof compactQuery.addEventListener === 'function') {
-      compactQuery.addEventListener('change', onCompactChange);
-    } else if (typeof compactQuery.addListener === 'function') {
-      compactQuery.addListener(onCompactChange);
+      compactQuery.addEventListener('change', onViewportChange);
+      mobileQuery.addEventListener('change', onViewportChange);
+    } else {
+      compactQuery.addListener(onViewportChange);
+      mobileQuery.addListener(onViewportChange);
     }
   };
 
