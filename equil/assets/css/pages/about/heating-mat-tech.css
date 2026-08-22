@@ -104,7 +104,7 @@
   }
 
   .heating-mat-tech-hero {
-    --hero-end-height: 400px;
+    --hero-end-height: 244px;
   }
 
   .heating-mat-tech-hero__image {
@@ -118,12 +118,12 @@
   }
 
   .heating-mat-tech-hero__title {
-    font-size: clamp(0.75rem, 3.911vw, 1.875rem); /* 30px, mo/hero-title */
+    font-size: clamp(1.364rem, 6.818vw, 1.875rem); /* 30px, mo/hero-title */
     line-height: 100%;
   }
 
   .heating-mat-tech-hero__desc {
-    font-size: clamp(0.75rem, 2.347vw, 1.125rem); /* 18px, mo/body02 */
+    display: none;
   }
 }
 
@@ -143,6 +143,10 @@
   display: flex;
   flex-direction: column;
   gap: 3.125rem; /* 50px */
+}
+
+.heating-mat-tech-problem__title-mobile {
+  display: none;
 }
 
 .heating-mat-tech-problem__cards {
@@ -280,6 +284,14 @@
     font-size: 1rem; /* 16px, mo/body03 */
   }
 
+  .heating-mat-tech-problem__title-pc {
+    display: none;
+  }
+
+  .heating-mat-tech-problem__title-mobile {
+    display: inline;
+  }
+
   .heating-mat-tech-problem__viewport {
     position: relative;
     overflow: hidden;
@@ -302,7 +314,7 @@
   .heating-mat-tech-problem__card {
     flex: 0 0 100%;
     width: 100%;
-    height: clamp(10.43rem, 52.151vw, 25rem); /* 400px */
+    height: clamp(18.182rem, 90.909vw, 25rem); /* 400px */
     border-radius: 1.875rem; /* 30px */
   }
 
@@ -832,11 +844,11 @@ html {
   }
 
   .heating-mat-tech-technology__title {
-    font-size: clamp(0.75rem, 3.129vw, 1.5rem); /* 24px, mo/subtitle02 */
+    font-size: clamp(1.091rem, 5.455vw, 1.5rem); /* 24px, mo/subtitle02 */
   }
 
   .heating-mat-tech-technology__desc {
-    font-size: clamp(0.75rem, 2.086vw, 1rem); /* 16px, mo/body03 */
+    font-size: clamp(0.75rem, 3.636vw, 1rem); /* 16px, mo/body03 */
   }
 
   .heating-mat-tech-technology__features {
@@ -1062,11 +1074,11 @@ html {
   }
 
   .heating-mat-tech-certification__sub-title {
-    font-size: clamp(0.75rem, 2.346vw, 1.125rem); /* 18px */
+    font-size: clamp(0.818rem, 4.091vw, 1.125rem); /* 18px */
   }
 
   .heating-mat-tech-certification__title {
-    font-size: clamp(0.75rem, 2.607vw, 1.25rem); /* 20px */
+    font-size: clamp(0.909rem, 4.545vw, 1.25rem); /* 20px */
   }
 
   .heating-mat-tech-certification__certificates {
@@ -1107,11 +1119,11 @@ html {
   }
 
   .heating-mat-tech-certification__card-title {
-    font-size: clamp(0.75rem, 2.086vw, 1rem); /* 16px */
+    font-size: clamp(0.75rem, 3.636vw, 1rem); /* 16px */
   }
 
   .heating-mat-tech-certification__card-desc {
-    font-size: clamp(0.75rem, 1.825vw, 0.875rem); /* 14px */
+    font-size: clamp(0.75rem, 3.182vw, 0.875rem); /* 14px */
   }
 
   .heating-mat-tech-certification__verified {
@@ -1579,11 +1591,11 @@ html {
   }
 
   .heating-mat-tech-controller__title {
-    font-size: clamp(0.875rem, 3.651vw, 1.75rem); /* 28px, mo/title03 */
+    font-size: clamp(1.273rem, 6.364vw, 1.75rem); /* 28px, mo/title03 */
   }
 
   .heating-mat-tech-controller__desc {
-    font-size: clamp(0.75rem, 2.086vw, 1rem); /* 16px, mo/body03 */
+    font-size: clamp(0.75rem, 3.636vw, 1rem); /* 16px, mo/body03 */
   }
 
   .heating-mat-tech-controller__media {
@@ -1714,7 +1726,7 @@ html {
     padding: 0;
     border-radius: 0;
     font-weight: var(--fw-suit-bold);
-    font-size: clamp(0.75rem, 2.607vw, 1.25rem); /* 20px, mo/body01 */
+    font-size: clamp(0.909rem, 4.545vw, 1.25rem); /* 20px, mo/body01 */
     line-height: 130%;
     text-align: left;
     color: var(--color-brand-dark);
@@ -1724,7 +1736,7 @@ html {
   .heating-mat-tech-controller__compact-panel .heating-mat-tech-controller__callout-desc {
     width: 100%;
     max-width: none;
-    font-size: clamp(0.75rem, 2.086vw, 1rem); /* 16px, mo/body03 */
+    font-size: clamp(0.75rem, 3.636vw, 1rem); /* 16px, mo/body03 */
     line-height: 150%;
     text-align: left;
   }

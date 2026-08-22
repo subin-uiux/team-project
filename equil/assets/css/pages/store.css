@@ -350,11 +350,11 @@
   .store-hero__title {
     font-family: var(--font-paperlogy);
     font-weight: 700;
-    font-size: clamp(0.75rem, 3.129vw, 1.5rem); /* 24px, mo/subtitle01 */
+    font-size: clamp(1.091rem, 5.455vw, 1.5rem); /* 24px, mo/subtitle01 */
   }
 
   .store-hero__text {
-    font-size: clamp(0.75rem, 2.086vw, 1rem); /* 16px, mo/body03 */
+    font-size: clamp(0.75rem, 3.636vw, 1rem); /* 16px, mo/body03 */
   }
 
   .store-hero__gallery {
@@ -362,7 +362,7 @@
   }
 
   .store-hero__main {
-    height: clamp(6.492rem, 32.464vw, 15.5625rem); /* 249px */
+    height: clamp(11.318rem, 56.591vw, 15.5625rem); /* 249px */
   }
 
   .store-hero__nav,
@@ -404,11 +404,11 @@
   .store-map__title {
     font-family: var(--font-paperlogy);
     font-weight: 700;
-    font-size: clamp(0.75rem, 3.129vw, 1.5rem); /* 24px, mo/subtitle01 */
+    font-size: clamp(1.091rem, 5.455vw, 1.5rem); /* 24px, mo/subtitle01 */
   }
 
   .store-map__text {
-    font-size: clamp(0.75rem, 2.086vw, 1rem); /* 16px, mo/body03 */
+    font-size: clamp(0.75rem, 3.636vw, 1rem); /* 16px, mo/body03 */
   }
 
   .store-map__viewport {
@@ -424,7 +424,7 @@
 
   .store-map__canvas {
     width: 100%;
-    height: clamp(10.43rem, 52.151vw, 25rem); /* 400px */
+    height: clamp(18.182rem, 90.909vw, 25rem); /* 400px */
     border: 0.0625rem solid var(--color-brand-dark); /* 1px */
     box-sizing: border-box;
   }
@@ -468,12 +468,12 @@
   }
 
   .store-map__info-title {
-    font-size: clamp(0.75rem, 2.086vw, 1rem); /* 16px */
+    font-size: clamp(0.75rem, 3.636vw, 1rem); /* 16px */
     color: var(--color-brand-dark);
   }
 
   .store-map__info-text {
-    font-size: clamp(0.75rem, 1.825vw, 0.875rem); /* 14px */
+    font-size: clamp(0.75rem, 3.182vw, 0.875rem); /* 14px */
     color: var(--color-brand-dark);
   }
 }

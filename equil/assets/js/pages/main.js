@@ -41,6 +41,7 @@
     let scrollTrigger = null;
     let stepTween = null;
     let textTween = null;
+    let animatingProblemIndex = -1;
 
     const getProblemTextElements = (item) => ({
       fadeDown: gsap.utils.toArray('.main-problem__number, .main-problem__title', item),
@@ -60,12 +61,20 @@
         textTween = null;
       }
 
+      animatingProblemIndex = -1;
       items.forEach(resetProblemText);
     };
 
     const showProblemTextImmediate = (problemIndex) => {
       const item = items[problemIndex];
       if (!item) return;
+
+      if (textTween) {
+        textTween.kill();
+        textTween = null;
+      }
+
+      animatingProblemIndex = -1;
 
       items.forEach((entry, index) => {
         if (index === problemIndex) {
@@ -88,22 +97,27 @@
         textTween = null;
       }
 
+      animatingProblemIndex = problemIndex;
+
       items.forEach((entry, index) => {
         if (index !== problemIndex) resetProblemText(entry);
       });
 
       const { fadeDown, fadeUp } = getProblemTextElements(item);
 
+      gsap.set(fadeDown, { opacity: 0, y: TEXT_ANIM.fadeDownY });
+      gsap.set(fadeUp, { opacity: 0, y: TEXT_ANIM.fadeUpY });
+
       textTween = gsap.timeline({
         onComplete: () => {
           textTween = null;
+          animatingProblemIndex = -1;
         },
       });
 
       if (fadeDown.length) {
-        textTween.fromTo(
+        textTween.to(
           fadeDown,
-          { opacity: 0, y: TEXT_ANIM.fadeDownY },
           {
             opacity: 1,
             y: 0,
@@ -115,9 +129,8 @@
       }
 
       if (fadeUp.length) {
-        textTween.fromTo(
+        textTween.to(
           fadeUp,
-          { opacity: 0, y: TEXT_ANIM.fadeUpY },
           {
             opacity: 1,
             y: 0,
@@ -143,6 +156,7 @@
       }
 
       if (immediate) {
+        if (textTween && animatingProblemIndex === problemIndex) return;
         showProblemTextImmediate(problemIndex);
       }
     };
@@ -190,7 +204,13 @@
 
     const getScrollYForStep = (step) => {
       if (!scrollTrigger) return window.scrollY;
-      const progress = step / (STEPS.length - 1);
+      const maxStep = STEPS.length - 1;
+      if (maxStep <= 0) return scrollTrigger.start;
+
+      /* 마지막 스텝은 end 경계(onLeave) 직전까지만 — 04 텍스트 애니메이션과 충돌 방지 */
+      const progress = step >= maxStep
+        ? (maxStep - 0.001) / maxStep
+        : step / maxStep;
       return scrollTrigger.start + (scrollTrigger.end - scrollTrigger.start) * progress;
     };
 
@@ -382,16 +402,23 @@
       },
       onLeave: () => {
         document.body.classList.remove('is-main-scroll-nav-visible');
-        applyStep(STEPS.length - 1, { immediate: true });
+        const lastStep = STEPS.length - 1;
+        if (currentStep !== lastStep) {
+          applyStep(lastStep, { immediate: true });
+        }
         setFillProgress(1);
       },
       onEnterBack: () => {
         applyStep(STEPS.length - 1, { immediate: true, animateText: true });
       },
       onUpdate: (self) => {
-        if (isAnimating) return;
+        if (isAnimating || textTween) return;
 
-        const syncedStep = Math.round(self.progress * (STEPS.length - 1));
+        const maxStep = STEPS.length - 1;
+        const syncedStep = Math.min(
+          maxStep,
+          Math.round(self.progress * maxStep),
+        );
         if (syncedStep !== currentStep) {
           applyStep(syncedStep, { immediate: true });
         }
@@ -426,10 +453,12 @@
     const LAST_INDEX = panels.length - 1;
     const SLIDE_DURATION = 0.9; /* 매트리스 이미지 슬라이드 전환 속도 */
     const SLIDE_EASE = 'power2.inOut';
-    const FADE_UP_DURATION = 3; /* heading·features fadeUp 속도 */
+    const HEADING_FADE_UP_DURATION = 1.26; /* 3단 타이틀 fadeUp — common.js FADE_UP_DURATION과 동일 */
+    const FEATURES_FADE_UP_DURATION = 1.2; /* features fadeUp 속도 (조정: main.js) */
+    const FEATURES_DELAY = 0.15; /* heading 이후 features 지연 (조정: main.js) */
     const FADE_UP_EASE = 'power3.out';
     const FADE_UP_Y = 40;
-    const FEATURES_DELAY = 0.2; /* heading 이후 features가 따라오는 지연 */
+    const HEADING_CHAR_CLASS = 'heading-3tier__char';
     const ENTRY_LOCK_MS = 800;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const compactMq = window.matchMedia('(max-width: 63.9375rem)');
@@ -439,6 +468,7 @@
     let currentIndex = -1;
     let isAnimating = false;
     let entryLockUntil = 0;
+    let sectionEntered = false;
     let textTween = null;
     let slideTween = null;
     let scrollTrigger = null;
@@ -448,18 +478,72 @@
       features: panel.querySelector('.main-mattress-solution__features'),
     });
 
+    const splitHeadingChars = (element, charClass) => {
+      const walk = (node) => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const chars = Array.from(node.textContent);
+          const fragment = document.createDocumentFragment();
+
+          chars.forEach((char) => {
+            if (/^\s$/.test(char)) {
+              fragment.appendChild(document.createTextNode(char));
+              return;
+            }
+
+            const span = document.createElement('span');
+            span.className = charClass;
+            span.textContent = char;
+            fragment.appendChild(span);
+          });
+
+          node.parentNode.replaceChild(fragment, node);
+          return;
+        }
+
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          if (node.tagName === 'BR') return;
+          Array.from(node.childNodes).forEach(walk);
+        }
+      };
+
+      Array.from(element.childNodes).forEach(walk);
+      return Array.from(element.querySelectorAll(`.${charClass}`));
+    };
+
+    const getHeadingChars = (heading) => {
+      if (!heading) return [];
+
+      const existing = heading.querySelectorAll(`.${HEADING_CHAR_CLASS}`);
+      if (existing.length) return Array.from(existing);
+
+      const targets = [
+        heading.querySelector('.heading-3tier__sub-title'),
+        heading.querySelector('.heading-3tier__title'),
+        heading.querySelector('.heading-3tier__desc'),
+      ].filter(Boolean);
+
+      return targets.flatMap((element) => splitHeadingChars(element, HEADING_CHAR_CLASS));
+    };
+
+    panels.forEach((panel) => {
+      const { heading } = getPanelParts(panel);
+      getHeadingChars(heading);
+    });
+
     const hidePanel = (panel) => {
       const { heading, features } = getPanelParts(panel);
       panel.classList.remove('is-active');
       panel.setAttribute('aria-hidden', 'true');
-      gsap.set([heading, features].filter(Boolean), { opacity: 0, y: FADE_UP_Y });
+      gsap.set(getHeadingChars(heading), { opacity: 0, y: FADE_UP_Y });
+      if (features) gsap.set(features, { opacity: 0, y: FADE_UP_Y });
     };
 
     const showPanelImmediate = (panel) => {
       const { heading, features } = getPanelParts(panel);
       panel.classList.add('is-active');
       panel.setAttribute('aria-hidden', 'false');
-      gsap.set([heading, features].filter(Boolean), { opacity: 1, y: 0 });
+      gsap.set(getHeadingChars(heading), { opacity: 1, y: 0 });
+      if (features) gsap.set(features, { opacity: 1, y: 0 });
     };
 
     const activatePanel = (index, { animate = true } = {}) => {
@@ -482,30 +566,43 @@
       setActiveNav(index);
 
       const { heading, features } = getPanelParts(nextPanel);
-      const targets = [heading, features].filter(Boolean);
+      const headingChars = getHeadingChars(heading);
 
-      if (!animate || reduceMotion || !targets.length) {
+      if (!animate || reduceMotion || (!headingChars.length && !features)) {
         showPanelImmediate(nextPanel);
         return;
       }
 
-      gsap.set(targets, { opacity: 0, y: FADE_UP_Y });
+      if (!sectionEntered) {
+        showPanelImmediate(nextPanel);
+        return;
+      }
+
+      gsap.set(headingChars, { opacity: 0, y: FADE_UP_Y });
+      if (features) gsap.set(features, { opacity: 0, y: FADE_UP_Y });
 
       textTween = gsap.timeline({
         onComplete: () => {
           textTween = null;
+          if (headingChars.length) {
+            gsap.set(headingChars, { clearProps: 'will-change' });
+          }
         },
       });
 
-      if (heading) {
-        /* main-mattress-solution__heading fadeUp */
+      if (headingChars.length) {
+        const charStagger =
+          HEADING_FADE_UP_DURATION / Math.max(headingChars.length * 2.5, 1);
+
+        /* main-mattress-solution__heading — 3단 타이틀 글자 fadeUp */
         textTween.to(
-          heading,
+          headingChars,
           {
             opacity: 1,
             y: 0,
-            duration: FADE_UP_DURATION,
+            duration: HEADING_FADE_UP_DURATION,
             ease: FADE_UP_EASE,
+            stagger: headingChars.length > 1 ? charStagger : 0,
           },
           0,
         );
@@ -518,7 +615,7 @@
           {
             opacity: 1,
             y: 0,
-            duration: FADE_UP_DURATION,
+            duration: FEATURES_FADE_UP_DURATION,
             ease: FADE_UP_EASE,
           },
           FEATURES_DELAY,
@@ -778,9 +875,23 @@
     ScrollTrigger.create({
       trigger: section,
       start: 'top 90%',
-      once: true,
       onEnter: () => {
+        sectionEntered = true;
         activatePanel(0, { animate: true });
+      },
+      onLeaveBack: () => {
+        sectionEntered = false;
+
+        if (textTween) {
+          textTween.kill();
+          textTween = null;
+        }
+
+        panels.forEach(hidePanel);
+        currentIndex = -1;
+        setImagesImmediate(0);
+        if (!isCompact()) setThumbImmediate(0);
+        setActiveNav(-1);
       },
     });
 
@@ -970,81 +1081,6 @@
     );
   };
 
-  const initMainBeddingOverviewFadeUp = () => {
-    const heading = document.querySelector('.main-bedding-overview__heading');
-    if (!heading) return;
-
-    const FADE_UP_DURATION = 1.26;
-    const charClass = 'main-bedding-overview__char';
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    const splitChars = (element) => {
-      const walk = (node) => {
-        if (node.nodeType === Node.TEXT_NODE) {
-          const chars = Array.from(node.textContent);
-          const fragment = document.createDocumentFragment();
-
-          chars.forEach((char) => {
-            if (/^\s$/.test(char)) {
-              fragment.appendChild(document.createTextNode(char));
-              return;
-            }
-
-            const span = document.createElement('span');
-            span.className = charClass;
-            span.textContent = char;
-            fragment.appendChild(span);
-          });
-
-          node.parentNode.replaceChild(fragment, node);
-          return;
-        }
-
-        if (node.nodeType === Node.ELEMENT_NODE) {
-          if (node.tagName === 'BR') return;
-          Array.from(node.childNodes).forEach(walk);
-        }
-      };
-
-      Array.from(element.childNodes).forEach(walk);
-      return Array.from(element.querySelectorAll(`.${charClass}`));
-    };
-
-    const targets = [
-      heading.querySelector('.heading-3tier__sub-title'),
-      heading.querySelector('.heading-3tier__title'),
-      heading.querySelector('.heading-3tier__desc'),
-    ].filter(Boolean);
-
-    const chars = targets.flatMap((element) => splitChars(element));
-    if (!chars.length) return;
-
-    if (reduceMotion) {
-      gsap.set(chars, { opacity: 1, y: 0 });
-      return;
-    }
-
-    const stagger = FADE_UP_DURATION / Math.max(chars.length * 2.5, 1);
-
-    /* main-bedding-overview__heading 글자 단위 fadeUp */
-    gsap.set(chars, { opacity: 0, y: 40 });
-    gsap.to(chars, {
-      opacity: 1,
-      y: 0,
-      duration: FADE_UP_DURATION,
-      ease: 'power3.out',
-      stagger: chars.length > 1 ? stagger : 0,
-      scrollTrigger: {
-        trigger: heading,
-        start: 'top 90%',
-        once: true,
-      },
-      onComplete: () => {
-        gsap.set(chars, { clearProps: 'will-change' });
-      },
-    });
-  };
-
   const initMainSleepBalanceFadeDown = () => {
     const title = document.querySelector('.main-sleep-balance__title');
     if (!title) return;
@@ -1123,11 +1159,12 @@
     if (!section || !viewport || !media || !frame || !header) return;
 
     const LAST_INDEX = 1;
-    const SLIDE_DURATION = 1.1; /* 풀스크린 이미지가 프레임 크기로 줄어드는 속도 */
+    const SLIDE_DURATION = 1.35; /* 풀스크린 이미지가 프레임 크기로 줄어드는 속도 */
     const SLIDE_EASE = 'power2.inOut';
-    const FADE_UP_DURATION = 1.26; /* main-sleep-fit__header fadeUp 속도 */
+    const FADE_UP_DURATION = 1.2; /* main-sleep-fit__header fadeUp 속도 */
     const FADE_UP_EASE = 'power3.out';
-    const ENTRY_LOCK_MS = 800;
+    const ENTRY_LOCK_MS = 900; /* PC — 섹션 pin 직후 풀스크린 유지 */
+    const SECTION_HOLD_MS = 1100; /* PC — shrink + fadeUp 완료 후 pin 유지 */
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const compactMq = window.matchMedia('(max-width: 63.9375rem)');
 
@@ -1136,6 +1173,7 @@
     let entryLockUntil = 0;
     let slideTween = null;
     let scrollTrigger = null;
+    let postExpandHoldUntil = 0;
 
     const isCompact = () => compactMq.matches;
 
@@ -1244,6 +1282,7 @@
 
       isAnimating = true;
       currentIndex = safeIndex;
+      section.classList.add('is-animating');
       section.classList.toggle('is-expanded', expanded);
 
       const HEADER_OUT_DURATION = 0.45; /* header 사라지는 속도 (이미지 확대 전) */
@@ -1252,9 +1291,13 @@
         onComplete: () => {
           isAnimating = false;
           slideTween = null;
+          section.classList.remove('is-animating');
           applyMediaState(expanded);
           applyOverlayState(expanded);
           applyHeaderState(expanded, { animate: false });
+          if (expanded && !isCompact()) {
+            postExpandHoldUntil = Date.now() + SECTION_HOLD_MS;
+          }
         },
       });
 
@@ -1286,7 +1329,7 @@
         }, HEADER_OUT_DURATION);
       }
 
-      if (scrollTrigger) {
+      if (scrollTrigger && !isCompact()) {
         slideTween.to(
           { progress: 0 },
           {
@@ -1310,13 +1353,17 @@
       if (Date.now() < entryLockUntil) return true;
 
       if (direction > 0) {
-        if (currentIndex >= LAST_INDEX) return false;
+        if (currentIndex >= LAST_INDEX) {
+          if (Date.now() < postExpandHoldUntil) return true;
+          return false;
+        }
         goTo(currentIndex + 1);
         return true;
       }
 
       if (direction < 0) {
         if (currentIndex <= 0) return false;
+        postExpandHoldUntil = 0;
         goTo(currentIndex - 1);
         return true;
       }
@@ -1328,7 +1375,7 @@
       const onWheel = (event) => {
         if (!scrollTrigger?.isActive) return;
 
-        if (isAnimating || Date.now() < entryLockUntil) {
+        if (isAnimating || Date.now() < entryLockUntil || Date.now() < postExpandHoldUntil) {
           event.preventDefault();
           return;
         }
@@ -1353,6 +1400,30 @@
       return;
     }
 
+    if (isCompact()) {
+      scrollTrigger = ScrollTrigger.create({
+        trigger: section,
+        start: 'top top',
+        end: 'bottom top',
+        invalidateOnRefresh: true,
+        onRefresh: () => {
+          applyMediaState(currentIndex >= LAST_INDEX);
+          applyOverlayState(currentIndex >= LAST_INDEX);
+        },
+        onEnter: () => {
+          goTo(LAST_INDEX);
+        },
+        onLeaveBack: () => {
+          goTo(0);
+        },
+        onEnterBack: () => {
+          goTo(LAST_INDEX);
+        },
+      });
+
+      return;
+    }
+
     scrollTrigger = ScrollTrigger.create({
       trigger: section,
       start: 'top top',
@@ -1360,7 +1431,7 @@
       pin: true,
       pinSpacing: true,
       scrub: false,
-      anticipatePin: 1,
+      anticipatePin: 0,
       invalidateOnRefresh: true,
       onRefresh: () => {
         applyMediaState(currentIndex >= LAST_INDEX);
@@ -1368,13 +1439,16 @@
       },
       onEnter: () => {
         entryLockUntil = Date.now() + ENTRY_LOCK_MS;
+        postExpandHoldUntil = 0;
         applyIndex(0, { animate: false });
       },
       onEnterBack: () => {
         entryLockUntil = Date.now() + ENTRY_LOCK_MS;
+        postExpandHoldUntil = 0;
         applyIndex(LAST_INDEX, { animate: false });
       },
       onLeaveBack: () => {
+        postExpandHoldUntil = 0;
         applyIndex(0, { animate: false });
       },
     });
@@ -1398,7 +1472,6 @@
       initMainMattressSolution();
       initMainPillowSolution();
       initMainSleepFit();
-      initMainBeddingOverviewFadeUp();
       initMainSleepBalanceFadeDown();
       ScrollTrigger.refresh();
 
@@ -1406,6 +1479,9 @@
       if (Number.isFinite(savedY) && savedY > 0) {
         window.scrollTo(0, savedY);
       }
+
+      window.initEquilHeading3tierFadeUp?.();
+      ScrollTrigger.refresh();
 
       if (typeof window.AOS !== 'undefined') {
         window.AOS.init({

@@ -166,7 +166,7 @@
 
   .product-list__title {
     margin-bottom: 2.5rem; /* 40px */
-    font-size: clamp(0.75rem, 3.129vw, 1.5rem); /* 24px, mo/subtitle01 */
+    font-size: clamp(1.091rem, 5.455vw, 1.5rem); /* 24px, mo/subtitle01 */
   }
 
   .product-list__grid {
@@ -192,14 +192,14 @@
 
   .product-list__item .card-product__title,
   .product-list__item .card-product__name {
-    font-size: clamp(0.75rem, 2.347vw, 1.125rem); /* 18px */
+    font-size: clamp(0.818rem, 4.091vw, 1.125rem); /* 18px */
   }
 
   .product-list__item .card-product__text {
-    font-size: clamp(0.75rem, 2.086vw, 1rem); /* 16px */
+    font-size: clamp(0.75rem, 3.636vw, 1rem); /* 16px */
   }
 
   .product-list__item .card-product__sizes {
-    font-size: clamp(0.75rem, 1.825vw, 0.875rem); /* 14px */
+    font-size: clamp(0.75rem, 3.182vw, 0.875rem); /* 14px */
   }
 }

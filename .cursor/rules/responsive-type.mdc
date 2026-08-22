@@ -13,7 +13,7 @@ alwaysApply: true
 | 구간 | 미디어 | 기준 너비 (지정 크기가 나오는 지점) |
 |---|---|---|
 | Tablet | `(min-width: 48rem) and (max-width: 63.9375rem)` | **1023px** |
-| Mobile | `(max-width: 47.9375rem)` | **767px** |
+| Mobile | `(max-width: 47.9375rem)` | **440px** |
 | Compact (탭+모 동일 값) | `(max-width: 63.9375rem)` | **1023px** |
 
 PC는 지정값이 있으면 고정(또는 기존 clamp)을 유지한다.
@@ -34,8 +34,8 @@ max = 지정 크기
 /* ✅ Tablet 32px @1023 → ~24px @768 */
 font-size: clamp(1.5rem, 3.128vw, 2rem); /* 32px */
 
-/* ✅ Mobile 24px @767 → 하한 12px */
-font-size: clamp(0.75rem, 3.129vw, 1.5rem); /* 24px */
+/* ✅ Mobile 24px @440 → ~17px @320 */
+font-size: clamp(1.091rem, 5.455vw, 1.5rem); /* 24px */
 
 /* ❌ */
 font-size: 2rem; /* 32px */

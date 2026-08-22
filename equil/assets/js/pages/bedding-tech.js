@@ -136,6 +136,8 @@
     window.initScrollFeature({
       sectionSelector: '.bedding-tech-process',
       images: PROCESS_IMAGES,
+      pinOnCompact: true,
+      pinOnMobile: false,
     });
   };
 
@@ -407,9 +409,6 @@
     const medias = Array.from(
       section.querySelectorAll('.bedding-tech-seasonal__media')
     );
-    const arrows = Array.from(
-      section.querySelectorAll('.bedding-tech-seasonal__arrow')
-    );
     const dots = Array.from(
       section.querySelectorAll('.bedding-tech-seasonal__dot')
     );
@@ -424,7 +423,6 @@
     const fadeOutDuration = TRANSITION_DURATION * FADE_OUT_RATIO;
     let currentIndex = 0;
     let mediaStarted = false;
-    let arrowsShown = false;
     let compactRevealed = !compactMq.matches;
     let compactCover = null;
     let isTransitioning = false;
@@ -442,16 +440,6 @@
       });
       dots.forEach((dot, i) => {
         dot.classList.toggle('is-active', i === index);
-      });
-      arrows.forEach((arrow) => {
-        const isPrev = arrow.classList.contains(
-          'bedding-tech-seasonal__arrow--prev'
-        );
-        const isNext = arrow.classList.contains(
-          'bedding-tech-seasonal__arrow--next'
-        );
-        if (isPrev) arrow.classList.toggle('is-hidden', index <= 0);
-        if (isNext) arrow.classList.toggle('is-hidden', index >= LAST_INDEX);
       });
     };
 
@@ -508,16 +496,6 @@
       }
     };
 
-    const showArrows = () => {
-      if (arrowsShown || !arrows.length) return;
-      arrowsShown = true;
-      gsap.to(arrows, {
-        opacity: 1,
-        duration: 0.45,
-        ease: 'power2.out',
-      });
-    };
-
     const coverActiveMedia = () => {
       if (compactCover) return compactCover;
 
@@ -545,7 +523,6 @@
 
     if (isCompact()) {
       showCard(0);
-      gsap.set(arrows, { opacity: 0 });
       cards.forEach((card, index) => {
         const copy = getCopy(card);
         if (!copy) return;
@@ -564,7 +541,6 @@
         const cover = coverActiveMedia();
         if (!cover) {
           compactRevealed = true;
-          showArrows();
           return;
         }
 
@@ -579,7 +555,6 @@
             });
             gsap.set(cover.card, { clearProps: 'minHeight' });
             compactRevealed = true;
-            showArrows();
           },
         });
         return;
@@ -595,19 +570,7 @@
 
     section.addEventListener('click', (event) => {
       if (!isCompact()) return;
-      const prev = event.target.closest('.bedding-tech-seasonal__arrow--prev');
-      const next = event.target.closest('.bedding-tech-seasonal__arrow--next');
       const dot = event.target.closest('.bedding-tech-seasonal__dot');
-
-      if (prev) {
-        goTo(currentIndex - 1);
-        return;
-      }
-
-      if (next) {
-        goTo(currentIndex + 1);
-        return;
-      }
 
       if (dot) {
         const index = dots.indexOf(dot);
@@ -619,7 +582,6 @@
     if (cardsEl) {
       cardsEl.addEventListener('pointerdown', (event) => {
         if (!isCompact()) return;
-        if (event.target.closest('.bedding-tech-seasonal__arrow')) return;
         if (event.pointerType === 'mouse' && event.button !== 0) return;
         pointerStartX = event.clientX;
         pointerStartY = event.clientY;
@@ -667,30 +629,43 @@
 
     gsap.set(headingChars, { opacity: 0, y: 40 });
 
-    gsap.to(headingChars, {
-      opacity: 1,
-      y: 0,
-      duration: FADE_UP_DURATION,
-      ease: 'power3.out',
-      stagger: headingChars.length > 1 ? charStagger : 0,
-      scrollTrigger: {
-        trigger: heading,
-        start: 'top 90%',
-        once: true,
-      },
-      onUpdate() {
-        if (!mediaStarted && this.progress() >= 0.5) {
-          mediaStarted = true;
-          playMediaReveal();
-        }
-      },
-      onComplete: () => {
-        gsap.set(headingChars, { clearProps: 'will-change' });
-        if (!mediaStarted) {
-          mediaStarted = true;
-          playMediaReveal();
-        }
-      },
+    const headingFadeUpTimeline = gsap
+      .timeline({
+        paused: true,
+        scrollTrigger: {
+          trigger: heading.closest('section') || section,
+          start: 'top 90%',
+          toggleActions: 'restart none none reset',
+          invalidateOnRefresh: true,
+          onLeaveBack: () => {
+            mediaStarted = false;
+          },
+        },
+        onComplete: () => {
+          gsap.set(headingChars, { clearProps: 'will-change' });
+          if (!mediaStarted) {
+            mediaStarted = true;
+            playMediaReveal();
+          }
+        },
+      })
+      .fromTo(
+        headingChars,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: FADE_UP_DURATION,
+          ease: 'power3.out',
+          stagger: headingChars.length > 1 ? charStagger : 0,
+        },
+      );
+
+    headingFadeUpTimeline.eventCallback('onUpdate', function onHeadingFadeUpUpdate() {
+      if (!mediaStarted && this.progress() >= 0.5) {
+        mediaStarted = true;
+        playMediaReveal();
+      }
     });
   };
 
