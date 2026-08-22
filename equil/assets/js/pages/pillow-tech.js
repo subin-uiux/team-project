@@ -220,6 +220,9 @@
   };
 
   const initPillowTechZonesCompact = (section, pillowIn, callouts) => {
+    if (section.dataset.zonesCompactReady === 'true') return;
+    section.dataset.zonesCompactReady = 'true';
+
     const media = section.querySelector('.pillow-tech-zones__media');
     const captionName = section.querySelector('.pillow-tech-zones__caption-name');
     const captionDesc = section.querySelector('.pillow-tech-zones__caption-desc');
@@ -444,12 +447,13 @@
     if (!pillowIn || callouts.length !== 3) return;
 
     const compactMq = window.matchMedia('(max-width: 63.9375rem)');
-    if (compactMq.matches) {
-      initPillowTechZonesCompact(section, pillowIn, callouts);
-      return;
-    }
 
-    const FADE_UP_DURATION = 1.26;
+    const mountCompact = () => {
+      initPillowTechZonesCompact(section, pillowIn, callouts);
+    };
+
+    const mountDesktop = () => {
+      const FADE_UP_DURATION = 1.26;
     const IMAGE_FADE_DURATION = 1.6;
     const AFTER_IMAGE_DELAY = 1.2;
     const AFTER_CALLOUTS_HOLD = 2;
@@ -661,6 +665,62 @@
     });
 
     window.addEventListener('wheel', onWheel, { passive: false });
+
+    return () => {
+      if (delayCall) {
+        delayCall.kill();
+        delayCall = null;
+      }
+      if (holdCall) {
+        holdCall.kill();
+        holdCall = null;
+      }
+      if (calloutTl) {
+        calloutTl.kill();
+        calloutTl = null;
+      }
+      if (imageTween) {
+        imageTween.kill();
+        imageTween = null;
+      }
+      if (pinTrigger) {
+        pinTrigger.kill(true);
+        pinTrigger = null;
+      }
+      window.removeEventListener('wheel', onWheel);
+      ScrollTrigger.refresh();
+    };
+    };
+
+    let destroyDesktop = null;
+    let currentMode = null;
+
+    const syncZonesMode = () => {
+      const nextMode = compactMq.matches ? 'compact' : 'desktop';
+      if (nextMode === currentMode) return;
+
+      if (destroyDesktop) {
+        destroyDesktop();
+        destroyDesktop = null;
+      }
+
+      if (nextMode === 'compact') {
+        mountCompact();
+        currentMode = 'compact';
+        return;
+      }
+
+      section.removeAttribute('data-zones-compact-ready');
+      destroyDesktop = mountDesktop();
+      currentMode = 'desktop';
+    };
+
+    syncZonesMode();
+    if (typeof compactMq.addEventListener === 'function') {
+      compactMq.addEventListener('change', syncZonesMode);
+    } else if (typeof compactMq.addListener === 'function') {
+      compactMq.addListener(syncZonesMode);
+    }
   };
 
   const start = () => {

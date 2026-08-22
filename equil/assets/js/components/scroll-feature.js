@@ -20,6 +20,7 @@
    * @param {Array<{ left: string, top: string }>|null} [options.hotspotPositions]
    * @param {'fade'|'crossfade'|'none'} [options.imageTransition]
    * @param {boolean} [options.pinOnCompact] 모바일·태블릿에서도 pin + 세로 슬라이드 전환
+   * @param {boolean} [options.pinOnMobile] 모바일(767px 이하)에서 pin 사용 여부
    */
   const initScrollFeature = ({
     sectionSelector,
@@ -27,6 +28,7 @@
     hotspotPositions = null,
     imageTransition = 'crossfade',
     pinOnCompact = false,
+    pinOnMobile = true,
   }) => {
     const section = document.querySelector(sectionSelector);
     if (!section) return;
@@ -175,8 +177,13 @@
     };
 
     const compactMq = window.matchMedia('(max-width: 63.9375rem)');
+    const mobileMq = window.matchMedia('(max-width: 47.9375rem)');
     const isCompactView = () => compactMq.matches;
-    const shouldPin = () => !isCompactView() || pinOnCompact;
+    const isMobileView = () => mobileMq.matches;
+    const shouldPin = () => {
+      if (isMobileView() && !pinOnMobile) return false;
+      return !isCompactView() || pinOnCompact;
+    };
     const SWIPE_THRESHOLD = 40;
     let pointerStartX = null;
     let pointerStartY = null;
@@ -230,8 +237,8 @@
       const prevIndex = currentIndex;
       currentIndex = index;
 
-      /* 스와이프 전용 컴팩트(비-pin): 즉시 전환. pinOnCompact면 PC와 동일하게 잠금+애니 */
-      if (isCompactView() && !pinOnCompact) {
+      /* 스와이프 전용 컴팩트(비-pin): 즉시 전환 */
+      if (isCompactView() && !shouldPin()) {
         features.forEach((feature, i) => {
           const isActive = i === index;
           feature.classList.toggle('is-active', isActive);
@@ -505,34 +512,18 @@
       return rect.top <= 0.5 && rect.bottom >= window.innerHeight - 0.5;
     };
 
-    const canCapturePinNav = () => {
-      if (!pinTrigger) return false;
-      return (
-        isSectionPinnedInView() ||
-        (currentIndex < LAST_INDEX && isSectionStuckInViewport())
-      );
-    };
-
-    const navigateByDirection = (goingDown) => {
-      if (isEntryLocked() || isTransitioning || isInCooldown()) return false;
-
-      if (goingDown && currentIndex < LAST_INDEX) {
-        activateFeature(currentIndex + 1, true);
-        return true;
-      }
-
-      if (!goingDown && currentIndex > 0) {
-        activateFeature(currentIndex - 1, true);
-        return true;
-      }
-
-      return false;
-    };
-
     const onWheel = (event) => {
-      if (!canCapturePinNav()) return;
+      if (!pinTrigger) return;
 
       const goingDown = event.deltaY > 0;
+      const pinActive = isSectionPinnedInView();
+
+      if (
+        !pinActive &&
+        !(currentIndex < LAST_INDEX && isSectionStuckInViewport())
+      ) {
+        return;
+      }
 
       if (isEntryLocked()) {
         event.preventDefault();
@@ -546,6 +537,9 @@
 
       if (goingDown && currentIndex < LAST_INDEX) {
         event.preventDefault();
+        if (!pinActive) {
+          window.scrollTo(0, pinTrigger.start);
+        }
         if (isInCooldown()) return;
         activateFeature(currentIndex + 1, true);
         return;
@@ -559,23 +553,33 @@
         event.preventDefault();
         if (isInCooldown()) return;
         activateFeature(currentIndex - 1, true);
+        return;
+      }
+
+      if (goingDown && currentIndex === LAST_INDEX) {
+        if (isInCooldown()) {
+          event.preventDefault();
+        }
       }
     };
 
     const onTouchStart = (event) => {
-      if (!canCapturePinNav() || !event.touches?.length) return;
+      if (!pinTrigger?.isActive || !event.touches?.length) return;
       touchStartY = event.touches[0].clientY;
       touchGestureHandled = false;
     };
 
     const onTouchMove = (event) => {
-      if (touchStartY === null || !canCapturePinNav() || !event.touches?.length) {
+      if (
+        touchStartY === null ||
+        !pinTrigger?.isActive ||
+        !event.touches?.length
+      ) {
         return;
       }
 
       const deltaY = event.touches[0].clientY - touchStartY;
       const goingDown = deltaY < 0;
-      const goingUp = deltaY > 0;
 
       if (isEntryLocked() || isTransitioning) {
         event.preventDefault();
@@ -583,20 +587,16 @@
       }
 
       if (goingDown && currentIndex >= LAST_INDEX) return;
-      if (goingUp && currentIndex <= 0) return;
+      if (!goingDown && currentIndex <= 0) return;
 
-      if (
-        (goingDown && currentIndex < LAST_INDEX) ||
-        (goingUp && currentIndex > 0)
-      ) {
-        event.preventDefault();
+      event.preventDefault();
 
-        if (touchGestureHandled) return;
-        if (Math.abs(deltaY) < SWIPE_THRESHOLD) return;
+      if (touchGestureHandled) return;
+      if (Math.abs(deltaY) < SWIPE_THRESHOLD) return;
 
-        touchGestureHandled = true;
-        navigateByDirection(goingDown);
-      }
+      touchGestureHandled = true;
+      if (goingDown) activateFeature(currentIndex + 1, true);
+      else activateFeature(currentIndex - 1, true);
     };
 
     const onTouchEnd = () => {
@@ -618,12 +618,10 @@
         onEnter: () => {
           activateFeature(0, false);
           startEntryLock();
-          revealTitle();
         },
         onEnterBack: () => {
           activateFeature(LAST_INDEX, false);
           startEntryLock();
-          revealTitle();
         },
       });
 
@@ -661,10 +659,13 @@
     };
 
     syncPinToViewport();
+    const onViewportChange = () => syncPinToViewport();
     if (compactMq.addEventListener) {
-      compactMq.addEventListener('change', syncPinToViewport);
+      compactMq.addEventListener('change', onViewportChange);
+      mobileMq.addEventListener('change', onViewportChange);
     } else {
-      compactMq.addListener(syncPinToViewport);
+      compactMq.addListener(onViewportChange);
+      mobileMq.addListener(onViewportChange);
     }
 
     return pinTrigger;

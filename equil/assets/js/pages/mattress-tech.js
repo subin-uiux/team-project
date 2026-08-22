@@ -101,6 +101,7 @@
     const RESEARCH_SLIDE_DURATION = 2;
     const RESEARCH_SLIDE_EASE = 'power2.inOut';
     const compactQuery = window.matchMedia('(max-width: 63.9375rem)');
+    const isHorizontal = () => compactQuery.matches;
 
     let currentIndex = 0;
     let isAnimating = false;
@@ -217,6 +218,9 @@
       });
     };
 
+    const getSlideAxis = () => (isHorizontal() ? 'x' : 'y');
+    const getOffAxis = () => (isHorizontal() ? 'y' : 'x');
+
     const stopTimers = () => {
       if (autoTimer) {
         autoTimer.kill();
@@ -263,12 +267,14 @@
 
     const resetSlides = (activeIndex) => {
       currentIndex = activeIndex;
+      const axis = getSlideAxis();
+      const offAxis = getOffAxis();
       slides.forEach((slide, index) => {
         const isActive = index === activeIndex;
         slide.classList.toggle('is-active', isActive);
         gsap.set(slide, {
-          x: '0%',
-          y: isActive ? '0%' : '100%',
+          [axis]: isActive ? '0%' : '100%',
+          [offAxis]: '0%',
           zIndex: isActive ? 2 : 1,
         });
       });
@@ -357,6 +363,8 @@
       const currentSlide = slides[currentIndex];
       const nextSlide = slides[nextIndex];
       const isForward = nextIndex > currentIndex;
+      const axis = getSlideAxis();
+      const offAxis = getOffAxis();
       const currentTo = isForward ? '-100%' : '100%';
       const nextFrom = isForward ? '100%' : '-100%';
 
@@ -369,13 +377,13 @@
         resetSlideText(nextIndex);
       }
 
-      gsap.set(nextSlide, { x: '0%', y: nextFrom, zIndex: 2 });
-      gsap.set(currentSlide, { x: '0%', zIndex: 1 });
+      gsap.set(nextSlide, { [axis]: nextFrom, [offAxis]: '0%', zIndex: 2 });
+      gsap.set(currentSlide, { [offAxis]: '0%', zIndex: 1 });
 
       gsap
         .timeline({
           onComplete: () => {
-            gsap.set(currentSlide, { x: '0%', y: nextFrom });
+            gsap.set(currentSlide, { [axis]: nextFrom, [offAxis]: '0%' });
             resetSlideText(currentIndex);
             currentIndex = nextIndex;
             isAnimating = false;
@@ -385,7 +393,7 @@
         .to(
           currentSlide,
           {
-            y: currentTo,
+            [axis]: currentTo,
             duration: RESEARCH_SLIDE_DURATION,
             ease: RESEARCH_SLIDE_EASE,
           },
@@ -393,9 +401,9 @@
         )
         .fromTo(
           nextSlide,
-          { y: nextFrom },
+          { [axis]: nextFrom },
           {
-            y: '0%',
+            [axis]: '0%',
             duration: RESEARCH_SLIDE_DURATION,
             ease: RESEARCH_SLIDE_EASE,
           },
@@ -448,7 +456,7 @@
     };
 
     const onWheel = (event) => {
-      if (!pinTrigger?.isActive) return;
+      if (!pinTrigger || !pinTrigger.isActive) return;
 
       if (isAnimating || isTextAnimating) {
         event.preventDefault();
@@ -479,103 +487,32 @@
       goTo(currentIndex - 1);
     };
 
-    let touchStartY = null;
-    let touchGestureHandled = false;
-    const TOUCH_THRESHOLD = 40;
-
-    const onTouchStart = (event) => {
-      if (!pinTrigger?.isActive || !event.touches?.length) return;
-      touchStartY = event.touches[0].clientY;
-      touchGestureHandled = false;
-    };
-
-    const onTouchMove = (event) => {
-      if (
-        touchStartY === null ||
-        !pinTrigger?.isActive ||
-        !event.touches?.length
-      ) {
-        return;
-      }
-
-      const deltaY = event.touches[0].clientY - touchStartY;
-      const goingDown = deltaY < 0;
-
-      if (isAnimating || isTextAnimating) {
-        event.preventDefault();
-        return;
-      }
-
-      if (!isLocked) return;
-
-      if (goingDown && currentIndex >= LAST_SLIDE_INDEX) {
-        if (Math.abs(deltaY) >= TOUCH_THRESHOLD) {
-          finishForward();
-        }
-        return;
-      }
-
-      if (!goingDown && currentIndex <= 0) {
-        if (Math.abs(deltaY) >= TOUCH_THRESHOLD) {
-          finishBackward();
-        }
-        return;
-      }
-
-      event.preventDefault();
-
-      if (touchGestureHandled) return;
-      if (Math.abs(deltaY) < TOUCH_THRESHOLD) return;
-
-      touchGestureHandled = true;
-      if (goingDown) goTo(currentIndex + 1);
-      else goTo(currentIndex - 1);
-    };
-
-    const onTouchEnd = () => {
-      touchStartY = null;
-      touchGestureHandled = false;
-    };
-
     resetAllSlideText();
 
     pinTrigger = ScrollTrigger.create({
       trigger: section,
       start: 'top top',
-      end: '+=120%',
+      end: '+=100%',
       pin: true,
-      pinSpacing: true,
       anticipatePin: 1,
       invalidateOnRefresh: true,
       onEnter: () => activate(0),
       onEnterBack: () => activate(LAST_SLIDE_INDEX),
       onLeave: deactivate,
       onLeaveBack: deactivate,
-      onUpdate: (self) => {
-        /* PC와 동일: 잠금 중에는 pin 구간을 스크롤로 통과하지 못함 */
-        if (!isLocked) return;
-        if (self.scroll() !== self.start) {
-          self.scroll(self.start);
-        }
-      },
     });
 
-    window.addEventListener('wheel', onWheel, { passive: false });
-    section.addEventListener('touchstart', onTouchStart, { passive: true });
-    section.addEventListener('touchmove', onTouchMove, { passive: false });
-    section.addEventListener('touchend', onTouchEnd, { passive: true });
-    section.addEventListener('touchcancel', onTouchEnd, { passive: true });
+    section.addEventListener('wheel', onWheel, { passive: false });
 
     dots.forEach((dot, index) => {
       dot.addEventListener('click', () => {
-        if (!isLocked || isAnimating || isTextAnimating) return;
+        if (isAnimating || isTextAnimating) return;
         goTo(index);
       });
     });
 
     const onCompactChange = () => {
       resetSlides(currentIndex);
-      ScrollTrigger.refresh();
     };
 
     if (typeof compactQuery.addEventListener === 'function') {
@@ -588,7 +525,11 @@
   const initMattressTechStructureOverview = () => {
     const section = document.querySelector('.mattress-tech-structure-overview');
     const title = section?.querySelector('.mattress-tech-structure-overview__title');
+    const image = section?.querySelector('.mattress-tech-structure-overview__image');
     if (!section || !title) return;
+
+    const IMAGE_REVEAL_DURATION = 1.2;
+    const TEXT_OVERLAP_AT = 0.5;
 
     const chars = splitChars(
       title,
@@ -596,14 +537,22 @@
     );
     const charStagger =
       FADE_UP_DURATION / Math.max(chars.length * 2.5, 1);
+    const textDuration =
+      chars.length <= 1
+        ? FADE_UP_DURATION
+        : FADE_UP_DURATION + charStagger * (chars.length - 1);
 
     gsap.set(chars, { opacity: 0, y: 40 });
-    gsap.to(chars, {
-      opacity: 1,
-      y: 0,
-      duration: FADE_UP_DURATION,
-      ease: 'power3.out',
-      stagger: chars.length > 1 ? charStagger : 0,
+    if (image) {
+      gsap.set(image, {
+        opacity: 0,
+        scale: 0.96,
+        y: 16,
+        filter: 'blur(3px)',
+      });
+    }
+
+    const tl = gsap.timeline({
       scrollTrigger: {
         trigger: title,
         start: 'top 90%',
@@ -611,8 +560,34 @@
       },
       onComplete: () => {
         gsap.set(chars, { clearProps: 'will-change' });
+        if (image) {
+          gsap.set(image, { clearProps: 'will-change' });
+        }
       },
     });
+
+    tl.to(chars, {
+      opacity: 1,
+      y: 0,
+      duration: FADE_UP_DURATION,
+      ease: 'power3.out',
+      stagger: chars.length > 1 ? charStagger : 0,
+    });
+
+    if (image) {
+      tl.to(
+        image,
+        {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          filter: 'blur(0px)',
+          duration: IMAGE_REVEAL_DURATION,
+          ease: 'power3.out',
+        },
+        textDuration * TEXT_OVERLAP_AT
+      );
+    }
   };
 
   const TOP_LAYER_IMAGES = [
@@ -628,11 +603,13 @@
       sectionSelector: '.mattress-tech-top-layer',
       images: TOP_LAYER_IMAGES,
       imageTransition: 'crossfade',
+      pinOnCompact: true,
     });
   };
 
   const initMattressTechSupportLayersOverview = () => {
     const section = document.querySelector('.mattress-tech-support-layers-overview');
+    const stage = section?.querySelector('.mattress-tech-support-layers-overview__stage');
     const phrase = section?.querySelector('.mattress-tech-support-layers-overview__phrase');
     const leftText = section?.querySelector(
       '.mattress-tech-support-layers-overview__text--left'
@@ -645,6 +622,7 @@
     const line = section?.querySelector('.mattress-tech-support-layers-overview__line');
     if (
       !section ||
+      !stage ||
       !phrase ||
       !leftText ||
       !rightText ||
@@ -656,22 +634,50 @@
     }
 
     const SPLIT_GAP = 564;
+    const SPLIT_GAP_TABLET = 232;
     const SPLIT_DURATION = 1;
     const DOT_DURATION = 0.45;
     const AFTER_HOLD = 1.5;
-    const LEAVE_GRACE_MS = 500;
     const INITIAL_SPACER = 12;
+    const MIN_PADDING_PC = 60;
     const compactQuery = window.matchMedia('(max-width: 63.9375rem)');
+    const tabletQuery = window.matchMedia(
+      '(min-width: 48rem) and (max-width: 63.9375rem)'
+    );
+
+    const getContentWidth = () => {
+      if (!compactQuery.matches) {
+        return window.innerWidth - MIN_PADDING_PC * 2;
+      }
+
+      const style = getComputedStyle(stage);
+      const paddingInline =
+        parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+      return stage.clientWidth - paddingInline;
+    };
 
     const getSplitGap = () => {
-      if (!compactQuery.matches) return SPLIT_GAP;
-
       const leftWidth = leftText.getBoundingClientRect().width;
       const rightWidth = rightText.getBoundingClientRect().width;
-      return Math.max(
+      const paddingLimitedSpacer = Math.max(
         INITIAL_SPACER,
-        phrase.clientWidth - leftWidth - rightWidth
+        getContentWidth() - leftWidth - rightWidth
       );
+
+      if (!compactQuery.matches) {
+        return Math.min(SPLIT_GAP, paddingLimitedSpacer);
+      }
+
+      if (tabletQuery.matches) {
+        return Math.min(SPLIT_GAP_TABLET, paddingLimitedSpacer);
+      }
+
+      return paddingLimitedSpacer;
+    };
+
+    const updateSpacerLayout = () => {
+      if (!sequenceStarted && !hasCompleted) return;
+      gsap.set(spacer, { width: getSplitGap() });
     };
 
     let sequenceStarted = false;
@@ -803,6 +809,17 @@
     });
 
     window.addEventListener('wheel', onWheel, { passive: false });
+    window.addEventListener('resize', updateSpacerLayout);
+    if (typeof compactQuery.addEventListener === 'function') {
+      compactQuery.addEventListener('change', updateSpacerLayout);
+    } else if (typeof compactQuery.addListener === 'function') {
+      compactQuery.addListener(updateSpacerLayout);
+    }
+    if (typeof tabletQuery.addEventListener === 'function') {
+      tabletQuery.addEventListener('change', updateSpacerLayout);
+    } else if (typeof tabletQuery.addListener === 'function') {
+      tabletQuery.addListener(updateSpacerLayout);
+    }
   };
 
   const SUPPORT_LAYERS_TABS = [
@@ -896,14 +913,23 @@
     const cards = Array.from(
       section.querySelectorAll('.mattress-tech-support-layers__card')
     );
-    if (!heading || !tabs.length || cards.length !== 3) return;
+    const dots = Array.from(
+      section.querySelectorAll('.mattress-tech-support-layers__dot')
+    );
+    const slider = section.querySelector('.mattress-tech-support-layers__slider');
+    if (!heading || !tabs.length || cards.length !== 3 || !slider) return;
 
     const FADE_DURATION = 0.35;
+    const SWIPE_THRESHOLD = 40;
     const compactQuery = window.matchMedia('(max-width: 63.9375rem)');
+    const mobileQuery = window.matchMedia('(max-width: 47.9375rem)');
     let currentIndex = 0;
     let currentCardIndex = 0;
     let isTransitioning = false;
     let transitionTl = null;
+    let cardTransitionTl = null;
+    let touchStartX = null;
+    let touchGestureHandled = false;
 
     const headingTargets = [
       heading.querySelector('.heading-3tier__sub-title'),
@@ -981,6 +1007,97 @@
           gsap.set(card, { opacity: isActive ? 1 : 0 });
         }
       });
+
+      dots.forEach((dot, dotIndex) => {
+        const isActive = dotIndex === currentCardIndex;
+        dot.classList.toggle('is-active', isActive);
+        if (isActive) {
+          dot.setAttribute('aria-current', 'true');
+        } else {
+          dot.removeAttribute('aria-current');
+        }
+      });
+    };
+
+    const goToCard = (index) => {
+      if (!mobileQuery.matches || isTransitioning) return;
+
+      const nextIndex = Math.max(0, Math.min(cards.length - 1, index));
+      if (nextIndex === currentCardIndex) return;
+
+      isTransitioning = true;
+      const outgoing = cards[currentCardIndex];
+      const incoming = cards[nextIndex];
+
+      incoming.classList.add('is-active');
+      gsap.set(incoming, { opacity: 0 });
+
+      if (cardTransitionTl) {
+        cardTransitionTl.kill();
+      }
+
+      cardTransitionTl = gsap.timeline({
+        onComplete: () => {
+          outgoing.classList.remove('is-active');
+          gsap.set(outgoing, { opacity: 0 });
+          currentCardIndex = nextIndex;
+          isTransitioning = false;
+          cardTransitionTl = null;
+          updateCardVisibility();
+        },
+      });
+
+      cardTransitionTl.to(
+        outgoing,
+        {
+          opacity: 0,
+          duration: FADE_DURATION,
+          ease: 'power2.out',
+        },
+        0
+      );
+
+      cardTransitionTl.to(
+        incoming,
+        {
+          opacity: 1,
+          duration: FADE_DURATION,
+          ease: 'power2.out',
+        },
+        0
+      );
+    };
+
+    const onTouchStart = (event) => {
+      if (!mobileQuery.matches || !event.touches?.length) return;
+      touchStartX = event.touches[0].clientX;
+      touchGestureHandled = false;
+    };
+
+    const onTouchMove = (event) => {
+      if (
+        touchStartX === null ||
+        !mobileQuery.matches ||
+        isTransitioning ||
+        !event.touches?.length
+      ) {
+        return;
+      }
+
+      const deltaX = event.touches[0].clientX - touchStartX;
+      if (touchGestureHandled || Math.abs(deltaX) < SWIPE_THRESHOLD) return;
+
+      touchGestureHandled = true;
+      if (deltaX < 0) {
+        goToCard(currentCardIndex + 1);
+      } else {
+        goToCard(currentCardIndex - 1);
+      }
+    };
+
+    const onTouchEnd = () => {
+      touchStartX = null;
+      touchGestureHandled = false;
     };
 
     const cardsWrap = section.querySelector(
@@ -1038,7 +1155,23 @@
       });
     });
 
-    compactQuery.addEventListener('change', updateCardVisibility);
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        goToCard(index);
+      });
+    });
+
+    slider.addEventListener('touchstart', onTouchStart, { passive: true });
+    slider.addEventListener('touchmove', onTouchMove, { passive: true });
+    slider.addEventListener('touchend', onTouchEnd, { passive: true });
+    slider.addEventListener('touchcancel', onTouchEnd, { passive: true });
+
+    compactQuery.addEventListener('change', () => {
+      if (!compactQuery.matches) {
+        currentCardIndex = 0;
+      }
+      updateCardVisibility();
+    });
     updateCardVisibility();
   };
 
@@ -1073,11 +1206,11 @@
 
     const TITLE_HOLD = 1;
     const TITLE_FADE_OUT = 0.6;
-    const LINE_DURATION = 0.8;
+    const LINE_DURATION = 1.6;
     const BG_INTRO_DURATION = 3.2;
     const BG_FADE_OUT_DURATION = 0.6;
     const BG_ORIGIN_HOLD = 0.25;
-    const BG_FADE_IN_DURATION = 2;
+    const BG_FADE_IN_DURATION = 3;
     const BG_INTRO_DELAY = 1.1;
     const compactQuery = window.matchMedia('(max-width: 63.9375rem)');
     let currentIndex = 0;

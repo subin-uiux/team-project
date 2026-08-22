@@ -136,6 +136,8 @@
     window.initScrollFeature({
       sectionSelector: '.bedding-tech-process',
       images: PROCESS_IMAGES,
+      pinOnCompact: true,
+      pinOnMobile: false,
     });
   };
 

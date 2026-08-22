@@ -281,6 +281,14 @@
   }
 }
 
+@media (max-width: 47.9375rem) {
+  .bedding-tech-process .scroll-feature__feature-desc {
+    max-width: 21.25rem; /* 340px */
+    word-break: keep-all;
+    text-wrap: pretty;
+  }
+}
+
 /* ========================================
    bedding-tech-wool
    ======================================== */
@@ -457,6 +465,10 @@
   display: none;
 }
 
+.bedding-tech-seasonal__break {
+  display: none;
+}
+
 @media (max-width: 63.9375rem) {
   .bedding-tech-seasonal {
     height: auto;
@@ -546,12 +558,16 @@
 }
 
 @media (max-width: 47.9375rem) {
+  .bedding-tech-seasonal__break {
+    display: block;
+  }
+
   .bedding-tech-seasonal__copy {
     padding: 1.25rem; /* 20px */
   }
 
   .bedding-tech-seasonal__title {
-    font-size: clamp(0.75rem, 3.129vw, 1.5rem); /* 24px */
+    font-size: clamp(0.75rem, 3.651vw, 1.75rem); /* 28px */
   }
 
   .bedding-tech-seasonal__desc {

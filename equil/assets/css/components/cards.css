@@ -358,3 +358,11 @@ a.card-event {
     font-size: clamp(0.75rem, 1.368vw, 0.875rem); /* 14px */
   }
 }
+
+@media (max-width: 47.9375rem) {
+  .card-material__text {
+    max-width: 21.25rem; /* 340px */
+    word-break: keep-all;
+    text-wrap: pretty;
+  }
+}

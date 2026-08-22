@@ -161,8 +161,27 @@
       const chars = splitHeadingChars(title, charClass);
       if (!chars.length) return;
 
-      /* 재생은 scroll-feature.js revealTitle에서 담당 (중복 tween 방지) */
+      const charStagger =
+        FADE_UP_DURATION / Math.max(chars.length * 2.5, 1);
+
       gsap.set(chars, { opacity: 0, y: 40 });
+
+      gsap.to(chars, {
+        opacity: 1,
+        y: 0,
+        duration: FADE_UP_DURATION,
+        ease: 'power3.out',
+        stagger: chars.length > 1 ? charStagger : 0,
+        scrollTrigger: {
+          trigger: title,
+          start: 'top 70%',
+          once: true,
+        },
+        onComplete: () => {
+          title.dataset.revealed = 'true';
+          gsap.set(chars, { clearProps: 'will-change' });
+        },
+      });
     });
   };
 
@@ -296,6 +315,8 @@
     const getShrinkDistance = () =>
       Math.max(getStartHeight() - getEndHeight(), 1);
     const getScaleDistance = () => Math.round(window.innerHeight * 0.2);
+    const mobileQuery = window.matchMedia('(max-width: 47.9375rem)');
+    const shouldFadeDescOnScroll = () => mobileQuery.matches;
 
     gsap.set(overlay, { opacity: 0 });
     gsap.set(content, { opacity: 0 });
@@ -363,7 +384,7 @@
       }
     );
 
-    if (desc) {
+    if (desc && shouldFadeDescOnScroll()) {
       tl.fromTo(
         desc,
         { opacity: 1 },

@@ -373,3 +373,11 @@ a {
   }
 }
 
+@media (max-width: 47.9375rem) {
+  .heading-3tier__desc {
+    max-width: 21.25rem; /* 340px */
+    word-break: keep-all;
+    text-wrap: pretty;
+  }
+}
+
