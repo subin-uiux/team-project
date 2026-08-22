@@ -1159,11 +1159,12 @@
     if (!section || !viewport || !media || !frame || !header) return;
 
     const LAST_INDEX = 1;
-    const SLIDE_DURATION = 1.1; /* 풀스크린 이미지가 프레임 크기로 줄어드는 속도 */
+    const SLIDE_DURATION = 1.35; /* 풀스크린 이미지가 프레임 크기로 줄어드는 속도 */
     const SLIDE_EASE = 'power2.inOut';
-    const FADE_UP_DURATION = 1.26; /* main-sleep-fit__header fadeUp 속도 */
+    const FADE_UP_DURATION = 1.2; /* main-sleep-fit__header fadeUp 속도 */
     const FADE_UP_EASE = 'power3.out';
-    const ENTRY_LOCK_MS = 800;
+    const ENTRY_LOCK_MS = 900; /* PC — 섹션 pin 직후 풀스크린 유지 */
+    const SECTION_HOLD_MS = 1100; /* PC — shrink + fadeUp 완료 후 pin 유지 */
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const compactMq = window.matchMedia('(max-width: 63.9375rem)');
 
@@ -1172,6 +1173,7 @@
     let entryLockUntil = 0;
     let slideTween = null;
     let scrollTrigger = null;
+    let postExpandHoldUntil = 0;
 
     const isCompact = () => compactMq.matches;
 
@@ -1293,6 +1295,9 @@
           applyMediaState(expanded);
           applyOverlayState(expanded);
           applyHeaderState(expanded, { animate: false });
+          if (expanded && !isCompact()) {
+            postExpandHoldUntil = Date.now() + SECTION_HOLD_MS;
+          }
         },
       });
 
@@ -1348,13 +1353,17 @@
       if (Date.now() < entryLockUntil) return true;
 
       if (direction > 0) {
-        if (currentIndex >= LAST_INDEX) return false;
+        if (currentIndex >= LAST_INDEX) {
+          if (Date.now() < postExpandHoldUntil) return true;
+          return false;
+        }
         goTo(currentIndex + 1);
         return true;
       }
 
       if (direction < 0) {
         if (currentIndex <= 0) return false;
+        postExpandHoldUntil = 0;
         goTo(currentIndex - 1);
         return true;
       }
@@ -1366,7 +1375,7 @@
       const onWheel = (event) => {
         if (!scrollTrigger?.isActive) return;
 
-        if (isAnimating || Date.now() < entryLockUntil) {
+        if (isAnimating || Date.now() < entryLockUntil || Date.now() < postExpandHoldUntil) {
           event.preventDefault();
           return;
         }
@@ -1422,7 +1431,7 @@
       pin: true,
       pinSpacing: true,
       scrub: false,
-      anticipatePin: 1,
+      anticipatePin: 0,
       invalidateOnRefresh: true,
       onRefresh: () => {
         applyMediaState(currentIndex >= LAST_INDEX);
@@ -1430,13 +1439,16 @@
       },
       onEnter: () => {
         entryLockUntil = Date.now() + ENTRY_LOCK_MS;
+        postExpandHoldUntil = 0;
         applyIndex(0, { animate: false });
       },
       onEnterBack: () => {
         entryLockUntil = Date.now() + ENTRY_LOCK_MS;
+        postExpandHoldUntil = 0;
         applyIndex(LAST_INDEX, { animate: false });
       },
       onLeaveBack: () => {
+        postExpandHoldUntil = 0;
         applyIndex(0, { animate: false });
       },
     });
