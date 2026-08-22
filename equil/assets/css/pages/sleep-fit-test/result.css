@@ -51,17 +51,17 @@
 }
 
 .sleep-fit-result__heading .heading-3tier__sub-title {
-  font-size: clamp(0.75rem, 1.146vw, 1.375rem); /* 22px */
+  font-size: 1.375rem; /* 22px */
 }
 
 .sleep-fit-result__heading .heading-3tier__title {
   font-weight: 800;
-  font-size: clamp(2.133rem, 3.333vw, 4rem); /* 64px */
+  font-size: 4rem; /* 64px */
 }
 
 .sleep-fit-result__heading .heading-3tier__desc {
   font-weight: 400;
-  font-size: clamp(0.75rem, 1.146vw, 1.375rem); /* 22px */
+  font-size: 1.375rem; /* 22px */
 }
 
 .sleep-fit-result__tags {
@@ -139,17 +139,17 @@
 }
 
 .sleep-fit-structure__heading .heading-3tier__sub-title {
-  font-size: clamp(0.75rem, 1.146vw, 1.375rem); /* 22px */
+  font-size: 1.375rem; /* 22px */
 }
 
 .sleep-fit-structure__heading .heading-3tier__title {
   font-weight: 800;
-  font-size: clamp(2.133rem, 3.333vw, 4rem); /* 64px */
+  font-size: 4rem; /* 64px */
 }
 
 .sleep-fit-structure__heading .heading-3tier__desc {
   font-weight: 400;
-  font-size: clamp(0.75rem, 1.146vw, 1.375rem); /* 22px */
+  font-size: 1.375rem; /* 22px */
 }
 
 .sleep-fit-structure__media {

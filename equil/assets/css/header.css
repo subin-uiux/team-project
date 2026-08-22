@@ -365,10 +365,12 @@
     position: fixed;
     top: 5rem; /* below header bar */
     right: 0;
+    bottom: 0;
     z-index: 1002;
     width: 100%;
     max-width: 24rem; /* 384px */
-    height: 36.875rem; /* 590px */
+    height: calc(100vh - 5rem); /* header 80px 아래 전체 */
+    height: calc(100dvh - 5rem);
     padding: 1.25rem; /* 20px */
     background-color: var(--color-brand-light-1);
     transform: translateX(100%);
