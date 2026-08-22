@@ -50,9 +50,34 @@
     }
 
     const SIDE_GAP = 24;
+    const mobileMq = window.matchMedia('(max-width: 47.9375rem)');
+    const isMobileMessage = () => mobileMq.matches;
     let titleSlideX = 0;
     const titles = [title, invertTitle];
     const fadeWithSlide = gsap.utils.toArray(sideLetters).concat(caption);
+    const CAPTION_FADE_UP_DURATION = 1.26;
+    const CAPTION_FADE_UP_Y = 40;
+    let captionEnterTween = null;
+
+    const playCaptionFadeUp = () => {
+      captionEnterTween?.kill();
+      gsap.set(caption, { opacity: 0, y: CAPTION_FADE_UP_Y, xPercent: -50 });
+      captionEnterTween = gsap.to(caption, {
+        opacity: 1,
+        y: 0,
+        duration: CAPTION_FADE_UP_DURATION,
+        ease: 'power3.out',
+        onComplete: () => {
+          captionEnterTween = null;
+        },
+      });
+    };
+
+    const resetCaption = () => {
+      captionEnterTween?.kill();
+      captionEnterTween = null;
+      gsap.set(caption, { opacity: 0, y: CAPTION_FADE_UP_Y, xPercent: -50 });
+    };
 
     const getCoverRadius = () => {
       const w = pin.offsetWidth;
@@ -83,8 +108,12 @@
       return equilCenterX - logoCenterX;
     };
 
-    const getAvailableMessageWidth = () =>
-      Math.max(0, content.clientWidth - eq.offsetWidth - uil.offsetWidth - SIDE_GAP * 2);
+    const getAvailableMessageWidth = () => {
+      if (isMobileMessage()) {
+        return Math.max(0, content.clientWidth - 40); /* 좌우 20px */
+      }
+      return Math.max(0, content.clientWidth - eq.offsetWidth - uil.offsetWidth - SIDE_GAP * 2);
+    };
 
     const getPartWidth = (partEl) => {
       const available = getAvailableMessageWidth();
@@ -101,51 +130,47 @@
       gsap.set(titles, { x: 0 });
       gsap.set(sideLetters, { opacity: 1 });
       // 첫 화면: 영어만 고정, 한글은 아래쪽에서 대기
-      gsap.set(caption, { opacity: 0, y: 40, xPercent: -50 });
+      gsap.set(caption, { opacity: 0, y: CAPTION_FADE_UP_Y, xPercent: -50 });
       gsap.set(row, { x: 0 });
       gsap.set(invertLayer, { opacity: 1 });
       gsap.set(circle, { clipPath: 'circle(0px at 50% 50%)' });
       gsap.set([eq, uil], { opacity: 0 });
-      gsap.set(message, { width: 0, marginLeft: 0, marginRight: 0 });
-      gsap.set([messageA, messageB], { opacity: 0 });
+      if (isMobileMessage()) {
+        gsap.set(message, { width: 'auto', marginLeft: 20, marginRight: 20 });
+        gsap.set([messageA, messageB], { opacity: 0, y: CAPTION_FADE_UP_Y });
+      } else {
+        gsap.set(message, { width: 0, marginLeft: 0, marginRight: 0 });
+        gsap.set([messageA, messageB], { opacity: 0, y: 0 });
+      }
     };
 
     prepare();
 
-    // 캡션 등장 → 슬라이드/원 순으로, 전체는 부드럽게 유지
-    const CAPTION_DUR = 0.09;
-    const SLIDE_START = CAPTION_DUR * 0.85;
+    // 캡션 fadeUp(실시간) → 슬라이드/원 순으로, 전체는 부드럽게 유지
+    const CAPTION_SCROLL_PHASE = CAPTION_FADE_UP_DURATION;
+    const SLIDE_START = CAPTION_SCROLL_PHASE * 0.6;
     const SLIDE_DUR = 0.16;
     const CIRCLE_START = SLIDE_START + SLIDE_DUR * 0.55;
     const CIRCLE_DUR = 0.5;
     const HANDOFF = CIRCLE_START + CIRCLE_DUR;
-    const MSG_START = HANDOFF + 0.04;
+    const EQUIL_FADE_DUR = 0.48; /* 반전 EQUIL 서서히 fade out */
+    const MSG_START = HANDOFF + EQUIL_FADE_DUR * 0.85; /* EQUIL 거의 사라진 뒤 문구 등장 */
 
     const tl = gsap.timeline({
       defaults: { ease: 'power1.inOut' },
       scrollTrigger: {
         trigger: pin,
         start: 'top top',
-        end: '+=900%',
+        end: '+=400%',
         pin: true,
-        scrub: 1.15,
+        scrub: 3,
         invalidateOnRefresh: true,
         anticipatePin: 1,
         onRefreshInit: prepare,
+        onEnter: playCaptionFadeUp,
+        onLeaveBack: resetCaption,
       },
     });
-
-    // 0) 한글 캡션: 아래에서 위로 빠르게 올라옴
-    tl.to(
-      caption,
-      {
-        duration: CAPTION_DUR,
-        opacity: 1,
-        y: 0,
-        ease: 'power2.out',
-      },
-      0
-    );
 
     // 1) AEQUILIBRIUM 부드럽게 오른쪽 이동
     tl.to(
@@ -178,13 +203,13 @@
       CIRCLE_START
     );
 
-    // 3) 반전 EQUIL → EQ/UIL 인계 (이후 EQUIL 페이드/이동 없음)
+    // 3) 반전 EQUIL 서서히 fade out → EQ/UIL · 문구 인계
     tl.to(
       invertLayer,
       {
-        duration: 0.08,
+        duration: EQUIL_FADE_DUR,
         opacity: 0,
-        ease: 'power1.out',
+        ease: 'power1.inOut',
       },
       HANDOFF
     );
@@ -193,71 +218,96 @@
       { x: 0 },
       {
         duration: 0.01,
-        x: () => measureLogoAlignX(),
+        x: () => (isMobileMessage() ? 0 : measureLogoAlignX()),
         ease: 'none',
       },
-      HANDOFF
+      HANDOFF + EQUIL_FADE_DUR * 0.55
     );
-    tl.to(
-      [eq, uil],
-      {
-        duration: 0.08,
-        opacity: 1,
-        ease: 'power1.out',
-      },
-      HANDOFF
-    );
+    if (!isMobileMessage()) {
+      tl.to(
+        [eq, uil],
+        {
+          duration: 0.22,
+          opacity: 1,
+          ease: 'power2.out',
+        },
+        HANDOFF + EQUIL_FADE_DUR * 0.6
+      );
+    }
 
-    // 4) 문구 펼침 — 더 빠르고 부드럽게
-    tl.to(
-      message,
-      {
-        duration: 0.16,
-        width: () => getPartWidth(messageA),
-        marginLeft: SIDE_GAP,
-        marginRight: SIDE_GAP,
-        ease: 'power2.out',
-      },
-      MSG_START
-    );
-    tl.to(
-      messageA,
-      {
-        duration: 0.1,
-        opacity: 1,
-        ease: 'power1.out',
-      },
-      MSG_START + 0.02
-    );
+    // 4) 문구 펼침
+    if (isMobileMessage()) {
+      tl.set(
+        message,
+        {
+          width: 'auto',
+          marginLeft: 20,
+          marginRight: 20,
+        },
+        MSG_START
+      );
+      tl.fromTo(
+        [messageA, messageB],
+        { opacity: 0, y: CAPTION_FADE_UP_Y },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.35,
+          ease: 'power3.out',
+        },
+        MSG_START
+      );
+    } else {
+      tl.to(
+        message,
+        {
+          duration: 0.16,
+          width: () => getPartWidth(messageA),
+          marginLeft: SIDE_GAP,
+          marginRight: SIDE_GAP,
+          ease: 'power2.out',
+        },
+        MSG_START
+      );
+      tl.to(
+        messageA,
+        {
+          duration: 0.1,
+          opacity: 1,
+          ease: 'power1.out',
+        },
+        MSG_START + 0.02
+      );
 
-    tl.to(
-      message,
-      {
-        duration: 0.18,
-        width: () => getFullMessageWidth(),
-        ease: 'power2.out',
-      },
-      MSG_START + 0.14
-    );
-    tl.to(
-      messageB,
-      {
-        duration: 0.12,
-        opacity: 1,
-        ease: 'power1.out',
-      },
-      MSG_START + 0.16
-    );
-    // 문구 펼침과 함께 EQ / UIL 서서히 사라짐
-    tl.to(
-      [eq, uil],
-      {
-        duration: 0.28,
-        opacity: 0,
-        ease: 'power1.out',
-      },
-      MSG_START + 0.16
-    );
+      tl.to(
+        message,
+        {
+          duration: 0.18,
+          width: () => getFullMessageWidth(),
+          ease: 'power2.out',
+        },
+        MSG_START + 0.14
+      );
+      tl.to(
+        messageB,
+        {
+          duration: 0.12,
+          opacity: 1,
+          ease: 'power1.out',
+        },
+        MSG_START + 0.16
+      );
+      // 문구 펼침과 함께 EQ / UIL 서서히 사라짐
+      tl.to(
+        [eq, uil],
+        {
+          duration: 0.28,
+          opacity: 0,
+          ease: 'power1.out',
+        },
+        MSG_START + 0.16
+      );
+    }
   };
 
   const initBrandStoryPhilosophy = () => {

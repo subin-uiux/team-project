@@ -667,30 +667,43 @@
 
     gsap.set(headingChars, { opacity: 0, y: 40 });
 
-    gsap.to(headingChars, {
-      opacity: 1,
-      y: 0,
-      duration: FADE_UP_DURATION,
-      ease: 'power3.out',
-      stagger: headingChars.length > 1 ? charStagger : 0,
-      scrollTrigger: {
-        trigger: heading,
-        start: 'top 90%',
-        once: true,
-      },
-      onUpdate() {
-        if (!mediaStarted && this.progress() >= 0.5) {
-          mediaStarted = true;
-          playMediaReveal();
-        }
-      },
-      onComplete: () => {
-        gsap.set(headingChars, { clearProps: 'will-change' });
-        if (!mediaStarted) {
-          mediaStarted = true;
-          playMediaReveal();
-        }
-      },
+    const headingFadeUpTimeline = gsap
+      .timeline({
+        paused: true,
+        scrollTrigger: {
+          trigger: heading.closest('section') || section,
+          start: 'top 90%',
+          toggleActions: 'restart none none reset',
+          invalidateOnRefresh: true,
+          onLeaveBack: () => {
+            mediaStarted = false;
+          },
+        },
+        onComplete: () => {
+          gsap.set(headingChars, { clearProps: 'will-change' });
+          if (!mediaStarted) {
+            mediaStarted = true;
+            playMediaReveal();
+          }
+        },
+      })
+      .fromTo(
+        headingChars,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: FADE_UP_DURATION,
+          ease: 'power3.out',
+          stagger: headingChars.length > 1 ? charStagger : 0,
+        },
+      );
+
+    headingFadeUpTimeline.eventCallback('onUpdate', function onHeadingFadeUpUpdate() {
+      if (!mediaStarted && this.progress() >= 0.5) {
+        mediaStarted = true;
+        playMediaReveal();
+      }
     });
   };
 

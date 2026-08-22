@@ -65,6 +65,11 @@
   })();
 
   const FADE_UP_DURATION = 1.26;
+  const HEADING_3TIER_SCROLL_START = 'top 90%';
+  const HEADING_3TIER_TOGGLE_ACTIONS = 'restart none none reset';
+
+  const getHeading3tierScrollTrigger = (heading) =>
+    heading.closest('section') || heading;
 
   const splitHeadingChars = (element, charClass) => {
     const walk = (node) => {
@@ -105,13 +110,17 @@
   ];
 
   const initHeading3tierFadeUp = () => {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     document.querySelectorAll('.heading-3tier').forEach((heading) => {
+      if (heading.dataset.equilFadeUpInit === 'true') return;
+
       /* 질문 헤딩은 좁은 폭에서 단어 단위 줄바꿈을 유지해야 해서 글자 분리를 하지 않음 */
       if (heading.classList.contains('sleep-fit-test__question-heading')) return;
       if (heading.classList.contains('sleep-fit-result__heading')) return;
       if (heading.classList.contains('sleep-fit-structure__heading')) return;
-      /* 메인 핀 스크롤 이후에 main.js에서 따로 실행 */
-      if (heading.classList.contains('main-bedding-overview__heading')) return;
+      /* 패널·연동 애니메이션은 각 page JS에서 따로 실행 */
+      if (heading.classList.contains('main-mattress-solution__heading')) return;
       if (heading.classList.contains('bedding-tech-seasonal__heading')) return;
 
       const targets = [
@@ -127,6 +136,8 @@
       );
       if (!allChars.length) return;
 
+      heading.dataset.equilFadeUpInit = 'true';
+
       const fadeUpDuration = POST_HERO_HEADING_SELECTORS.some((selector) =>
         heading.matches(selector)
       )
@@ -135,24 +146,47 @@
       const charStagger =
         fadeUpDuration / Math.max(allChars.length * 2.5, 1);
 
+      if (reduceMotion) {
+        gsap.set(allChars, { opacity: 1, y: 0 });
+        return;
+      }
+
       gsap.set(allChars, { opacity: 0, y: 40 });
 
-      gsap.to(allChars, {
-        opacity: 1,
-        y: 0,
-        duration: fadeUpDuration,
-        ease: 'power3.out',
-        stagger: allChars.length > 1 ? charStagger : 0,
+      const fadeUpTimeline = gsap.timeline({
+        paused: true,
         scrollTrigger: {
-          trigger: heading,
-          start: 'top 90%',
-          once: true,
+          trigger: getHeading3tierScrollTrigger(heading),
+          start: HEADING_3TIER_SCROLL_START,
+          toggleActions: HEADING_3TIER_TOGGLE_ACTIONS,
+          invalidateOnRefresh: true,
         },
         onComplete: () => {
           gsap.set(allChars, { clearProps: 'will-change' });
         },
       });
+
+      fadeUpTimeline.fromTo(
+        allChars,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: fadeUpDuration,
+          ease: 'power3.out',
+          stagger: allChars.length > 1 ? charStagger : 0,
+        },
+      );
     });
+  };
+
+  window.initEquilHeading3tierFadeUp = initHeading3tierFadeUp;
+
+  const runEquilHeading3tierFadeUp = () => {
+    initHeading3tierFadeUp();
+    if (window.ScrollTrigger) {
+      window.ScrollTrigger.refresh();
+    }
   };
 
   const initScrollFeatureTitleFadeUp = () => {
@@ -267,9 +301,11 @@
 
   window.equilLibsReady
     .then(() => {
-      initHeading3tierFadeUp();
       initScrollFeatureTitleFadeUp();
       initSectionCtaFadeUp();
+
+      /* page JS(pin·ScrollTrigger) 이후 실행 — common.js가 main.js보다 먼저 로드됨 */
+      setTimeout(runEquilHeading3tierFadeUp, 0);
     })
     .catch(() => {});
 

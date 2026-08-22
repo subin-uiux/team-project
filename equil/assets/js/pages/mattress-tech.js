@@ -879,21 +879,31 @@
         FADE_UP_DURATION / Math.max(headingChars.length * 2.5, 1);
 
       gsap.set(headingChars, { opacity: 0, y: 40 });
-      gsap.to(headingChars, {
-        opacity: 1,
-        y: 0,
-        duration: FADE_UP_DURATION,
-        ease: 'power3.out',
-        stagger: headingChars.length > 1 ? charStagger : 0,
-        scrollTrigger: {
-          trigger: heading,
-          start: 'top 90%',
-          once: true,
-        },
-        onComplete: () => {
-          gsap.set(headingChars, { clearProps: 'will-change' });
-        },
-      });
+
+      gsap
+        .timeline({
+          paused: true,
+          scrollTrigger: {
+            trigger: heading.closest('section') || heading,
+            start: 'top 90%',
+            toggleActions: 'restart none none reset',
+            invalidateOnRefresh: true,
+          },
+          onComplete: () => {
+            gsap.set(headingChars, { clearProps: 'will-change' });
+          },
+        })
+        .fromTo(
+          headingChars,
+          { opacity: 0, y: 40 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: FADE_UP_DURATION,
+            ease: 'power3.out',
+            stagger: headingChars.length > 1 ? charStagger : 0,
+          },
+        );
     }
 
     const cardNodes = cards.map((card) => ({
@@ -1393,28 +1403,40 @@
 
     if (headingChars.length) {
       gsap.set(headingChars, { opacity: 0, y: 40 });
-      gsap.to(headingChars, {
-        opacity: 1,
-        y: 0,
-        duration: FADE_UP_DURATION,
-        ease: 'power3.out',
-        stagger: headingChars.length > 1 ? headingStagger : 0,
-        scrollTrigger: {
-          trigger: heading,
-          start: 'top 90%',
-          once: true,
-          onEnter: playItems,
-        },
-        onComplete: () => {
-          gsap.set(headingChars, { clearProps: 'will-change' });
-        },
-      });
+
+      gsap
+        .timeline({
+          paused: true,
+          scrollTrigger: {
+            trigger: heading.closest('section') || section,
+            start: 'top 90%',
+            toggleActions: 'restart none none reset',
+            invalidateOnRefresh: true,
+            onEnter: () => playItems(),
+          },
+          onComplete: () => {
+            gsap.set(headingChars, { clearProps: 'will-change' });
+          },
+        })
+        .fromTo(
+          headingChars,
+          { opacity: 0, y: 40 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: FADE_UP_DURATION,
+            ease: 'power3.out',
+            stagger: headingChars.length > 1 ? headingStagger : 0,
+          },
+        );
     } else {
       ScrollTrigger.create({
         trigger: section,
         start: 'top 90%',
-        once: true,
         onEnter: playItems,
+        onLeaveBack: () => {
+          itemsStarted = false;
+        },
       });
     }
 
