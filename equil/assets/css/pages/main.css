@@ -461,7 +461,9 @@ body.is-main-scroll-nav-visible .main-problem-nav {
   .main-problem__desc {
     font-size: var(--fs-body-03); /* Body03 16px */
     max-width: 16.25rem; /* 260px — mo 줄바꿈·여백 조절 */
-    word-break: keep-all; /* 한글 단어 중간 줄바꿈·고아 글자 방지 */
+    word-break: keep-all;
+    text-wrap: pretty;
+    max-width: 21.875rem; /* 350px — 한글 단어 중간 줄바꿈·고아 글자 방지 */
   }
 }
 
@@ -684,7 +686,6 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
   .main-mattress-solution__heading .heading-3tier__title {
     font-weight: 500; /* Title02 Medium */
     font-size: var(--fs-title); /* 32px */
-    letter-spacing: 0.1em;
     text-align: left;
   }
 
@@ -771,7 +772,6 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
   .main-mattress-solution__heading .heading-3tier__title {
     font-weight: 500; /* Title02 Medium */
     font-size: var(--fs-title); /* 28px */
-    letter-spacing: 0.1em;
     text-align: left;
   }
 
@@ -1150,7 +1150,7 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
   }
 
   .main-pillow-solution__heading {
-    width: fit-content;
+    width: 100%;
     max-width: 100%;
     margin-inline: 0;
     align-items: flex-start;
@@ -1310,6 +1310,9 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
 
   .main-pillow-solution__caption-text {
     font-size: var(--fs-body-03); /* Body03 16px */
+    word-break: keep-all;
+    text-wrap: pretty;
+    max-width: 19.375rem; /* 310px — 한글 단어 중간 줄바꿈·고아 글자 방지 */
   }
 
   .main-pillow-solution__nav {
@@ -1431,6 +1434,9 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
     font-family: var(--font-suit);
     font-weight: 400;
     font-size: var(--fs-body-02); /* 18px, mo/body02 */
+    word-break: keep-all;
+    text-wrap: pretty;
+    
   }
 }
 

@@ -16,6 +16,10 @@
   gap: 3.125rem; /* 50px */
 }
 
+.product-compare__slider {
+  width: 100%;
+}
+
 .product-compare__cards {
   display: flex;
   gap: 1.25rem; /* 20px */
@@ -24,7 +28,7 @@
 
 .product-compare__card.card-cta-product {
   flex: 1;
-  width: auto;
+  width: 100%;
   min-width: 0;
 }
 
@@ -33,4 +37,164 @@
   height: auto;
   max-height: 100%;
   object-fit: contain;
+}
+
+.product-compare__nav {
+  display: none;
+}
+
+.product-compare__card .card-cta-product__text--compact {
+  display: none;
+}
+
+@media (max-width: 63.9375rem) {
+  .product-compare {
+    height: auto;
+    padding-block: 5rem; /* 80px */
+  }
+
+  .product-compare__container {
+    gap: 2.5rem; /* 40px — 3단 타이틀 ↔ 카드 */
+  }
+
+  .product-compare__card .card-cta-product__overlay,
+  .product-compare__card.card-cta-product:hover .card-cta-product__overlay,
+  .product-compare__card.card-cta-product:focus-within .card-cta-product__overlay {
+    opacity: 1;
+  }
+
+  .product-compare__card.card-cta-product:hover
+    .card-cta-product__media
+    .card__placeholder-icon,
+  .product-compare__card.card-cta-product:focus-within
+    .card-cta-product__media
+    .card__placeholder-icon {
+    opacity: 0;
+  }
+
+  .product-compare__card .card-cta-product__text--full {
+    display: none;
+  }
+
+  .product-compare__card .card-cta-product__text--compact {
+    display: block;
+  }
+}
+
+/* Tablet — 354×411 카드 3열 (padding 40/20 · title 24 · text 16 · gap 12) */
+@media (min-width: 48rem) and (max-width: 63.9375rem) {
+  .product-compare__cards {
+    gap: 1.25rem; /* 20px */
+    overflow: visible;
+  }
+
+  .product-compare__card.card-cta-product {
+    flex: 1;
+    width: 100%;
+    height: 25.6875rem; /* 411px */
+  }
+
+  .product-compare__card .card-cta-product__media img {
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    /* object-fit: cover; */
+  }
+
+  .card-cta-product__text {
+    word-break: keep-all;
+    text-wrap: pretty;
+    max-width: 100%;
+  }
+}
+
+/* Mobile — 280×325 슬라이드 + pagination (padding 40/20 · title 20 · text 16 · gap 10) */
+@media (max-width: 47.9375rem) {
+  .product-compare__cards {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 20.3125rem; /* 325px */
+    overflow: hidden;
+    margin-bottom: 0.875rem; /* 14px — 카드 ↔ 페이지네이션 */
+  }
+
+  .product-compare__card.card-cta-product {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    will-change: transform;
+  }
+
+  .product-compare__card .card-cta-product__media img {
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    /* object-fit: cover; */
+  }
+
+
+  .product-compare__card .card-cta-product__title,
+  .product-compare__card .card-cta-product__text {
+    opacity: 0;
+    transform: translate3d(0, 2.5rem, 0); /* fadeUp y 40px */
+    will-change: transform, opacity;
+  }
+
+  .product-compare__card .card-cta-product__title {
+    transition:
+      opacity 0.4s cubic-bezier(0.215, 0.61, 0.355, 1),
+      transform 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+
+  .product-compare__card .card-cta-product__text {
+    transition:
+      opacity 0.4s cubic-bezier(0.215, 0.61, 0.355, 1),
+      transform 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+
+  .product-compare__card.is-active .card-cta-product__title {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    transition:
+      opacity 1s cubic-bezier(0.215, 0.61, 0.355, 1) 0.4s,
+      transform 1s cubic-bezier(0.215, 0.61, 0.355, 1) 0.4s;
+  }
+
+  .product-compare__card.is-active .card-cta-product__text {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    transition:
+      opacity 1s cubic-bezier(0.215, 0.61, 0.355, 1) 0.55s,
+      transform 1s cubic-bezier(0.215, 0.61, 0.355, 1) 0.55s;
+  }
+
+  .product-compare__nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.9375rem; /* 15px */
+  }
+
+  .product-compare__nav-item {
+    width: 0.375rem; /* 6px */
+    height: 0.375rem; /* 6px */
+    padding: 0;
+    border: 0;
+    border-radius: 6.25rem;
+    background-color: var(--color-brand-light-1);
+    cursor: pointer;
+    font-size: 0;
+    color: transparent;
+    transition:
+      width 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.4s ease;
+  }
+
+  .product-compare__nav-item.is-active {
+    width: 1.25rem; /* 20px */
+    background-color: var(--color-brand-dark);
+  }
 }

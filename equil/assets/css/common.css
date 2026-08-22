@@ -395,6 +395,7 @@ a {
 
 @media (max-width: 47.9375rem) {
   body {
+    padding-top: 3.75rem; /* fixed header bar 60px */
     word-break: keep-all;
   }
 

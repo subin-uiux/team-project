@@ -1644,6 +1644,7 @@
 
     const itemData = items.map((item) => {
       const image = item.querySelector('.mattress-tech-process__image');
+      const body = item.querySelector('.mattress-tech-process__body');
       const title = item.querySelector('.mattress-tech-process__item-title');
       const desc = item.querySelector('.mattress-tech-process__item-desc');
       const chars = [title, desc]
@@ -1657,7 +1658,7 @@
       }
       gsap.set(chars, { opacity: 0, y: 40 });
 
-      return { image, chars };
+      return { image, body, chars };
     });
 
     const getTextTweenDuration = (chars) => {
@@ -1669,28 +1670,43 @@
     const getItemDuration = (chars) =>
       Math.max(IMAGE_REVEAL_DURATION, getTextTweenDuration(chars));
 
-    const revealItems = () => {
-      itemData.forEach((item) => {
-        if (item.image) {
-          gsap.set(item.image, { clipPath: 'inset(0% 0 0 0)' });
-        }
-        gsap.set(item.chars, { opacity: 1, y: 0, clearProps: 'will-change' });
-      });
+    const getCharStagger = (chars, duration = FADE_UP_DURATION) =>
+      duration / Math.max(chars.length * 2.5, 1);
+
+    const prepareMobileBody = (data) => {
+      gsap.set(data.chars, { opacity: 1, y: 0, clearProps: 'will-change' });
     };
 
-    const updateItemVisibility = () => {
-      items.forEach((item, index) => {
-        const isActive = !mobileQuery.matches || index === currentItemIndex;
-        item.classList.toggle('is-active', isActive);
-        if (!mobileQuery.matches) {
-          gsap.set(item, { clearProps: 'opacity' });
-        } else {
-          gsap.set(item, { opacity: isActive ? 1 : 0 });
-        }
-      });
+    const setMobileBodyHidden = (data) => {
+      prepareMobileBody(data);
+      if (data.body) {
+        gsap.set(data.body, { opacity: 0, y: 40 });
+      }
+    };
 
+    const playMobileBodyFadeUp = (
+      timeline,
+      body,
+      position,
+      duration = FADE_UP_DURATION
+    ) => {
+      if (!body) return;
+
+      timeline.to(
+        body,
+        {
+          opacity: 1,
+          y: 0,
+          duration,
+          ease: 'power3.out',
+        },
+        position
+      );
+    };
+
+    const updateDots = (activeIndex) => {
       dots.forEach((dot, index) => {
-        const isActive = index === currentItemIndex;
+        const isActive = index === activeIndex;
         dot.classList.toggle('is-active', isActive);
         if (isActive) {
           dot.setAttribute('aria-current', 'true');
@@ -1700,53 +1716,151 @@
       });
     };
 
+    const revealItems = () => {
+      itemData.forEach((item) => {
+        if (item.image) {
+          gsap.set(item.image, { clipPath: 'inset(0% 0 0 0)' });
+        }
+        gsap.set(item.chars, { opacity: 1, y: 0, clearProps: 'will-change' });
+      });
+    };
+
+    const revealMobileItems = () => {
+      itemData.forEach((item, index) => {
+        if (item.image) {
+          gsap.set(item.image, {
+            clipPath: 'inset(0% 0 0 0)',
+            opacity: index === 0 ? 1 : 0,
+          });
+        }
+        setMobileBodyHidden(item);
+      });
+
+      playMobileBodyFadeUp(gsap.timeline(), itemData[0].body, 0);
+    };
+
+    const updateItemVisibility = () => {
+      items.forEach((item, index) => {
+        const isActive = !mobileQuery.matches || index === currentItemIndex;
+        const data = itemData[index];
+        item.classList.toggle('is-active', isActive);
+
+        if (!mobileQuery.matches) {
+          gsap.set(item, { clearProps: 'opacity' });
+          return;
+        }
+
+        gsap.set(item, { opacity: isActive ? 1 : 0 });
+
+        if (isActive) {
+          if (itemsStarted) {
+            prepareMobileBody(data);
+            if (data.body) {
+              gsap.set(data.body, { opacity: 1, y: 0 });
+            }
+          }
+          if (data.image && itemsStarted) {
+            gsap.set(data.image, { opacity: 1 });
+          }
+        } else {
+          setMobileBodyHidden(data);
+          if (data.image) {
+            gsap.set(data.image, { opacity: 0 });
+          }
+        }
+      });
+
+      updateDots(currentItemIndex);
+    };
+
+    const getWrappedIndex = (index) => {
+      const total = items.length;
+      return ((index % total) + total) % total;
+    };
+
     const goToItem = (index) => {
       if (!mobileQuery.matches || isTransitioning) return;
 
-      const nextIndex = Math.max(0, Math.min(items.length - 1, index));
+      const nextIndex = getWrappedIndex(index);
       if (nextIndex === currentItemIndex) return;
 
       isTransitioning = true;
       const outgoing = items[currentItemIndex];
       const incoming = items[nextIndex];
+      const outgoingData = itemData[currentItemIndex];
+      const incomingData = itemData[nextIndex];
 
-      incoming.classList.add('is-active');
-      gsap.set(incoming, { opacity: 0 });
+      currentItemIndex = nextIndex;
+      updateDots(nextIndex);
 
       if (itemTween) {
         itemTween.kill();
       }
 
+      /* incoming을 먼저 flow에 올려 높이를 잡은 뒤, outgoing만 absolute로 겹침 */
+      incoming.classList.add('is-active');
+      outgoing.classList.remove('is-active');
+      gsap.set(incoming, { opacity: 1, zIndex: 1 });
+      gsap.set(outgoing, { opacity: 1, zIndex: 2 });
+      setMobileBodyHidden(incomingData);
+
+      if (incomingData.image) {
+        gsap.set(incomingData.image, { opacity: 0 });
+      }
+      if (outgoingData.image) {
+        gsap.set(outgoingData.image, { opacity: 1 });
+      }
+
       itemTween = gsap.timeline({
         onComplete: () => {
-          outgoing.classList.remove('is-active');
-          gsap.set(outgoing, { opacity: 0 });
-          currentItemIndex = nextIndex;
+          gsap.set(outgoing, { opacity: 0, clearProps: 'zIndex' });
+          gsap.set(incoming, { clearProps: 'zIndex' });
+          setMobileBodyHidden(outgoingData);
+          if (outgoingData.image) {
+            gsap.set(outgoingData.image, { opacity: 0 });
+          }
           isTransitioning = false;
           itemTween = null;
           updateItemVisibility();
         },
       });
 
-      itemTween.to(
-        outgoing,
-        {
-          opacity: 0,
-          duration: FADE_DURATION,
-          ease: 'power2.out',
-        },
-        0
-      );
+      if (outgoingData.body) {
+        itemTween.to(
+          outgoingData.body,
+          {
+            opacity: 0,
+            y: 20,
+            duration: 0.25,
+            ease: 'power2.in',
+          },
+          0
+        );
+      }
 
-      itemTween.to(
-        incoming,
-        {
-          opacity: 1,
-          duration: FADE_DURATION,
-          ease: 'power2.out',
-        },
-        0
-      );
+      if (outgoingData.image && incomingData.image) {
+        itemTween.to(
+          outgoingData.image,
+          {
+            opacity: 0,
+            duration: FADE_DURATION,
+            ease: 'power2.out',
+          },
+          0
+        );
+
+        itemTween.to(
+          incomingData.image,
+          {
+            opacity: 1,
+            duration: FADE_DURATION,
+            ease: 'power2.out',
+          },
+          0
+        );
+      }
+
+      playMobileBodyFadeUp(itemTween, incomingData.body, FADE_DURATION * 0.15);
     };
 
     const playItems = () => {
@@ -1754,7 +1868,7 @@
       itemsStarted = true;
 
       if (mobileQuery.matches) {
-        revealItems();
+        revealMobileItems();
         return;
       }
 
@@ -1845,6 +1959,39 @@
         goToItem(index);
       });
     });
+
+    const slider = section.querySelector('.mattress-tech-process__slider');
+    const SWIPE_THRESHOLD = 40;
+    let touchStartX = 0;
+
+    if (slider) {
+      slider.addEventListener(
+        'touchstart',
+        (event) => {
+          if (!mobileQuery.matches) return;
+          touchStartX = event.touches[0]?.clientX ?? 0;
+        },
+        { passive: true }
+      );
+
+      slider.addEventListener(
+        'touchend',
+        (event) => {
+          if (!mobileQuery.matches || isTransitioning) return;
+
+          const touchEndX = event.changedTouches[0]?.clientX ?? 0;
+          const deltaX = touchStartX - touchEndX;
+          if (Math.abs(deltaX) < SWIPE_THRESHOLD) return;
+
+          if (deltaX > 0) {
+            goToItem(currentItemIndex + 1);
+          } else {
+            goToItem(currentItemIndex - 1);
+          }
+        },
+        { passive: true }
+      );
+    }
 
     mobileQuery.addEventListener('change', () => {
       if (!mobileQuery.matches) {

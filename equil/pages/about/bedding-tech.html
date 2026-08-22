@@ -392,8 +392,9 @@
             </h2>
           </div>
 
-          <div class="product-compare__cards">
-            <article class="card card-cta-product product-compare__card" tabindex="0">
+          <div class="product-compare__slider">
+            <div class="product-compare__cards">
+            <article class="card card-cta-product product-compare__card is-active" tabindex="0">
               <div class="card-cta-product__media">
                 <img
                   src="../../assets/images/about/bedding-tech/bedding-tech-products_summer.webp"
@@ -440,6 +441,12 @@
                 </p>
               </div>
             </article>
+          </div>
+          <nav class="product-compare__nav" role="tablist" aria-label="이불 제품 비교">
+            <button type="button" class="product-compare__nav-item is-active" data-index="0" aria-label="SUMMER" aria-current="true"></button>
+            <button type="button" class="product-compare__nav-item" data-index="1" aria-label="ALL-SEASON WOOL"></button>
+            <button type="button" class="product-compare__nav-item" data-index="2" aria-label="WINTER"></button>
+          </nav>
           </div>
         </div>
       </div>
@@ -492,6 +499,7 @@
 
   <script src="../../assets/js/common.js"></script>
   <script src="../../assets/js/components/scroll-feature.js"></script>
+  <script src="../../assets/js/components/product-compare.js"></script>
   <script src="../../assets/js/pages/bedding-tech.js"></script>
 </body>
 </html>
