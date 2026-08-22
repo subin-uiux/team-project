@@ -100,6 +100,7 @@
 
     const RESEARCH_SLIDE_DURATION = 2;
     const RESEARCH_SLIDE_EASE = 'power2.inOut';
+    const SWIPE_THRESHOLD = 40;
     const compactQuery = window.matchMedia('(max-width: 63.9375rem)');
     const isHorizontal = () => compactQuery.matches;
 
@@ -114,6 +115,8 @@
     let textTween = null;
     let hasEnteredOnce = false;
     let skipTextAnimation = false;
+    let touchStartY = null;
+    let touchGestureHandled = false;
 
     const contentCharsBySlide = slides.map((slide) => {
       const content = slide.querySelector('.mattress-tech-research__content');
@@ -455,15 +458,13 @@
       video.pause();
     };
 
-    const onWheel = (event) => {
-      if (!pinTrigger || !pinTrigger.isActive) return;
+    const handleScrollIntent = (goingDown, event) => {
+      if (!pinTrigger?.isActive) return;
 
       if (isAnimating || isTextAnimating) {
-        event.preventDefault();
+        event?.preventDefault?.();
         return;
       }
-
-      const goingDown = event.deltaY > 0;
 
       if (!isLocked) return;
 
@@ -477,7 +478,7 @@
         return;
       }
 
-      event.preventDefault();
+      event?.preventDefault?.();
 
       if (goingDown) {
         goTo(currentIndex + 1);
@@ -487,6 +488,52 @@
       goTo(currentIndex - 1);
     };
 
+    const onWheel = (event) => {
+      handleScrollIntent(event.deltaY > 0, event);
+    };
+
+    const onTouchStart = (event) => {
+      if (!pinTrigger?.isActive || !event.touches?.length) return;
+      touchStartY = event.touches[0].clientY;
+      touchGestureHandled = false;
+    };
+
+    const onTouchMove = (event) => {
+      if (
+        touchStartY === null ||
+        !pinTrigger?.isActive ||
+        !event.touches?.length
+      ) {
+        return;
+      }
+
+      const deltaY = event.touches[0].clientY - touchStartY;
+      const goingDown = deltaY < 0;
+
+      if (isAnimating || isTextAnimating) {
+        event.preventDefault();
+        return;
+      }
+
+      if (!isLocked) return;
+
+      if (goingDown && currentIndex === LAST_SLIDE_INDEX) return;
+      if (!goingDown && currentIndex === 0) return;
+
+      event.preventDefault();
+
+      if (touchGestureHandled) return;
+      if (Math.abs(deltaY) < SWIPE_THRESHOLD) return;
+
+      touchGestureHandled = true;
+      handleScrollIntent(goingDown, event);
+    };
+
+    const onTouchEnd = () => {
+      touchStartY = null;
+      touchGestureHandled = false;
+    };
+
     resetAllSlideText();
 
     pinTrigger = ScrollTrigger.create({
@@ -494,6 +541,7 @@
       start: 'top top',
       end: '+=100%',
       pin: true,
+      pinSpacing: true,
       anticipatePin: 1,
       invalidateOnRefresh: true,
       onEnter: () => activate(0),
@@ -502,7 +550,11 @@
       onLeaveBack: deactivate,
     });
 
-    section.addEventListener('wheel', onWheel, { passive: false });
+    window.addEventListener('wheel', onWheel, { passive: false });
+    section.addEventListener('touchstart', onTouchStart, { passive: true });
+    section.addEventListener('touchmove', onTouchMove, { passive: false });
+    section.addEventListener('touchend', onTouchEnd, { passive: true });
+    section.addEventListener('touchcancel', onTouchEnd, { passive: true });
 
     dots.forEach((dot, index) => {
       dot.addEventListener('click', () => {
@@ -604,6 +656,7 @@
       images: TOP_LAYER_IMAGES,
       imageTransition: 'crossfade',
       pinOnCompact: true,
+      pinOnMobile: false,
     });
   };
 
