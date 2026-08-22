@@ -104,7 +104,7 @@
   }
 
   .heating-mat-tech-hero {
-    --hero-end-height: 400px;
+    --hero-end-height: 244px;
   }
 
   .heating-mat-tech-hero__image {
@@ -123,7 +123,7 @@
   }
 
   .heating-mat-tech-hero__desc {
-    font-size: clamp(0.818rem, 4.091vw, 1.125rem); /* 18px, mo/body02 */
+    display: none;
   }
 }
 
@@ -143,6 +143,10 @@
   display: flex;
   flex-direction: column;
   gap: 3.125rem; /* 50px */
+}
+
+.heating-mat-tech-problem__title-mobile {
+  display: none;
 }
 
 .heating-mat-tech-problem__cards {
@@ -278,6 +282,14 @@
 
   .heating-mat-tech-problem__heading .heading-3tier__desc {
     font-size: 1rem; /* 16px, mo/body03 */
+  }
+
+  .heating-mat-tech-problem__title-pc {
+    display: none;
+  }
+
+  .heating-mat-tech-problem__title-mobile {
+    display: inline;
   }
 
   .heating-mat-tech-problem__viewport {

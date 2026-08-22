@@ -80,7 +80,7 @@
 
 @media (max-width: 47.9375rem) {
   .bedding-tech-hero {
-    --hero-end-height: 400px;
+    --hero-end-height: 244px;
   }
 
   .bedding-tech-hero__title {
@@ -89,7 +89,7 @@
   }
 
   .bedding-tech-hero__desc {
-    font-size: 1.125rem; /* 18px */
+    display: none;
   }
 }
 
@@ -274,6 +274,21 @@
   background-color: var(--color-white);
 }
 
+@media (max-width: 63.9375rem) {
+  .bedding-tech-process {
+    height: auto;
+    min-height: 0;
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .bedding-tech-process .scroll-feature__feature-desc {
+    max-width: 21.25rem; /* 340px */
+    word-break: keep-all;
+    text-wrap: pretty;
+  }
+}
+
 /* ========================================
    bedding-tech-wool
    ======================================== */
@@ -446,8 +461,11 @@
   color: var(--color-brand-dark);
 }
 
-.bedding-tech-seasonal__arrow,
 .bedding-tech-seasonal__pagination {
+  display: none;
+}
+
+.bedding-tech-seasonal__break {
   display: none;
 }
 
@@ -515,38 +533,6 @@
     opacity: 1;
   }
 
-  .bedding-tech-seasonal__arrow {
-    display: block;
-    position: absolute;
-    top: 50%;
-    z-index: 3;
-    width: 3.125rem; /* 50px */
-    height: 3.125rem;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    transform: translateY(-50%);
-    cursor: pointer;
-  }
-
-  .bedding-tech-seasonal__arrow--prev {
-    left: 1.25rem; /* 20px */
-  }
-
-  .bedding-tech-seasonal__arrow--next {
-    right: 1.25rem; /* 20px */
-  }
-
-  .bedding-tech-seasonal__arrow.is-hidden {
-    display: none;
-  }
-
-  .bedding-tech-seasonal__arrow-icon {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-
   .bedding-tech-seasonal__pagination {
     display: flex;
     justify-content: center;
@@ -572,12 +558,16 @@
 }
 
 @media (max-width: 47.9375rem) {
+  .bedding-tech-seasonal__break {
+    display: block;
+  }
+
   .bedding-tech-seasonal__copy {
     padding: 1.25rem; /* 20px */
   }
 
   .bedding-tech-seasonal__title {
-    font-size: clamp(1.091rem, 5.455vw, 1.5rem); /* 24px */
+    font-size: clamp(0.75rem, 3.651vw, 1.75rem); /* 28px */
   }
 
   .bedding-tech-seasonal__desc {
