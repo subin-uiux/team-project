@@ -205,7 +205,7 @@
           });
           gsap.set(titleChars, { opacity: 0, y: 40 });
           gsap.set(section, {
-            backgroundColor: 'var(--color-brand-light-2)',
+            backgroundColor: 'var(--color-brand-light-1)',
           });
         } else if (step === 1) {
           const splitX = getSplitX();
@@ -219,13 +219,13 @@
           });
           gsap.set(titleChars, { opacity: 0, y: 40 });
           gsap.set(section, {
-            backgroundColor: 'var(--color-brand-light-2)',
+            backgroundColor: 'var(--color-brand-light-1)',
           });
         } else {
           gsap.set([brandEq, brandUil, image], { opacity: 0 });
           gsap.set(titleChars, { opacity: 1, y: 0 });
           gsap.set(section, {
-            backgroundColor: 'var(--color-brand-light-2)',
+            backgroundColor: 'var(--color-brand-light-1)',
           });
         }
 

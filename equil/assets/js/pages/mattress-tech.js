@@ -753,11 +753,8 @@
   const initMattressTechStructureOverview = () => {
     const section = document.querySelector('.mattress-tech-structure-overview');
     const title = section?.querySelector('.mattress-tech-structure-overview__title');
-    const image = section?.querySelector('.mattress-tech-structure-overview__image');
+    const arrow = section?.querySelector('.mattress-tech-structure-overview__arrow');
     if (!section || !title) return;
-
-    const IMAGE_REVEAL_DURATION = 1.2;
-    const TEXT_OVERLAP_AT = 0.5;
 
     const chars = splitChars(
       title,
@@ -765,57 +762,25 @@
     );
     const charStagger =
       FADE_UP_DURATION / Math.max(chars.length * 2.5, 1);
-    const textDuration =
-      chars.length <= 1
-        ? FADE_UP_DURATION
-        : FADE_UP_DURATION + charStagger * (chars.length - 1);
 
     gsap.set(chars, { opacity: 0, y: 40 });
-    if (image) {
-      gsap.set(image, {
-        opacity: 0,
-        scale: 0.96,
-        y: 16,
-        filter: 'blur(3px)',
-      });
-    }
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: title,
-        start: 'top 90%',
-        once: true,
-      },
-      onComplete: () => {
-        gsap.set(chars, { clearProps: 'will-change' });
-        if (image) {
-          gsap.set(image, { clearProps: 'will-change' });
-        }
-      },
-    });
-
-    tl.to(chars, {
+    gsap.to(chars, {
       opacity: 1,
       y: 0,
       duration: FADE_UP_DURATION,
       ease: 'power3.out',
       stagger: chars.length > 1 ? charStagger : 0,
+      scrollTrigger: {
+        trigger: section,
+        start: 'top 50%',
+        once: true,
+      },
+      onComplete: () => {
+        gsap.set(chars, { clearProps: 'will-change' });
+        arrow?.classList.add('is-visible');
+      },
     });
-
-    if (image) {
-      tl.to(
-        image,
-        {
-          opacity: 1,
-          scale: 1,
-          y: 0,
-          filter: 'blur(0px)',
-          duration: IMAGE_REVEAL_DURATION,
-          ease: 'power3.out',
-        },
-        textDuration * TEXT_OVERLAP_AT
-      );
-    }
   };
 
   const TOP_LAYER_IMAGES = [
