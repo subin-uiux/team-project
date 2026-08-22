@@ -54,9 +54,18 @@
     const isMobileMessage = () => mobileMq.matches;
     let titleSlideX = 0;
     const titles = [title, invertTitle];
-    const fadeWithSlide = gsap.utils.toArray(sideLetters).concat(caption);
+    const fadeWithSlide = gsap.utils.toArray(sideLetters);
     const CAPTION_FADE_UP_DURATION = 1.26;
     const CAPTION_FADE_UP_Y = 40;
+    const MSG_FADE_UP_DURATION = 1.26;
+    const MSG_FADE_UP_Y = 70;
+    const PC_MSG_EXPAND_FIRST_DUR = 0.32;
+    const PC_MSG_EXPAND_FULL_DUR = 0.38;
+    const PC_MSG_PART_A_OPACITY_DUR = 0.18;
+    const PC_MSG_PART_B_OPACITY_DUR = 0.22;
+    const PC_MSG_EXPAND_B_START = 0.26;
+    const PC_MSG_PART_B_START = 0.28;
+    let tl;
     let captionEnterTween = null;
 
     const playCaptionFadeUp = () => {
@@ -77,6 +86,12 @@
       captionEnterTween?.kill();
       captionEnterTween = null;
       gsap.set(caption, { opacity: 0, y: CAPTION_FADE_UP_Y, xPercent: -50 });
+    };
+
+    const resetSection = () => {
+      resetCaption();
+      tl?.progress(0);
+      prepare();
     };
 
     const getCoverRadius = () => {
@@ -136,8 +151,8 @@
       gsap.set(circle, { clipPath: 'circle(0px at 50% 50%)' });
       gsap.set([eq, uil], { opacity: 0 });
       if (isMobileMessage()) {
-        gsap.set(message, { width: 'auto', marginLeft: 20, marginRight: 20 });
-        gsap.set([messageA, messageB], { opacity: 0, y: CAPTION_FADE_UP_Y });
+        gsap.set(message, { width: 'auto', marginLeft: 0, marginRight: 0 });
+        gsap.set([messageA, messageB], { opacity: 0, y: MSG_FADE_UP_Y });
       } else {
         gsap.set(message, { width: 0, marginLeft: 0, marginRight: 0 });
         gsap.set([messageA, messageB], { opacity: 0, y: 0 });
@@ -146,29 +161,35 @@
 
     prepare();
 
-    // 캡션 fadeUp(실시간) → 슬라이드/원 순으로, 전체는 부드럽게 유지
-    const CAPTION_SCROLL_PHASE = CAPTION_FADE_UP_DURATION;
-    const SLIDE_START = CAPTION_SCROLL_PHASE * 0.6;
-    const SLIDE_DUR = 0.16;
-    const CIRCLE_START = SLIDE_START + SLIDE_DUR * 0.55;
-    const CIRCLE_DUR = 0.5;
+    // 캡션 fadeUp(실시간) → 슬라이드/원 순 (섹션 pin 후 스크롤로 진행)
+    const SLIDE_START = CAPTION_FADE_UP_DURATION * 0.75;
+    const SLIDE_DUR = 0.8;
+    const SLIDE_FADE_RATIO = 0.6; /* A/IBRIUM·캡션 fade out — SLIDE_DUR 대비 */
+    const CIRCLE_START = SLIDE_START + SLIDE_DUR * 0.75;
+    const CIRCLE_DUR = 0.8;
     const HANDOFF = CIRCLE_START + CIRCLE_DUR;
     const EQUIL_FADE_DUR = 0.48; /* 반전 EQUIL 서서히 fade out */
     const MSG_START = HANDOFF + EQUIL_FADE_DUR * 0.85; /* EQUIL 거의 사라진 뒤 문구 등장 */
+    const SECTION_HOLD_DUR = 1; /* row 완전 등장 후 pin 유지(초) — 스크롤 길이 */
+    const getRowRevealEnd = () =>
+      isMobileMessage()
+        ? MSG_START + MSG_FADE_UP_DURATION * 0.67 /* 2줄 fadeUp + stagger */
+        : MSG_START + PC_MSG_PART_B_START + Math.max(PC_MSG_PART_B_OPACITY_DUR, 0.4);
 
-    const tl = gsap.timeline({
+    tl = gsap.timeline({
       defaults: { ease: 'power1.inOut' },
       scrollTrigger: {
-        trigger: pin,
+        trigger: section,
         start: 'top top',
-        end: '+=400%',
-        pin: true,
-        scrub: 3,
+        end: '+=650%',
+        pin,
+        pinSpacing: true,
+        scrub: 4.5,
+        anticipatePin: 0,
         invalidateOnRefresh: true,
-        anticipatePin: 1,
         onRefreshInit: prepare,
         onEnter: playCaptionFadeUp,
-        onLeaveBack: resetCaption,
+        onLeaveBack: resetSection,
       },
     });
 
@@ -182,11 +203,20 @@
       SLIDE_START
     );
 
-    // 1-b) A / IBRIUM + 한글 문구 함께 fade out
+    // 1-b) A / IBRIUM + 캡션 함께 fade out
     tl.to(
       fadeWithSlide,
       {
-        duration: SLIDE_DUR * 0.55,
+        duration: SLIDE_DUR * SLIDE_FADE_RATIO,
+        opacity: 0,
+        ease: 'power2.out',
+      },
+      SLIDE_START
+    );
+    tl.to(
+      caption,
+      {
+        duration: SLIDE_DUR * SLIDE_FADE_RATIO,
         opacity: 0,
         ease: 'power2.out',
       },
@@ -237,31 +267,34 @@
 
     // 4) 문구 펼침
     if (isMobileMessage()) {
-      tl.set(
-        message,
+      tl.set(message, { width: 'auto' }, MSG_START);
+      tl.fromTo(
+        messageA,
+        { opacity: 0, y: MSG_FADE_UP_Y },
         {
-          width: 'auto',
-          marginLeft: 20,
-          marginRight: 20,
+          opacity: 1,
+          y: 0,
+          duration: MSG_FADE_UP_DURATION * 0.55,
+          ease: 'power3.out',
         },
         MSG_START
       );
       tl.fromTo(
-        [messageA, messageB],
-        { opacity: 0, y: CAPTION_FADE_UP_Y },
+        messageB,
+        { opacity: 0, y: MSG_FADE_UP_Y },
         {
           opacity: 1,
           y: 0,
-          duration: 0.35,
+          duration: MSG_FADE_UP_DURATION * 0.55,
           ease: 'power3.out',
         },
-        MSG_START
+        MSG_START + MSG_FADE_UP_DURATION * 0.12
       );
     } else {
       tl.to(
         message,
         {
-          duration: 0.16,
+          duration: PC_MSG_EXPAND_FIRST_DUR,
           width: () => getPartWidth(messageA),
           marginLeft: SIDE_GAP,
           marginRight: SIDE_GAP,
@@ -272,42 +305,45 @@
       tl.to(
         messageA,
         {
-          duration: 0.1,
+          duration: PC_MSG_PART_A_OPACITY_DUR,
           opacity: 1,
           ease: 'power1.out',
         },
-        MSG_START + 0.02
+        MSG_START + 0.04
       );
 
       tl.to(
         message,
         {
-          duration: 0.18,
+          duration: PC_MSG_EXPAND_FULL_DUR,
           width: () => getFullMessageWidth(),
           ease: 'power2.out',
         },
-        MSG_START + 0.14
+        MSG_START + PC_MSG_EXPAND_B_START
       );
       tl.to(
         messageB,
         {
-          duration: 0.12,
+          duration: PC_MSG_PART_B_OPACITY_DUR,
           opacity: 1,
           ease: 'power1.out',
         },
-        MSG_START + 0.16
+        MSG_START + PC_MSG_PART_B_START
       );
       // 문구 펼침과 함께 EQ / UIL 서서히 사라짐
       tl.to(
         [eq, uil],
         {
-          duration: 0.28,
+          duration: 0.4,
           opacity: 0,
           ease: 'power1.out',
         },
-        MSG_START + 0.16
+        MSG_START + PC_MSG_PART_B_START
       );
     }
+
+    // 5) row 완전 등장 후 잠깐 고정 — 추가 스크롤 시 다음 섹션으로
+    tl.to({}, { duration: SECTION_HOLD_DUR }, getRowRevealEnd());
   };
 
   const initBrandStoryPhilosophy = () => {
@@ -469,6 +505,7 @@
     const init = () => {
       initBrandStoryName();
       initBrandStoryPhilosophy();
+      window.initEquilHeading3tierFadeUp?.();
       ScrollTrigger.refresh();
     };
 
