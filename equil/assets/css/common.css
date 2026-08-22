@@ -87,7 +87,11 @@
   :root {
     --grid-columns: 12;
     --grid-gutter: 1.25rem;
-    --grid-margin: 7.5rem; /* 120px */
+    --grid-margin: clamp(
+      3.75rem,
+      calc(3.75rem + (100vw - 64.0625rem) * 3.75 / 55.9375),
+      7.5rem
+    ); /* 60px @1025, 120px @1920 */
 
     /* Typography — PC (1024+) */
     --fs-extra-large: 4rem; /* 64px */
@@ -391,6 +395,7 @@ a {
 
 @media (max-width: 47.9375rem) {
   body {
+    padding-top: 3.75rem; /* fixed header bar 60px */
     word-break: keep-all;
   }
 

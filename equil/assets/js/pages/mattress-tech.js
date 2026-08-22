@@ -101,8 +101,12 @@
     const RESEARCH_SLIDE_DURATION = 2;
     const RESEARCH_SLIDE_EASE = 'power2.inOut';
     const SWIPE_THRESHOLD = 40;
+    const ENTRY_LOCK_MS = 400;
     const compactQuery = window.matchMedia('(max-width: 63.9375rem)');
+    const mobileQuery = window.matchMedia('(max-width: 47.9375rem)');
     const isHorizontal = () => compactQuery.matches;
+    const isMobileView = () => mobileQuery.matches;
+    const shouldPin = () => !isMobileView();
 
     let currentIndex = 0;
     let isAnimating = false;
@@ -117,6 +121,27 @@
     let skipTextAnimation = false;
     let touchStartY = null;
     let touchGestureHandled = false;
+    let pointerStartX = null;
+    let pointerStartY = null;
+    let entryLockUntil = 0;
+    let mobileRevealTrigger = null;
+    let pinListenersAttached = false;
+
+    const startEntryLock = () => {
+      entryLockUntil = Date.now() + ENTRY_LOCK_MS;
+    };
+
+    const isEntryLocked = () => Date.now() < entryLockUntil;
+
+    const isSectionStuckInViewport = () => {
+      const rect = section.getBoundingClientRect();
+      return rect.top <= 0.5 && rect.bottom >= window.innerHeight - 0.5;
+    };
+
+    const snapToPinStart = (trigger = pinTrigger) => {
+      if (!trigger) return;
+      window.scrollTo(0, trigger.start);
+    };
 
     const contentCharsBySlide = slides.map((slide) => {
       const content = slide.querySelector('.mattress-tech-research__content');
@@ -293,6 +318,25 @@
         animateSlideText(index);
       }
 
+      if (isMobileView()) {
+        if (index === 0) {
+          stopVideoSync = () => {
+            video.pause();
+          };
+          video.playbackRate = 1.8;
+          video.currentTime = 0;
+
+          getVideoDuration().then(() => {
+            if (currentIndex !== 0 || !isMobileView()) return;
+            const playPromise = video.play();
+            if (playPromise) {
+              playPromise.catch(() => {});
+            }
+          });
+        }
+        return;
+      }
+
       if (index === 0) {
         const onTimeUpdate = () => {
           if (
@@ -419,6 +463,7 @@
       isAnimating = false;
       skipTextAnimation = hasEnteredOnce;
       stopTimers();
+      startEntryLock();
       if (skipTextAnimation) {
         if (textTween) {
           textTween.kill();
@@ -459,9 +504,18 @@
     };
 
     const handleScrollIntent = (goingDown, event) => {
-      if (!pinTrigger?.isActive) return;
+      if (!pinTrigger) return;
 
-      if (isAnimating || isTextAnimating) {
+      const pinActive = pinTrigger.isActive;
+
+      if (
+        !pinActive &&
+        !(isLocked && isSectionStuckInViewport())
+      ) {
+        return;
+      }
+
+      if (isEntryLocked() || isAnimating || isTextAnimating) {
         event?.preventDefault?.();
         return;
       }
@@ -480,6 +534,10 @@
 
       event?.preventDefault?.();
 
+      if (!pinActive) {
+        snapToPinStart();
+      }
+
       if (goingDown) {
         goTo(currentIndex + 1);
         return;
@@ -492,69 +550,182 @@
       handleScrollIntent(event.deltaY > 0, event);
     };
 
-    const onTouchStart = (event) => {
+    const onPinTouchStart = (event) => {
       if (!pinTrigger?.isActive || !event.touches?.length) return;
       touchStartY = event.touches[0].clientY;
       touchGestureHandled = false;
     };
 
-    const onTouchMove = (event) => {
-      if (
-        touchStartY === null ||
-        !pinTrigger?.isActive ||
-        !event.touches?.length
-      ) {
-        return;
-      }
+    const onPinTouchMove = (event) => {
+      if (!pinTrigger?.isActive || !event.touches?.length) return;
 
-      const deltaY = event.touches[0].clientY - touchStartY;
-      const goingDown = deltaY < 0;
-
-      if (isAnimating || isTextAnimating) {
+      if (isEntryLocked() || isAnimating || isTextAnimating) {
         event.preventDefault();
         return;
       }
 
       if (!isLocked) return;
 
+      const deltaY =
+        touchStartY === null
+          ? 0
+          : event.touches[0].clientY - touchStartY;
+      const goingDown = deltaY < 0;
+
       if (goingDown && currentIndex === LAST_SLIDE_INDEX) return;
       if (!goingDown && currentIndex === 0) return;
 
       event.preventDefault();
 
-      if (touchGestureHandled) return;
+      if (touchStartY === null || touchGestureHandled) return;
       if (Math.abs(deltaY) < SWIPE_THRESHOLD) return;
 
       touchGestureHandled = true;
       handleScrollIntent(goingDown, event);
     };
 
-    const onTouchEnd = () => {
+    const onPinTouchEnd = () => {
       touchStartY = null;
       touchGestureHandled = false;
     };
 
+    const attachPinListeners = () => {
+      if (pinListenersAttached) return;
+      window.addEventListener('wheel', onWheel, { passive: false });
+      window.addEventListener('touchstart', onPinTouchStart, { passive: true });
+      window.addEventListener('touchmove', onPinTouchMove, { passive: false });
+      window.addEventListener('touchend', onPinTouchEnd, { passive: true });
+      window.addEventListener('touchcancel', onPinTouchEnd, { passive: true });
+      pinListenersAttached = true;
+    };
+
+    const detachPinListeners = () => {
+      if (!pinListenersAttached) return;
+      window.removeEventListener('wheel', onWheel);
+      window.removeEventListener('touchstart', onPinTouchStart);
+      window.removeEventListener('touchmove', onPinTouchMove);
+      window.removeEventListener('touchend', onPinTouchEnd);
+      window.removeEventListener('touchcancel', onPinTouchEnd);
+      touchStartY = null;
+      touchGestureHandled = false;
+      pinListenersAttached = false;
+    };
+
+    const enablePin = () => {
+      if (pinTrigger) return;
+
+      if (mobileRevealTrigger) {
+        mobileRevealTrigger.kill();
+        mobileRevealTrigger = null;
+      }
+
+      pinTrigger = ScrollTrigger.create({
+        trigger: section,
+        start: 'top top',
+        end: `+=${(LAST_SLIDE_INDEX + 2) * 100}%`,
+        pin: true,
+        pinSpacing: true,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+        onEnter: (self) => {
+          activate(0);
+          snapToPinStart(self);
+        },
+        onEnterBack: (self) => {
+          activate(LAST_SLIDE_INDEX);
+          snapToPinStart(self);
+        },
+        onLeave: deactivate,
+        onLeaveBack: deactivate,
+      });
+
+      attachPinListeners();
+    };
+
+    const disablePin = () => {
+      if (pinTrigger) {
+        pinTrigger.kill();
+        pinTrigger = null;
+        ScrollTrigger.refresh();
+      }
+      detachPinListeners();
+      isLocked = false;
+      stopTimers();
+      video.pause();
+    };
+
+    const enableMobileMode = () => {
+      disablePin();
+      isLocked = false;
+      isAnimating = false;
+      skipTextAnimation = false;
+      resetAllSlideText();
+      resetSlides(currentIndex);
+
+      if (mobileRevealTrigger) return;
+
+      mobileRevealTrigger = ScrollTrigger.create({
+        trigger: section,
+        start: 'top 85%',
+        once: true,
+        onEnter: () => {
+          startSlideTimers(currentIndex);
+        },
+      });
+    };
+
+    const onMobilePointerDown = (event) => {
+      if (!isMobileView()) return;
+      if (event.pointerType === 'mouse' && event.button !== 0) return;
+      pointerStartX = event.clientX;
+      pointerStartY = event.clientY;
+    };
+
+    const onMobilePointerUp = (event) => {
+      if (!isMobileView() || pointerStartX === null) return;
+
+      const deltaX = event.clientX - pointerStartX;
+      const deltaY = event.clientY - pointerStartY;
+      pointerStartX = null;
+      pointerStartY = null;
+
+      if (Math.abs(deltaX) < SWIPE_THRESHOLD) return;
+      if (Math.abs(deltaX) <= Math.abs(deltaY)) return;
+      if (isAnimating || isTextAnimating) return;
+
+      if (deltaX < 0 && currentIndex < LAST_SLIDE_INDEX) {
+        goTo(currentIndex + 1);
+        return;
+      }
+
+      if (deltaX > 0 && currentIndex > 0) {
+        goTo(currentIndex - 1);
+      }
+    };
+
+    const onMobilePointerCancel = () => {
+      pointerStartX = null;
+      pointerStartY = null;
+    };
+
+    const syncViewportMode = () => {
+      if (shouldPin()) {
+        if (mobileRevealTrigger) {
+          mobileRevealTrigger.kill();
+          mobileRevealTrigger = null;
+        }
+        enablePin();
+        return;
+      }
+
+      enableMobileMode();
+    };
+
     resetAllSlideText();
 
-    pinTrigger = ScrollTrigger.create({
-      trigger: section,
-      start: 'top top',
-      end: '+=100%',
-      pin: true,
-      pinSpacing: true,
-      anticipatePin: 1,
-      invalidateOnRefresh: true,
-      onEnter: () => activate(0),
-      onEnterBack: () => activate(LAST_SLIDE_INDEX),
-      onLeave: deactivate,
-      onLeaveBack: deactivate,
-    });
-
-    window.addEventListener('wheel', onWheel, { passive: false });
-    section.addEventListener('touchstart', onTouchStart, { passive: true });
-    section.addEventListener('touchmove', onTouchMove, { passive: false });
-    section.addEventListener('touchend', onTouchEnd, { passive: true });
-    section.addEventListener('touchcancel', onTouchEnd, { passive: true });
+    section.addEventListener('pointerdown', onMobilePointerDown);
+    section.addEventListener('pointerup', onMobilePointerUp);
+    section.addEventListener('pointercancel', onMobilePointerCancel);
 
     dots.forEach((dot, index) => {
       dot.addEventListener('click', () => {
@@ -563,25 +734,27 @@
       });
     });
 
-    const onCompactChange = () => {
+    syncViewportMode();
+
+    const onViewportChange = () => {
       resetSlides(currentIndex);
+      syncViewportMode();
     };
 
     if (typeof compactQuery.addEventListener === 'function') {
-      compactQuery.addEventListener('change', onCompactChange);
-    } else if (typeof compactQuery.addListener === 'function') {
-      compactQuery.addListener(onCompactChange);
+      compactQuery.addEventListener('change', onViewportChange);
+      mobileQuery.addEventListener('change', onViewportChange);
+    } else {
+      compactQuery.addListener(onViewportChange);
+      mobileQuery.addListener(onViewportChange);
     }
   };
 
   const initMattressTechStructureOverview = () => {
     const section = document.querySelector('.mattress-tech-structure-overview');
     const title = section?.querySelector('.mattress-tech-structure-overview__title');
-    const image = section?.querySelector('.mattress-tech-structure-overview__image');
+    const arrow = section?.querySelector('.mattress-tech-structure-overview__arrow');
     if (!section || !title) return;
-
-    const IMAGE_REVEAL_DURATION = 1.2;
-    const TEXT_OVERLAP_AT = 0.5;
 
     const chars = splitChars(
       title,
@@ -589,57 +762,25 @@
     );
     const charStagger =
       FADE_UP_DURATION / Math.max(chars.length * 2.5, 1);
-    const textDuration =
-      chars.length <= 1
-        ? FADE_UP_DURATION
-        : FADE_UP_DURATION + charStagger * (chars.length - 1);
 
     gsap.set(chars, { opacity: 0, y: 40 });
-    if (image) {
-      gsap.set(image, {
-        opacity: 0,
-        scale: 0.96,
-        y: 16,
-        filter: 'blur(3px)',
-      });
-    }
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: title,
-        start: 'top 90%',
-        once: true,
-      },
-      onComplete: () => {
-        gsap.set(chars, { clearProps: 'will-change' });
-        if (image) {
-          gsap.set(image, { clearProps: 'will-change' });
-        }
-      },
-    });
-
-    tl.to(chars, {
+    gsap.to(chars, {
       opacity: 1,
       y: 0,
       duration: FADE_UP_DURATION,
       ease: 'power3.out',
       stagger: chars.length > 1 ? charStagger : 0,
+      scrollTrigger: {
+        trigger: section,
+        start: 'top 50%',
+        once: true,
+      },
+      onComplete: () => {
+        gsap.set(chars, { clearProps: 'will-change' });
+        arrow?.classList.add('is-visible');
+      },
     });
-
-    if (image) {
-      tl.to(
-        image,
-        {
-          opacity: 1,
-          scale: 1,
-          y: 0,
-          filter: 'blur(0px)',
-          duration: IMAGE_REVEAL_DURATION,
-          ease: 'power3.out',
-        },
-        textDuration * TEXT_OVERLAP_AT
-      );
-    }
   };
 
   const TOP_LAYER_IMAGES = [
@@ -1503,6 +1644,7 @@
 
     const itemData = items.map((item) => {
       const image = item.querySelector('.mattress-tech-process__image');
+      const body = item.querySelector('.mattress-tech-process__body');
       const title = item.querySelector('.mattress-tech-process__item-title');
       const desc = item.querySelector('.mattress-tech-process__item-desc');
       const chars = [title, desc]
@@ -1516,7 +1658,7 @@
       }
       gsap.set(chars, { opacity: 0, y: 40 });
 
-      return { image, chars };
+      return { image, body, chars };
     });
 
     const getTextTweenDuration = (chars) => {
@@ -1528,28 +1670,43 @@
     const getItemDuration = (chars) =>
       Math.max(IMAGE_REVEAL_DURATION, getTextTweenDuration(chars));
 
-    const revealItems = () => {
-      itemData.forEach((item) => {
-        if (item.image) {
-          gsap.set(item.image, { clipPath: 'inset(0% 0 0 0)' });
-        }
-        gsap.set(item.chars, { opacity: 1, y: 0, clearProps: 'will-change' });
-      });
+    const getCharStagger = (chars, duration = FADE_UP_DURATION) =>
+      duration / Math.max(chars.length * 2.5, 1);
+
+    const prepareMobileBody = (data) => {
+      gsap.set(data.chars, { opacity: 1, y: 0, clearProps: 'will-change' });
     };
 
-    const updateItemVisibility = () => {
-      items.forEach((item, index) => {
-        const isActive = !mobileQuery.matches || index === currentItemIndex;
-        item.classList.toggle('is-active', isActive);
-        if (!mobileQuery.matches) {
-          gsap.set(item, { clearProps: 'opacity' });
-        } else {
-          gsap.set(item, { opacity: isActive ? 1 : 0 });
-        }
-      });
+    const setMobileBodyHidden = (data) => {
+      prepareMobileBody(data);
+      if (data.body) {
+        gsap.set(data.body, { opacity: 0, y: 40 });
+      }
+    };
 
+    const playMobileBodyFadeUp = (
+      timeline,
+      body,
+      position,
+      duration = FADE_UP_DURATION
+    ) => {
+      if (!body) return;
+
+      timeline.to(
+        body,
+        {
+          opacity: 1,
+          y: 0,
+          duration,
+          ease: 'power3.out',
+        },
+        position
+      );
+    };
+
+    const updateDots = (activeIndex) => {
       dots.forEach((dot, index) => {
-        const isActive = index === currentItemIndex;
+        const isActive = index === activeIndex;
         dot.classList.toggle('is-active', isActive);
         if (isActive) {
           dot.setAttribute('aria-current', 'true');
@@ -1559,53 +1716,151 @@
       });
     };
 
+    const revealItems = () => {
+      itemData.forEach((item) => {
+        if (item.image) {
+          gsap.set(item.image, { clipPath: 'inset(0% 0 0 0)' });
+        }
+        gsap.set(item.chars, { opacity: 1, y: 0, clearProps: 'will-change' });
+      });
+    };
+
+    const revealMobileItems = () => {
+      itemData.forEach((item, index) => {
+        if (item.image) {
+          gsap.set(item.image, {
+            clipPath: 'inset(0% 0 0 0)',
+            opacity: index === 0 ? 1 : 0,
+          });
+        }
+        setMobileBodyHidden(item);
+      });
+
+      playMobileBodyFadeUp(gsap.timeline(), itemData[0].body, 0);
+    };
+
+    const updateItemVisibility = () => {
+      items.forEach((item, index) => {
+        const isActive = !mobileQuery.matches || index === currentItemIndex;
+        const data = itemData[index];
+        item.classList.toggle('is-active', isActive);
+
+        if (!mobileQuery.matches) {
+          gsap.set(item, { clearProps: 'opacity' });
+          return;
+        }
+
+        gsap.set(item, { opacity: isActive ? 1 : 0 });
+
+        if (isActive) {
+          if (itemsStarted) {
+            prepareMobileBody(data);
+            if (data.body) {
+              gsap.set(data.body, { opacity: 1, y: 0 });
+            }
+          }
+          if (data.image && itemsStarted) {
+            gsap.set(data.image, { opacity: 1 });
+          }
+        } else {
+          setMobileBodyHidden(data);
+          if (data.image) {
+            gsap.set(data.image, { opacity: 0 });
+          }
+        }
+      });
+
+      updateDots(currentItemIndex);
+    };
+
+    const getWrappedIndex = (index) => {
+      const total = items.length;
+      return ((index % total) + total) % total;
+    };
+
     const goToItem = (index) => {
       if (!mobileQuery.matches || isTransitioning) return;
 
-      const nextIndex = Math.max(0, Math.min(items.length - 1, index));
+      const nextIndex = getWrappedIndex(index);
       if (nextIndex === currentItemIndex) return;
 
       isTransitioning = true;
       const outgoing = items[currentItemIndex];
       const incoming = items[nextIndex];
+      const outgoingData = itemData[currentItemIndex];
+      const incomingData = itemData[nextIndex];
 
-      incoming.classList.add('is-active');
-      gsap.set(incoming, { opacity: 0 });
+      currentItemIndex = nextIndex;
+      updateDots(nextIndex);
 
       if (itemTween) {
         itemTween.kill();
       }
 
+      /* incoming을 먼저 flow에 올려 높이를 잡은 뒤, outgoing만 absolute로 겹침 */
+      incoming.classList.add('is-active');
+      outgoing.classList.remove('is-active');
+      gsap.set(incoming, { opacity: 1, zIndex: 1 });
+      gsap.set(outgoing, { opacity: 1, zIndex: 2 });
+      setMobileBodyHidden(incomingData);
+
+      if (incomingData.image) {
+        gsap.set(incomingData.image, { opacity: 0 });
+      }
+      if (outgoingData.image) {
+        gsap.set(outgoingData.image, { opacity: 1 });
+      }
+
       itemTween = gsap.timeline({
         onComplete: () => {
-          outgoing.classList.remove('is-active');
-          gsap.set(outgoing, { opacity: 0 });
-          currentItemIndex = nextIndex;
+          gsap.set(outgoing, { opacity: 0, clearProps: 'zIndex' });
+          gsap.set(incoming, { clearProps: 'zIndex' });
+          setMobileBodyHidden(outgoingData);
+          if (outgoingData.image) {
+            gsap.set(outgoingData.image, { opacity: 0 });
+          }
           isTransitioning = false;
           itemTween = null;
           updateItemVisibility();
         },
       });
 
-      itemTween.to(
-        outgoing,
-        {
-          opacity: 0,
-          duration: FADE_DURATION,
-          ease: 'power2.out',
-        },
-        0
-      );
+      if (outgoingData.body) {
+        itemTween.to(
+          outgoingData.body,
+          {
+            opacity: 0,
+            y: 20,
+            duration: 0.25,
+            ease: 'power2.in',
+          },
+          0
+        );
+      }
 
-      itemTween.to(
-        incoming,
-        {
-          opacity: 1,
-          duration: FADE_DURATION,
-          ease: 'power2.out',
-        },
-        0
-      );
+      if (outgoingData.image && incomingData.image) {
+        itemTween.to(
+          outgoingData.image,
+          {
+            opacity: 0,
+            duration: FADE_DURATION,
+            ease: 'power2.out',
+          },
+          0
+        );
+
+        itemTween.to(
+          incomingData.image,
+          {
+            opacity: 1,
+            duration: FADE_DURATION,
+            ease: 'power2.out',
+          },
+          0
+        );
+      }
+
+      playMobileBodyFadeUp(itemTween, incomingData.body, FADE_DURATION * 0.15);
     };
 
     const playItems = () => {
@@ -1613,7 +1868,7 @@
       itemsStarted = true;
 
       if (mobileQuery.matches) {
-        revealItems();
+        revealMobileItems();
         return;
       }
 
@@ -1704,6 +1959,39 @@
         goToItem(index);
       });
     });
+
+    const slider = section.querySelector('.mattress-tech-process__slider');
+    const SWIPE_THRESHOLD = 40;
+    let touchStartX = 0;
+
+    if (slider) {
+      slider.addEventListener(
+        'touchstart',
+        (event) => {
+          if (!mobileQuery.matches) return;
+          touchStartX = event.touches[0]?.clientX ?? 0;
+        },
+        { passive: true }
+      );
+
+      slider.addEventListener(
+        'touchend',
+        (event) => {
+          if (!mobileQuery.matches || isTransitioning) return;
+
+          const touchEndX = event.changedTouches[0]?.clientX ?? 0;
+          const deltaX = touchStartX - touchEndX;
+          if (Math.abs(deltaX) < SWIPE_THRESHOLD) return;
+
+          if (deltaX > 0) {
+            goToItem(currentItemIndex + 1);
+          } else {
+            goToItem(currentItemIndex - 1);
+          }
+        },
+        { passive: true }
+      );
+    }
 
     mobileQuery.addEventListener('change', () => {
       if (!mobileQuery.matches) {

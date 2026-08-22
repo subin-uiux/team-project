@@ -79,9 +79,13 @@
 
     const overlay = section.querySelector('.bedding-tech-design__overlay');
     const title = section.querySelector('.bedding-tech-design__title');
-    const descs = Array.from(
-      section.querySelectorAll('.bedding-tech-design__desc')
-    );
+    const mobileQuery = window.matchMedia('(max-width: 47.9375rem)');
+    const bodyMobile = section.querySelector('.bedding-tech-design__body-mobile');
+    const descs = mobileQuery.matches && bodyMobile
+      ? [bodyMobile]
+      : Array.from(
+          section.querySelectorAll('.bedding-tech-design__body-pc .bedding-tech-design__desc')
+        );
     if (!overlay || !title || !descs.length) return;
 
     const POST_HERO_FADE_UP_DURATION = 2;
@@ -201,7 +205,7 @@
           });
           gsap.set(titleChars, { opacity: 0, y: 40 });
           gsap.set(section, {
-            backgroundColor: 'var(--color-brand-light-3)',
+            backgroundColor: 'var(--color-brand-light-1)',
           });
         } else if (step === 1) {
           const splitX = getSplitX();
@@ -215,13 +219,13 @@
           });
           gsap.set(titleChars, { opacity: 0, y: 40 });
           gsap.set(section, {
-            backgroundColor: 'var(--color-brand-light-3)',
+            backgroundColor: 'var(--color-brand-light-1)',
           });
         } else {
           gsap.set([brandEq, brandUil, image], { opacity: 0 });
           gsap.set(titleChars, { opacity: 1, y: 0 });
           gsap.set(section, {
-            backgroundColor: 'var(--color-brand-light-2)',
+            backgroundColor: 'var(--color-brand-light-1)',
           });
         }
 
@@ -243,9 +247,6 @@
       if (step === 1) {
         const splitX = getSplitX();
         gsap.set(titleChars, { opacity: 0, y: 40 });
-        gsap.set(section, {
-          backgroundColor: 'var(--color-brand-light-3)',
-        });
         gsap.set([brandEq, brandUil], { opacity: 1 });
 
         transitionTl
@@ -288,15 +289,6 @@
             duration: 0.55,
             ease: 'power1.in',
           })
-          .to(
-            section,
-            {
-              backgroundColor: 'var(--color-brand-light-2)',
-              duration: 0.45,
-              ease: 'power1.inOut',
-            },
-            '-=0.15'
-          )
           .to(titleChars, {
             opacity: 1,
             y: 0,
@@ -315,15 +307,6 @@
           duration: 0.35,
           ease: 'power1.in',
         })
-        .to(
-          section,
-          {
-            backgroundColor: 'var(--color-brand-light-3)',
-            duration: 0.35,
-            ease: 'power1.inOut',
-          },
-          0
-        )
         .to(
           [brandEq, brandUil],
           {

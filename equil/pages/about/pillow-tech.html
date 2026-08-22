@@ -393,8 +393,9 @@
             </h2>
           </div>
 
-          <div class="product-compare__cards">
-            <article class="card card-cta-product product-compare__card" tabindex="0">
+          <div class="product-compare__slider">
+            <div class="product-compare__cards">
+            <article class="card card-cta-product product-compare__card is-active" tabindex="0">
               <div class="card-cta-product__media">
                 <img
                   src="../../assets/images/about/pillow-tech/pillow-tech-products_low.webp"
@@ -403,9 +404,13 @@
               </div>
               <div class="card-cta-product__overlay">
                 <p class="card-cta-product__title">LOW</p>
-                <p class="card-cta-product__text">
+                <p class="card-cta-product__text card-cta-product__text--full">
                   바로 누워 자는 자세가 많거나 낮은 높이를 선호하는<br>
                   사람을 고려한 구조입니다. 머리가 과도하게 들리지 않도록<br>
+                  낮고 완만한 경추 지지 곡선을 적용합니다.
+                </p>
+                <p class="card-cta-product__text card-cta-product__text--compact">
+                  머리가 과도하게 들리지 않도록<br>
                   낮고 완만한 경추 지지 곡선을 적용합니다.
                 </p>
               </div>
@@ -420,10 +425,14 @@
               </div>
               <div class="card-cta-product__overlay">
                 <p class="card-cta-product__title">MEDIUM</p>
-                <p class="card-cta-product__text">
+                <p class="card-cta-product__text card-cta-product__text--full">
                   바로 눕기와 옆으로 눕기를 번갈아 하는 사람을<br>
                   고려한 균형형 구조입니다. 머리 수용 깊이와 경추 지지 높이의<br>
                   균형을 맞춰 다양한 자세에 대응합니다.
+                </p>
+                <p class="card-cta-product__text card-cta-product__text--compact">
+                  머리 수용 깊이와 경추 지지 높이의 균형을 맞춰<br>
+                  다양한 자세에 대응합니다.
                 </p>
               </div>
             </article>
@@ -437,13 +446,23 @@
               </div>
               <div class="card-cta-product__overlay">
                 <p class="card-cta-product__title">HIGH</p>
-                <p class="card-cta-product__text">
+                <p class="card-cta-product__text card-cta-product__text--full">
                   어깨 너비가 넓거나 비교적 높은 지지가 필요한 사람을<br>
                   고려한 구조입니다. 경추 지지부의 높이를 확보하면서<br>
                   머리와 목이 자연스럽게 이어지도록 설계합니다.
                 </p>
+                <p class="card-cta-product__text card-cta-product__text--compact">
+                  경추 지지부의 높이를 확보하면서 머리와<br>
+                  목이 자연스럽게 이어지도록 설계합니다.
+                </p>
               </div>
             </article>
+          </div>
+          <nav class="product-compare__nav" role="tablist" aria-label="베개 높이 비교">
+            <button type="button" class="product-compare__nav-item is-active" data-index="0" aria-label="LOW" aria-current="true"></button>
+            <button type="button" class="product-compare__nav-item" data-index="1" aria-label="MEDIUM"></button>
+            <button type="button" class="product-compare__nav-item" data-index="2" aria-label="HIGH"></button>
+          </nav>
           </div>
         </div>
       </div>
@@ -496,6 +515,7 @@
 
   <script src="../../assets/js/common.js"></script>
   <script src="../../assets/js/components/scroll-feature.js"></script>
+  <script src="../../assets/js/components/product-compare.js"></script>
   <script src="../../assets/js/pages/pillow-tech.js"></script>
 </body>
 

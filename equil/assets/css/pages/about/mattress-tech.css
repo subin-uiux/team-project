@@ -447,22 +447,21 @@
    ======================================== */
 
 .mattress-tech-structure-overview {
+  position: relative;
+  width: 100%;
   height: 100vh;
-  background-color: var(--color-white);
+  overflow: hidden;
+  background-color: var(--color-brand-dark);
 }
 
-.mattress-tech-structure-overview__container {
+.mattress-tech-structure-overview__stage {
+  position: relative;
+  width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.mattress-tech-structure-overview__content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.6875rem; /* 27px */
+  padding-inline: var(--grid-margin);
 }
 
 .mattress-tech-structure-overview__title {
@@ -471,7 +470,7 @@
   font-weight: 400;
   font-size: var(--fs-subtitle-lg); /* 36px */
   line-height: 130%;
-  color: var(--color-text-dark);
+  color: var(--color-white);
   text-align: center;
 }
 
@@ -485,14 +484,6 @@
   font-size: var(--fs-subtitle-lg); /* 36px */
 }
 
-.mattress-tech-structure-overview__image {
-  width: 72rem; /* 1152px */
-  max-width: none;
-  height: auto;
-  transform-origin: center top;
-  will-change: transform, opacity, filter;
-}
-
 .mattress-tech-structure-overview__break {
   display: none;
 }
@@ -504,11 +495,6 @@
 
   .mattress-tech-structure-overview__emphasis {
     font-size: 2rem; /* 32px */
-  }
-
-  .mattress-tech-structure-overview__image {
-    width: 41.5rem; /* 664px */
-    max-width: 100%;
   }
 }
 
@@ -524,10 +510,42 @@
   .mattress-tech-structure-overview__break {
     display: block;
   }
+}
 
-  .mattress-tech-structure-overview__image {
-    width: 100%;
-    max-width: 100%;
+.mattress-tech-structure-overview__arrow {
+  position: absolute;
+  bottom: 2rem; /* 32px */
+  left: 50%;
+  z-index: 2;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateX(-50%);
+  transition:
+    opacity 0.35s ease,
+    visibility 0.35s ease;
+}
+
+.mattress-tech-structure-overview__arrow.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.mattress-tech-structure-overview__arrow-image {
+  display: block;
+  width: 2rem; /* 32px */
+  height: 2.5rem; /* 40px */
+  animation: mattress-tech-structure-overview-arrow-bob 2s ease-in-out infinite;
+}
+
+@keyframes mattress-tech-structure-overview-arrow-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(0.5rem); /* 8px */
   }
 }
 
@@ -660,7 +678,7 @@
 
 @media (max-width: 47.9375rem) {
   .mattress-tech-support-layers-overview__phrase {
-    font-size: clamp(0.75rem, 2.608vw, 1.25rem); /* 20px */
+    font-size: 1.375rem; /* 22px */
   }
 }
 
@@ -1063,7 +1081,7 @@
   transform: scale(1);
   transform-origin: center center;
   transition: transform 0.4s ease;
-  will-change: clip-path, transform;
+  will-change: clip-path, transform, opacity;
 }
 
 .mattress-tech-process__item:hover .mattress-tech-process__image {
@@ -1152,15 +1170,22 @@
     width: 100%;
   }
 
+  .mattress-tech-process__item.is-active {
+    position: relative;
+    z-index: 1;
+  }
+
   .mattress-tech-process__item:not(.is-active) {
     position: absolute;
     inset: 0;
     opacity: 0;
     pointer-events: none;
+    z-index: 0;
   }
 
   .mattress-tech-process__body {
-    margin-top: calc(0.875rem + 0.375rem + 1.25rem); /* 14px + dot + 20px — pagination 아래 본문 */
+    margin-top: 1.25rem; /* 20px — 이미지 ↔ 제목 */
+    will-change: transform, opacity;
   }
 
   .mattress-tech-process__item-title,
@@ -1168,18 +1193,17 @@
     font-size: 1rem; /* 16px */
   }
 
+  .mattress-tech-process__item-desc {
+    word-break: keep-all;
+    text-wrap: pretty;/* 한글 단어 중간 줄바꿈·고아 글자 방지 */
+  }
+
   .mattress-tech-process__dots {
-    position: absolute;
-    top: calc(27.6875rem + 0.875rem); /* 이미지 아래 14px */
-    left: 50%;
-    z-index: 2;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.9375rem; /* 15px */
-    width: max-content;
-    transform: translateX(-50%);
-    pointer-events: auto;
+    margin-top: 0.875rem; /* 14px — 본문 ↔ pagination */
   }
 
   .mattress-tech-process__dot {
@@ -1194,7 +1218,7 @@
 
   .mattress-tech-process__dot.is-active {
     width: 1.25rem; /* 20px */
-    background-color: #737373;
+    background-color: var(--color-brand-dark);
   }
 }
 
