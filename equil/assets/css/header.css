@@ -11,6 +11,7 @@
   width: 100%;
   background-color: var(--color-brand-light-2);
   transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  --header-nav-gap: clamp(1.25rem, calc(1.25rem + (100vw - 48rem) * 0.15625), 3.75rem); /* 20px @768 → 60px @1024+ */
 }
 
 .site-header.is-hidden {
@@ -47,7 +48,7 @@
   align-items: center;
   align-self: stretch; /* bar 80px 높이 100% */
   height: 100%;
-  gap: clamp(1.25rem, calc(1.25rem + (100vw - 48rem) * 0.15625), 3.75rem); /* 20px @768 → 60px @1024+ */
+  gap: var(--header-nav-gap);
 }
 
 .site-header__link {
@@ -261,6 +262,23 @@ a.site-header__col-title:focus-visible {
   display: none;
 }
 
+/* ---------- Tablet+ — logo 좌측 · nav 우측, logo ↔ nav 최소 gap ---------- */
+@media (min-width: 48rem) {
+  .site-header__bar {
+    justify-content: space-between;
+    gap: var(--header-nav-gap); /* logo ↔ nav */
+  }
+
+  .site-header__logo {
+    flex-shrink: 0;
+  }
+
+  .site-header__nav {
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+}
+
 /* ---------- Tablet: 768–1023px — 햄버거 없이 nav 유지 ---------- */
 @media (min-width: 48rem) and (max-width: 63.9375rem) {
   .site-header__actions {
@@ -268,11 +286,11 @@ a.site-header__col-title:focus-visible {
   }
 
   .site-header__col:not(:first-child) {
-    padding-left: clamp(1.25rem, calc(1.25rem + (100vw - 48rem) * 0.15625), 3.75rem); /* nav gap과 동일 */
+    padding-left: var(--header-nav-gap);
   }
 
   .site-header__col:not(:last-child) {
-    padding-right: clamp(1.25rem, calc(1.25rem + (100vw - 48rem) * 0.15625), 3.75rem);
+    padding-right: var(--header-nav-gap);
   }
 
   .site-header__col-title,

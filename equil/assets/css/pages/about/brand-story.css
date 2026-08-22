@@ -493,6 +493,12 @@
   }
 }
 
+@media (min-width: 48rem) {
+  .brand-story-philosophy__title-break {
+    display: none;
+  }
+}
+
 @media (max-width: 47.9375rem) {
   .brand-story-hero__title {
     font-size: clamp(1.364rem, 6.818vw, 1.875rem); /* 30px, mo/hero-title */
@@ -520,6 +526,9 @@
 
   .brand-story-origin__heading .heading-3tier__desc {
     font-size: 1rem; /* 16px, mo/body03 */
+    text-wrap: pretty;
+    word-break: keep-all;
+  max-width: 21.25rem; /* 340px */
   }
 
   .brand-story-origin__media {
