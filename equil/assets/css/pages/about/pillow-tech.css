@@ -344,7 +344,7 @@
   top: 62%;
 }
 
-@media (max-width: 63.9375rem) {
+@media (min-width: 48rem) and (max-width: 63.9375rem) {
   .pillow-tech-structure:has(> .scroll-feature) {
     height: 100vh;
   }
@@ -361,6 +361,28 @@
   .pillow-tech-structure .scroll-feature--media-end .scroll-feature__media {
     height: 40vh;
     flex: 0 0 40vh;
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .pillow-tech-structure,
+  .pillow-tech-structure:has(> .scroll-feature) {
+    height: auto;
+    min-height: 0;
+  }
+
+  .pillow-tech-structure .scroll-feature {
+    height: auto;
+    min-height: 0;
+    justify-content: flex-start;
+    touch-action: pan-y;
+    box-sizing: border-box;
+  }
+
+  .pillow-tech-structure .scroll-feature__feature-desc {
+    max-width: 21.25rem; /* 340px */
+    word-break: keep-all;
+    /* text-wrap: pretty; */
   }
 }
 
@@ -644,4 +666,18 @@
 .pillow-tech-products {
   position: relative;
   z-index: 1;
+}
+
+.pillow-tech-products__title-mobile {
+  display: none;
+}
+
+@media (max-width: 47.9375rem) {
+  .pillow-tech-products__title-pc {
+    display: none;
+  }
+
+  .pillow-tech-products__title-mobile {
+    display: inline;
+  }
 }

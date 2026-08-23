@@ -437,25 +437,19 @@
     const cards = Array.from(
       section.querySelectorAll('.bedding-tech-seasonal__card')
     );
-    const medias = Array.from(
-      section.querySelectorAll('.bedding-tech-seasonal__media')
-    );
     const dots = Array.from(
       section.querySelectorAll('.bedding-tech-seasonal__dot')
     );
-    if (!medias.length) return;
+    if (!cards.length) return;
 
     const compactMq = window.matchMedia('(max-width: 63.9375rem)');
     const isCompact = () => compactMq.matches;
-    const LAST_INDEX = cards.length - 1;
     const SWIPE_THRESHOLD = 40;
     const TRANSITION_DURATION = 1;
     const FADE_OUT_RATIO = 0.55;
     const fadeOutDuration = TRANSITION_DURATION * FADE_OUT_RATIO;
     let currentIndex = 0;
-    let mediaStarted = false;
-    let compactRevealed = !compactMq.matches;
-    let compactCover = null;
+    let compactRevealed = true;
     let isTransitioning = false;
     let transitionTl = null;
     let pointerStartX = null;
@@ -463,6 +457,11 @@
 
     const getCopy = (card) =>
       card.querySelector('.bedding-tech-seasonal__copy');
+
+    const wrapIndex = (index) => {
+      const count = cards.length;
+      return ((index % count) + count) % count;
+    };
 
     const showCard = (index) => {
       currentIndex = index;
@@ -476,7 +475,7 @@
 
     const goTo = (index) => {
       if (!isCompact() || !compactRevealed || isTransitioning) return;
-      const nextIndex = Math.max(0, Math.min(LAST_INDEX, index));
+      const nextIndex = wrapIndex(index);
       if (nextIndex === currentIndex) return;
 
       const prevCopy = getCopy(cards[currentIndex]);
@@ -527,31 +526,6 @@
       }
     };
 
-    const coverActiveMedia = () => {
-      if (compactCover) return compactCover;
-
-      const card = cards[currentIndex];
-      const media = medias[currentIndex];
-      if (!card || !media) return null;
-
-      const coverHeight = card.offsetHeight;
-      const copy = getCopy(card);
-      const restTop = copy ? copy.offsetHeight : 0;
-      const restHeight = media.offsetHeight;
-
-      gsap.set(card, { minHeight: coverHeight });
-      gsap.set(media, {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: coverHeight,
-      });
-
-      compactCover = { card, media, restTop, restHeight };
-      return compactCover;
-    };
-
     if (isCompact()) {
       showCard(0);
       cards.forEach((card, index) => {
@@ -562,42 +536,7 @@
           y: 0,
         });
       });
-      coverActiveMedia();
-    } else {
-      gsap.set(medias, { top: '0%' });
     }
-
-    const playMediaReveal = () => {
-      if (isCompact()) {
-        const cover = coverActiveMedia();
-        if (!cover) {
-          compactRevealed = true;
-          return;
-        }
-
-        gsap.to(cover.media, {
-          top: cover.restTop,
-          height: cover.restHeight,
-          duration: 1,
-          ease: 'power2.inOut',
-          onComplete: () => {
-            gsap.set(cover.media, {
-              clearProps: 'position,top,left,width,height',
-            });
-            gsap.set(cover.card, { clearProps: 'minHeight' });
-            compactRevealed = true;
-          },
-        });
-        return;
-      }
-
-      gsap.to(medias, {
-        top: '35%',
-        duration: 1,
-        ease: 'power2.inOut',
-        stagger: 0.5,
-      });
-    };
 
     section.addEventListener('click', (event) => {
       if (!isCompact()) return;
@@ -636,15 +575,7 @@
       });
     }
 
-    if (!heading) {
-      ScrollTrigger.create({
-        trigger: section,
-        start: 'top 80%',
-        once: true,
-        onEnter: playMediaReveal,
-      });
-      return;
-    }
+    if (!heading) return;
 
     const targets = [
       heading.querySelector('.heading-3tier__sub-title'),
@@ -668,16 +599,9 @@
           start: 'top 90%',
           toggleActions: 'restart none none reset',
           invalidateOnRefresh: true,
-          onLeaveBack: () => {
-            mediaStarted = false;
-          },
         },
         onComplete: () => {
           gsap.set(headingChars, { clearProps: 'will-change' });
-          if (!mediaStarted) {
-            mediaStarted = true;
-            playMediaReveal();
-          }
         },
       })
       .fromTo(
@@ -692,12 +616,6 @@
         },
       );
 
-    headingFadeUpTimeline.eventCallback('onUpdate', function onHeadingFadeUpUpdate() {
-      if (!mediaStarted && this.progress() >= 0.5) {
-        mediaStarted = true;
-        playMediaReveal();
-      }
-    });
   };
 
   const start = () => {

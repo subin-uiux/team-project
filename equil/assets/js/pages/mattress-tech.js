@@ -122,6 +122,7 @@
     let textTween = null;
     let hasEnteredOnce = false;
     let skipTextAnimation = false;
+    let touchStartX = null;
     let touchStartY = null;
     let touchGestureHandled = false;
     let pointerStartX = null;
@@ -416,8 +417,18 @@
 
     const goTo = (nextIndex) => {
       if (isAnimating) return;
-      if (nextIndex === currentIndex) return;
-      if (nextIndex < 0 || nextIndex > LAST_SLIDE_INDEX) return;
+
+      const lastIndex = LAST_SLIDE_INDEX;
+      let safeIndex = nextIndex;
+
+      if (isMobileView()) {
+        const count = lastIndex + 1;
+        safeIndex = ((nextIndex % count) + count) % count;
+      } else if (nextIndex < 0 || nextIndex > lastIndex) {
+        return;
+      }
+
+      if (safeIndex === currentIndex) return;
 
       isAnimating = true;
       stopTimers();
@@ -428,8 +439,14 @@
       isTextAnimating = false;
 
       const currentSlide = slides[currentIndex];
-      const nextSlide = slides[nextIndex];
-      const isForward = nextIndex > currentIndex;
+      const nextSlide = slides[safeIndex];
+      const isForward = isMobileView()
+        ? currentIndex === lastIndex && safeIndex === 0
+          ? true
+          : currentIndex === 0 && safeIndex === lastIndex
+            ? false
+            : safeIndex > currentIndex
+        : safeIndex > currentIndex;
       const axis = getSlideAxis();
       const offAxis = getOffAxis();
       const currentTo = isForward ? '-100%' : '100%';
@@ -437,11 +454,11 @@
 
       currentSlide.classList.remove('is-active');
       nextSlide.classList.add('is-active');
-      updatePager(nextIndex);
+      updatePager(safeIndex);
       if (skipTextAnimation) {
-        showSlideTextComplete(nextIndex);
+        showSlideTextComplete(safeIndex);
       } else {
-        resetSlideText(nextIndex);
+        resetSlideText(safeIndex);
       }
 
       gsap.set(nextSlide, { [axis]: nextFrom, [offAxis]: '0%', zIndex: 2 });
@@ -452,9 +469,9 @@
           onComplete: () => {
             gsap.set(currentSlide, { [axis]: nextFrom, [offAxis]: '0%' });
             resetSlideText(currentIndex);
-            currentIndex = nextIndex;
+            currentIndex = safeIndex;
             isAnimating = false;
-            startSlideTimers(nextIndex);
+            startSlideTimers(safeIndex);
           },
         })
         .to(
@@ -713,6 +730,65 @@
       });
     };
 
+    const handleMobileSwipe = (deltaX, deltaY) => {
+      if (!isMobileView() || isAnimating) return;
+      if (Math.abs(deltaX) < SWIPE_THRESHOLD) return;
+      if (Math.abs(deltaX) <= Math.abs(deltaY)) return;
+
+      if (deltaX < 0) {
+        goTo(currentIndex + 1);
+        return;
+      }
+
+      goTo(currentIndex - 1);
+    };
+
+    const onMobileTouchStart = (event) => {
+      if (!isMobileView() || !event.touches?.length) return;
+      touchStartX = event.touches[0].clientX;
+      touchStartY = event.touches[0].clientY;
+      touchGestureHandled = false;
+    };
+
+    const onMobileTouchMove = (event) => {
+      if (
+        !isMobileView() ||
+        touchStartX === null ||
+        touchGestureHandled ||
+        !event.touches?.length
+      ) {
+        return;
+      }
+
+      const deltaX = event.touches[0].clientX - touchStartX;
+      const deltaY = event.touches[0].clientY - touchStartY;
+
+      if (Math.abs(deltaX) < SWIPE_THRESHOLD) return;
+      if (Math.abs(deltaX) <= Math.abs(deltaY)) return;
+
+      touchGestureHandled = true;
+      handleMobileSwipe(deltaX, deltaY);
+    };
+
+    const onMobileTouchEnd = (event) => {
+      if (!isMobileView() || touchStartX === null) {
+        touchStartX = null;
+        touchStartY = null;
+        touchGestureHandled = false;
+        return;
+      }
+
+      if (!touchGestureHandled && event.changedTouches?.length) {
+        const deltaX = event.changedTouches[0].clientX - touchStartX;
+        const deltaY = event.changedTouches[0].clientY - touchStartY;
+        handleMobileSwipe(deltaX, deltaY);
+      }
+
+      touchStartX = null;
+      touchStartY = null;
+      touchGestureHandled = false;
+    };
+
     const onMobilePointerDown = (event) => {
       if (!isMobileView()) return;
       if (event.pointerType === 'mouse' && event.button !== 0) return;
@@ -728,18 +804,7 @@
       pointerStartX = null;
       pointerStartY = null;
 
-      if (Math.abs(deltaX) < SWIPE_THRESHOLD) return;
-      if (Math.abs(deltaX) <= Math.abs(deltaY)) return;
-      if (isAnimating || isTextAnimating) return;
-
-      if (deltaX < 0 && currentIndex < LAST_SLIDE_INDEX) {
-        goTo(currentIndex + 1);
-        return;
-      }
-
-      if (deltaX > 0 && currentIndex > 0) {
-        goTo(currentIndex - 1);
-      }
+      handleMobileSwipe(deltaX, deltaY);
     };
 
     const onMobilePointerCancel = () => {
@@ -762,6 +827,10 @@
 
     resetAllSlideText();
 
+    section.addEventListener('touchstart', onMobileTouchStart, { passive: true });
+    section.addEventListener('touchmove', onMobileTouchMove, { passive: true });
+    section.addEventListener('touchend', onMobileTouchEnd, { passive: true });
+    section.addEventListener('touchcancel', onMobileTouchEnd, { passive: true });
     section.addEventListener('pointerdown', onMobilePointerDown);
     section.addEventListener('pointerup', onMobilePointerUp);
     section.addEventListener('pointercancel', onMobilePointerCancel);
@@ -869,12 +938,16 @@
     const SPLIT_DURATION = 1;
     const DOT_DURATION = 0.45;
     const AFTER_HOLD = 1.5;
+    const AFTER_HOLD_MOBILE = 0.45; /* mo — fadeUp 완료 후 짧은 pin 유지 */
     const INITIAL_SPACER = 12;
     const MIN_PADDING_PC = 60;
     const compactQuery = window.matchMedia('(max-width: 63.9375rem)');
+    const mobileQuery = window.matchMedia('(max-width: 47.9375rem)');
     const tabletQuery = window.matchMedia(
       '(min-width: 48rem) and (max-width: 63.9375rem)'
     );
+    const isMobile = () => mobileQuery.matches;
+    const getAfterHold = () => (isMobile() ? AFTER_HOLD_MOBILE : AFTER_HOLD);
 
     const getContentWidth = () => {
       if (!compactQuery.matches) {
@@ -907,7 +980,7 @@
     };
 
     const updateSpacerLayout = () => {
-      if (!sequenceStarted && !hasCompleted) return;
+      if (isMobile() || (!sequenceStarted && !hasCompleted)) return;
       gsap.set(spacer, { width: getSplitGap() });
     };
 
@@ -928,6 +1001,7 @@
 
     const setInitialVisualState = () => {
       gsap.set(chars, { opacity: 0, y: 40 });
+      if (isMobile()) return;
       gsap.set(spacer, { width: INITIAL_SPACER });
       gsap.set(dot, { opacity: 0 });
       gsap.set(line, { scaleX: 0, transformOrigin: 'left center' });
@@ -935,6 +1009,7 @@
 
     const setFinalVisualState = () => {
       gsap.set(chars, { opacity: 1, y: 0, clearProps: 'will-change' });
+      if (isMobile()) return;
       gsap.set(spacer, { width: getSplitGap() });
       gsap.set(dot, { opacity: 1 });
       gsap.set(line, { scaleX: 1, transformOrigin: 'left center' });
@@ -955,6 +1030,7 @@
       const afterTop = section.getBoundingClientRect().top;
       window.scrollTo(0, scrollY + (afterTop - beforeTop));
       window.removeEventListener('wheel', onWheel);
+      window.removeEventListener('touchmove', onPinTouchMove);
     };
 
     const freezeCompletedState = () => {
@@ -977,7 +1053,7 @@
 
       sequenceTl = gsap.timeline({
         onComplete: () => {
-          holdCall = gsap.delayedCall(AFTER_HOLD, () => {
+          holdCall = gsap.delayedCall(getAfterHold(), () => {
             holdCall = null;
             freezeCompletedState();
           });
@@ -994,6 +1070,8 @@
           gsap.set(chars, { clearProps: 'will-change' });
         },
       });
+
+      if (isMobile()) return;
 
       sequenceTl.add(() => {
         gsap.set(line, { scaleX: 1, transformOrigin: 'left center' });
@@ -1017,7 +1095,12 @@
     };
 
     const onWheel = (event) => {
-      if (!pinTrigger || !pinTrigger.isActive) return;
+      if (!pinTrigger || !pinTrigger.isActive || hasCompleted) return;
+      event.preventDefault();
+    };
+
+    const onPinTouchMove = (event) => {
+      if (!isMobile() || !pinTrigger?.isActive || hasCompleted) return;
       event.preventDefault();
     };
 
@@ -1026,7 +1109,7 @@
     pinTrigger = ScrollTrigger.create({
       trigger: section,
       start: 'top top',
-      end: '+=100%',
+      end: () => (isMobile() ? '+=1' : '+=100%'),
       pin: true,
       pinSpacing: true,
       anticipatePin: 1,
@@ -1040,6 +1123,7 @@
     });
 
     window.addEventListener('wheel', onWheel, { passive: false });
+    window.addEventListener('touchmove', onPinTouchMove, { passive: false });
     window.addEventListener('resize', updateSpacerLayout);
     if (typeof compactQuery.addEventListener === 'function') {
       compactQuery.addEventListener('change', updateSpacerLayout);
@@ -1151,9 +1235,12 @@
     if (!heading || !tabs.length || cards.length !== 3 || !slider) return;
 
     const FADE_DURATION = 0.35;
+    const SLIDE_DURATION = 0.9;
+    const SLIDE_EASE = 'power2.inOut';
     const SWIPE_THRESHOLD = 40;
     const compactQuery = window.matchMedia('(max-width: 63.9375rem)');
     const mobileQuery = window.matchMedia('(max-width: 47.9375rem)');
+    const LAST_CARD_INDEX = cards.length - 1;
     let currentIndex = 0;
     let currentCardIndex = 0;
     let isTransitioning = false;
@@ -1238,21 +1325,38 @@
       });
     };
 
-    const updateCardVisibility = () => {
-      cards.forEach((card, cardIndex) => {
-        const isActive = !compactQuery.matches || cardIndex === currentCardIndex;
-        card.classList.toggle('is-active', isActive);
-        card.style.visibility = '';
+    const wrapCardIndex = (index) => {
+      const count = LAST_CARD_INDEX + 1;
+      return ((index % count) + count) % count;
+    };
 
-        if (!compactQuery.matches) {
-          gsap.set(card, { clearProps: 'opacity,zIndex' });
-        } else {
-          gsap.set(card, {
-            opacity: isActive ? 1 : 0,
-            zIndex: isActive ? 2 : 1,
-          });
-        }
+    const isWrapForward = (fromIndex, toIndex) => {
+      if (fromIndex === LAST_CARD_INDEX && toIndex === 0) return true;
+      if (fromIndex === 0 && toIndex === LAST_CARD_INDEX) return false;
+      return toIndex > fromIndex;
+    };
+
+    const setCardsImmediate = (index) => {
+      cards.forEach((card, cardIndex) => {
+        const isActive = cardIndex === index;
+        card.classList.toggle('is-active', isActive);
+        gsap.set(card, {
+          xPercent: isActive ? 0 : cardIndex < index ? -100 : 100,
+          opacity: 1,
+          clearProps: 'zIndex,visibility',
+        });
       });
+    };
+
+    const updateCardVisibility = () => {
+      if (!compactQuery.matches) {
+        cards.forEach((card) => {
+          card.classList.add('is-active');
+          gsap.set(card, { clearProps: 'xPercent,opacity,zIndex,visibility' });
+        });
+      } else {
+        setCardsImmediate(currentCardIndex);
+      }
 
       dots.forEach((dot, dotIndex) => {
         const isActive = dotIndex === currentCardIndex;
@@ -1268,18 +1372,16 @@
     const goToCard = (index) => {
       if (!mobileQuery.matches || isTransitioning) return;
 
-      const nextIndex = Math.max(0, Math.min(cards.length - 1, index));
+      const nextIndex = wrapCardIndex(index);
       if (nextIndex === currentCardIndex) return;
 
       isTransitioning = true;
+      const isForward = isWrapForward(currentCardIndex, nextIndex);
       const outgoing = cards[currentCardIndex];
       const incoming = cards[nextIndex];
 
-      /* 레이아웃은 건드리지 않고 opacity만 전환 (카드는 전부 absolute) */
       incoming.classList.add('is-active');
-      incoming.style.visibility = 'visible';
-      gsap.set(incoming, { opacity: 0, zIndex: 2 });
-      gsap.set(outgoing, { zIndex: 1 });
+      gsap.set(incoming, { xPercent: isForward ? 100 : -100, opacity: 1 });
 
       if (cardTransitionTl) {
         cardTransitionTl.kill();
@@ -1288,36 +1390,41 @@
       cardTransitionTl = gsap.timeline({
         onComplete: () => {
           outgoing.classList.remove('is-active');
-          outgoing.style.visibility = '';
-          incoming.style.visibility = '';
-          gsap.set(outgoing, { opacity: 0, clearProps: 'zIndex' });
-          gsap.set(incoming, { clearProps: 'zIndex' });
           currentCardIndex = nextIndex;
           isTransitioning = false;
           cardTransitionTl = null;
-          updateCardVisibility();
+          setCardsImmediate(nextIndex);
+          dots.forEach((dot, dotIndex) => {
+            const isActive = dotIndex === currentCardIndex;
+            dot.classList.toggle('is-active', isActive);
+            if (isActive) {
+              dot.setAttribute('aria-current', 'true');
+            } else {
+              dot.removeAttribute('aria-current');
+            }
+          });
         },
       });
 
-      cardTransitionTl.to(
-        outgoing,
-        {
-          opacity: 0,
-          duration: FADE_DURATION,
-          ease: 'power2.out',
-        },
-        0
-      );
-
-      cardTransitionTl.to(
-        incoming,
-        {
-          opacity: 1,
-          duration: FADE_DURATION,
-          ease: 'power2.out',
-        },
-        0
-      );
+      cardTransitionTl
+        .to(
+          outgoing,
+          {
+            xPercent: isForward ? -100 : 100,
+            duration: SLIDE_DURATION,
+            ease: SLIDE_EASE,
+          },
+          0
+        )
+        .to(
+          incoming,
+          {
+            xPercent: 0,
+            duration: SLIDE_DURATION,
+            ease: SLIDE_EASE,
+          },
+          0
+        );
     };
 
     const onTouchStart = (event) => {
@@ -1388,7 +1495,20 @@
           applyTabContent(index);
           currentIndex = index;
           currentCardIndex = 0;
-          updateCardVisibility();
+          if (mobileQuery.matches) {
+            setCardsImmediate(0);
+          } else {
+            updateCardVisibility();
+          }
+          dots.forEach((dot, dotIndex) => {
+            const isActive = dotIndex === 0;
+            dot.classList.toggle('is-active', isActive);
+            if (isActive) {
+              dot.setAttribute('aria-current', 'true');
+            } else {
+              dot.removeAttribute('aria-current');
+            }
+          });
         },
       });
 

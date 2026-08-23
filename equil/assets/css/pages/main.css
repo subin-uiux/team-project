@@ -485,12 +485,6 @@ body.is-main-scroll-nav-visible .main-problem-nav {
   }
 }
 
-@media (min-width: 48rem) {
-  .main-problem__desc-break {
-    display: none;
-  }
-}
-
 @media (min-width: 64rem) {
   .heading-3tier__desc-break {
     display: none;
@@ -1114,6 +1108,10 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
     transform 0.4s cubic-bezier(0.215, 0.61, 0.355, 1); /* caption-text — 호버 해제 */
 }
 
+.main-pillow-solution__caption-text--compact {
+  display: none;
+}
+
 .main-pillow-solution__card:hover .main-pillow-solution__caption-title,
 .main-pillow-solution__card:focus-within .main-pillow-solution__caption-title {
   opacity: 1;
@@ -1314,8 +1312,16 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
   .main-pillow-solution__caption-text {
     font-size: var(--fs-body-03); /* Body03 16px */
     word-break: keep-all;
-    text-wrap: balance;
+    /* text-wrap: pretty; */
     max-width: 19.375rem; /* 310px — 한글 단어 중간 줄바꿈·고아 글자 방지 */
+  }
+
+  .main-pillow-solution__caption-text--full {
+    display: none;
+  }
+
+  .main-pillow-solution__caption-text--compact {
+    display: block;
   }
 
   .main-pillow-solution__nav {
@@ -1869,7 +1875,7 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
   .main-sleep-fit__frame {
     display: block;
     width: 100%;
-    height: 31.875rem; /* 510px */
+    height: 26.5625rem; /* 425px */
   }
 
   .main-sleep-fit__overlay {

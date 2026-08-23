@@ -72,14 +72,18 @@
 
     const title = section.querySelector('.heating-mat-tech-product-overview__title');
     const desc = section.querySelector('.heating-mat-tech-product-overview__desc');
-    if (!title || !desc) return;
+    if (!title) return;
+
+    const mobileQuery = window.matchMedia('(max-width: 47.9375rem)');
+    const isMobile = () => mobileQuery.matches;
 
     const TITLE_FADE_UP_DURATION = 1.6;
     /* title 트윈이 끝나기 전에 desc를 시작 (초). 클수록 title↔desc 텀이 짧아짐 */
     const DESC_OVERLAP = 1.2;
     const charClass = 'heating-mat-tech-product-overview__char';
     const titleChars = splitTextChars(title, charClass);
-    const descChars = splitTextChars(desc, charClass);
+    const descChars =
+      desc && !isMobile() ? splitTextChars(desc, charClass) : [];
     if (!titleChars.length && !descChars.length) return;
 
     const titleStagger =

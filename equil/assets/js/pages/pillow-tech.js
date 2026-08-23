@@ -216,6 +216,7 @@
       sectionSelector: '.pillow-tech-structure',
       hotspotPositions: HOTSPOT_POSITIONS,
       pinOnCompact: true,
+      pinOnMobile: false,
     });
   };
 

@@ -421,6 +421,10 @@
 }
 
 @media (max-width: 47.9375rem) {
+  .mattress-tech-research {
+    touch-action: pan-y;
+  }
+
   .mattress-tech-research__subtitle {
     font-size: 1.75rem; /* 28px */
   }
@@ -698,7 +702,21 @@
 
 @media (max-width: 47.9375rem) {
   .mattress-tech-support-layers-overview__phrase {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.25rem; /* 4px */
+    white-space: normal;
+    text-align: center;
     font-size: 1.375rem; /* 22px */
+  }
+
+  .mattress-tech-support-layers-overview__spacer {
+    display: none;
+  }
+
+  .mattress-tech-support-layers-overview__dot,
+  .mattress-tech-support-layers-overview__line {
+    display: none;
   }
 }
 
@@ -777,6 +795,7 @@
   .mattress-tech-support-layers__slider {
     position: relative;
     width: 100%;
+    overflow: hidden;
   }
 
   .mattress-tech-support-layers__cards {
@@ -784,6 +803,7 @@
     position: relative;
     width: 100%;
     aspect-ratio: 560 / 633;
+    overflow: hidden;
   }
 
   .mattress-tech-support-layers__card.card-material {
@@ -792,16 +812,15 @@
     width: 100%;
     height: 100%;
     padding: 0;
+    will-change: transform;
   }
 
   .mattress-tech-support-layers__card:not(.is-active) {
-    opacity: 0;
     pointer-events: none;
-    visibility: hidden;
   }
 
   .mattress-tech-support-layers__card.is-active {
-    visibility: visible;
+    pointer-events: auto;
   }
 
   .mattress-tech-support-layers__card .card-material__overlay {
@@ -1223,6 +1242,10 @@
 }
 
 @media (max-width: 47.9375rem) {
+  .mattress-tech-process__heading .heading-3tier__desc {
+    display: none;
+  }
+
   .mattress-tech-process__container {
     gap: 2.5rem; /* 40px — 3단 타이틀 ↔ 카드 */
   }

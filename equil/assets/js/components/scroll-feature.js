@@ -45,6 +45,10 @@
     if (hotspotPositions && !hotspot) return;
 
     const LAST_INDEX = features.length - 1;
+    const wrapFeatureIndex = (index) => {
+      const count = LAST_INDEX + 1;
+      return ((index % count) + count) % count;
+    };
     const IMAGE_CROSSFADE_DURATION = 0.6;
     const PIN_SCROLL_END = SCROLL_FEATURE.PIN_END;
     let currentIndex = 0;
@@ -213,13 +217,13 @@
         if (Math.abs(deltaX) <= Math.abs(deltaY)) return;
         if (isEntryLocked() || isTransitioning) return;
 
-        if (deltaX < 0 && currentIndex < LAST_INDEX) {
-          activateFeature(currentIndex + 1, true);
+        if (deltaX < 0) {
+          activateFeature(wrapFeatureIndex(currentIndex + 1), true);
           return;
         }
 
-        if (deltaX > 0 && currentIndex > 0) {
-          activateFeature(currentIndex - 1, true);
+        if (deltaX > 0) {
+          activateFeature(wrapFeatureIndex(currentIndex - 1), true);
         }
       };
 
