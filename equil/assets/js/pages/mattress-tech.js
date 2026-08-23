@@ -792,7 +792,6 @@
   const initMattressTechStructureOverview = () => {
     const section = document.querySelector('.mattress-tech-structure-overview');
     const title = section?.querySelector('.mattress-tech-structure-overview__title');
-    const arrow = section?.querySelector('.mattress-tech-structure-overview__arrow');
     if (!section || !title) return;
 
     const chars = splitChars(
@@ -817,7 +816,6 @@
       },
       onComplete: () => {
         gsap.set(chars, { clearProps: 'will-change' });
-        arrow?.classList.add('is-visible');
       },
     });
   };
