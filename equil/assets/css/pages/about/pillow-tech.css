@@ -621,6 +621,7 @@
     padding-inline: var(--grid-margin);
     box-sizing: border-box;
   }
+  
   .pillow-tech-zones__callout-dot {
     width: 0.625rem; /* 10px */
     height: 0.625rem; /* 10px */
