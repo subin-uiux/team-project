@@ -382,6 +382,16 @@
   color: var(--color-brand-dark);
 }
 
+.heating-mat-tech-product-overview__title-break {
+  display: none;
+}
+
+@media (max-width: 47.9375rem) {
+  .heating-mat-tech-product-overview__title-break {
+    display: block;
+  }
+}
+
 .heating-mat-tech-product-overview__desc {
   margin: 0;
   font-family: var(--font-suit);
@@ -389,6 +399,8 @@
   font-size: var(--fs-body-02); /* 22px */
   line-height: 150%;
   color: var(--color-brand-dark);
+  word-break: keep-all;
+  text-wrap: balance;
 }
 
 .heating-mat-tech-product-overview__char {
@@ -1134,7 +1146,7 @@ html {
   }
 
   .heating-mat-tech-certification__certificate {
-    width: 11.25rem; /* 180px */
+    width: 9.25rem; /* 148px */
     height: auto;
     object-fit: cover;
   }
@@ -1277,6 +1289,10 @@ html {
   font-size: var(--fs-title); /* 40px */
   line-height: 150%;
   color: var(--color-brand-dark);
+}
+
+.heating-mat-tech-controller__title-break {
+  display: none;
 }
 
 .heating-mat-tech-controller__desc {
@@ -1682,6 +1698,10 @@ html {
     font-size: clamp(1.273rem, 6.364vw, 1.75rem); /* 28px, mo/title03 */
   }
 
+  .heating-mat-tech-controller__title-break {
+    display: block;
+  }
+
   .heating-mat-tech-controller__desc {
     font-size: clamp(0.75rem, 3.636vw, 1rem); /* 16px, mo/body03 */
   }
@@ -1869,7 +1889,7 @@ html {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 3.125rem; /* 50px */
+  gap: 2.5rem; /* 40px */
 }
 
 .heating-mat-tech-safety__heading {
@@ -1896,6 +1916,10 @@ html {
 
 .heating-mat-tech-safety__title-point {
   color: var(--color-brand-point);
+}
+
+.heating-mat-tech-safety__title-break {
+  display: none;
 }
 
 .heating-mat-tech-safety__desc {
@@ -2058,6 +2082,10 @@ html {
     text-align: center;
   }
 
+  .heating-mat-tech-safety__title-break {
+    display: block;
+  }
+
   .heating-mat-tech-safety__flow {
     flex-direction: column;
     align-items: stretch;
@@ -2103,5 +2131,10 @@ html {
     width: 4.625rem; /* 74px */
     height: 3.625rem; /* 58px */
     transform: rotate(90deg);
+  }
+  
+  .heating-mat-tech-safety__desc {
+    word-break: keep-all;
+    /* text-wrap: balance; */
   }
 }

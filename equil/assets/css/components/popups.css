@@ -412,7 +412,7 @@ body.is-popup-open {
 
   .popup-news__close {
     top: 0.5rem;
-    right: 1.875rem; /* 30px */
+    right: 0.5rem; /* 8px */
   }
 
   .popup-news__header {
@@ -434,7 +434,7 @@ body.is-popup-open {
   .popup-news__media {
     width: min(100%, 21.25rem); /* 340px */
     height: auto;
-    aspect-ratio: 340 / 280;
+    aspect-ratio: 340 / 214;
     margin-inline: auto;
     margin-top: 0.9375rem; /* 15px — line ↔ image */
     margin-bottom: 1.5625rem; /* 25px — image ↔ body */

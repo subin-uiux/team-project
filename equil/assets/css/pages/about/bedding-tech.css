@@ -654,6 +654,10 @@
   }
 
   .bedding-tech-seasonal__media {
-    height: 25rem; /* 400px */
+    height: 20rem; /* 320px */
+  }
+
+  .bedding-tech-seasonal__cards {
+    margin-top: 2.5rem; /* 40px */
   }
 }

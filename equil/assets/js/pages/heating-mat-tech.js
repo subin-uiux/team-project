@@ -75,6 +75,8 @@
     if (!title || !desc) return;
 
     const TITLE_FADE_UP_DURATION = 1.6;
+    /* title 트윈이 끝나기 전에 desc를 시작 (초). 클수록 title↔desc 텀이 짧아짐 */
+    const DESC_OVERLAP = 1.2;
     const charClass = 'heating-mat-tech-product-overview__char';
     const titleChars = splitTextChars(title, charClass);
     const descChars = splitTextChars(desc, charClass);
@@ -151,13 +153,17 @@
       }
 
       if (descChars.length) {
-        fadeTl.to(descChars, {
-          opacity: 1,
-          y: 0,
-          duration: FADE_UP_DURATION,
-          ease: 'power3.out',
-          stagger: descChars.length > 1 ? descStagger : 0,
-        });
+        fadeTl.to(
+          descChars,
+          {
+            opacity: 1,
+            y: 0,
+            duration: FADE_UP_DURATION,
+            ease: 'power3.out',
+            stagger: descChars.length > 1 ? descStagger : 0,
+          },
+          titleChars.length ? `-=${DESC_OVERLAP}` : 0
+        );
       }
     };
 

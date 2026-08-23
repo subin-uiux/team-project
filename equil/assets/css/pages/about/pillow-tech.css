@@ -614,6 +614,13 @@
 }
 
 @media (max-width: 47.9375rem) {
+
+  .pillow-tech-zones {
+    height: 100vh;
+    justify-content: center;
+    padding-inline: var(--grid-margin);
+    box-sizing: border-box;
+  }
   .pillow-tech-zones__callout-dot {
     width: 0.625rem; /* 10px */
     height: 0.625rem; /* 10px */
