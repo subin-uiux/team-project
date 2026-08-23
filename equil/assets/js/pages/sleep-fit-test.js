@@ -321,10 +321,14 @@
       const setLayer = (index) => {
         currentLayer = ((index % layerCount) + layerCount) % layerCount;
 
-        [hotspots, thumbs, layerFeatures].forEach((group) => {
-          group.forEach((el, i) => {
-            el.classList.toggle('is-active', i === currentLayer);
-          });
+        thumbs.forEach((el, i) => {
+          el.classList.toggle('is-active', i === currentLayer);
+        });
+        layerFeatures.forEach((el, i) => {
+          el.classList.toggle('is-active', i === currentLayer);
+        });
+        hotspots.forEach((el) => {
+          el.classList.toggle('is-active', Number(el.dataset.index) === currentLayer);
         });
       };
 

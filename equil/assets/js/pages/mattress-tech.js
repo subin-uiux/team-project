@@ -98,10 +98,12 @@
     );
     if (!slides.length || !video || !gauge || !currentEl) return;
 
-    const RESEARCH_SLIDE_DURATION = 2;
+    const RESEARCH_SLIDE_DURATION = 1.5;
     const RESEARCH_SLIDE_EASE = 'power2.inOut';
     const SWIPE_THRESHOLD = 40;
     const ENTRY_LOCK_MS = 400;
+    const WHEEL_SLIDE_COOLDOWN_MS = 320;
+    const PIN_SCROLL_LENGTH = '+=120%';
     const compactQuery = window.matchMedia('(max-width: 63.9375rem)');
     const mobileQuery = window.matchMedia('(max-width: 47.9375rem)');
     const isHorizontal = () => compactQuery.matches;
@@ -112,6 +114,7 @@
     let isAnimating = false;
     let isLocked = false;
     let isTextAnimating = false;
+    let isExitingPin = false;
     let gaugeTween = null;
     let autoTimer = null;
     let stopVideoSync = null;
@@ -124,6 +127,7 @@
     let pointerStartX = null;
     let pointerStartY = null;
     let entryLockUntil = 0;
+    let wheelSlideCooldownUntil = 0;
     let mobileRevealTrigger = null;
     let pinListenersAttached = false;
 
@@ -133,6 +137,12 @@
 
     const isEntryLocked = () => Date.now() < entryLockUntil;
 
+    const startWheelSlideCooldown = () => {
+      wheelSlideCooldownUntil = Date.now() + WHEEL_SLIDE_COOLDOWN_MS;
+    };
+
+    const isWheelSlideCoolingDown = () => Date.now() < wheelSlideCooldownUntil;
+
     const isSectionStuckInViewport = () => {
       const rect = section.getBoundingClientRect();
       return rect.top <= 0.5 && rect.bottom >= window.innerHeight - 0.5;
@@ -141,6 +151,16 @@
     const snapToPinStart = (trigger = pinTrigger) => {
       if (!trigger) return;
       window.scrollTo(0, trigger.start);
+    };
+
+    const snapToPinEnd = (trigger = pinTrigger) => {
+      if (!trigger) return;
+      window.scrollTo(0, trigger.end + 1);
+    };
+
+    const snapBeforePin = (trigger = pinTrigger) => {
+      if (!trigger) return;
+      window.scrollTo(0, Math.max(0, trigger.start - 1));
     };
 
     const contentCharsBySlide = slides.map((slide) => {
@@ -461,6 +481,7 @@
     const activate = (startIndex) => {
       isLocked = true;
       isAnimating = false;
+      isExitingPin = false;
       skipTextAnimation = hasEnteredOnce;
       stopTimers();
       startEntryLock();
@@ -484,6 +505,7 @@
       isLocked = false;
       isAnimating = false;
       isTextAnimating = false;
+      isExitingPin = false;
       stopTimers();
       if (textTween) {
         textTween.kill();
@@ -503,8 +525,22 @@
       video.pause();
     };
 
+    const exitPinForward = () => {
+      if (isExitingPin) return;
+      isExitingPin = true;
+      finishForward();
+      snapToPinEnd();
+    };
+
+    const exitPinBackward = () => {
+      if (isExitingPin) return;
+      isExitingPin = true;
+      finishBackward();
+      snapBeforePin();
+    };
+
     const handleScrollIntent = (goingDown, event) => {
-      if (!pinTrigger) return;
+      if (!pinTrigger || isExitingPin) return;
 
       const pinActive = pinTrigger.isActive;
 
@@ -515,28 +551,29 @@
         return;
       }
 
-      if (isEntryLocked() || isAnimating || isTextAnimating) {
+      /* 마지막 슬라이드에서 아래로 → 다음 섹션 */
+      if (goingDown && currentIndex === LAST_SLIDE_INDEX && isLocked) {
+        event?.preventDefault?.();
+        exitPinForward();
+        return;
+      }
+
+      /* 첫 슬라이드에서 위로 → 이전 섹션 */
+      if (!goingDown && currentIndex === 0 && isLocked) {
+        event?.preventDefault?.();
+        exitPinBackward();
+        return;
+      }
+
+      if (isEntryLocked() || isAnimating || isWheelSlideCoolingDown()) {
         event?.preventDefault?.();
         return;
       }
 
       if (!isLocked) return;
 
-      if (goingDown && currentIndex === LAST_SLIDE_INDEX) {
-        finishForward();
-        return;
-      }
-
-      if (!goingDown && currentIndex === 0) {
-        finishBackward();
-        return;
-      }
-
       event?.preventDefault?.();
-
-      if (!pinActive) {
-        snapToPinStart();
-      }
+      startWheelSlideCooldown();
 
       if (goingDown) {
         goTo(currentIndex + 1);
@@ -557,23 +594,27 @@
     };
 
     const onPinTouchMove = (event) => {
-      if (!pinTrigger?.isActive || !event.touches?.length) return;
-
-      if (isEntryLocked() || isAnimating || isTextAnimating) {
-        event.preventDefault();
-        return;
-      }
-
-      if (!isLocked) return;
+      if (!pinTrigger?.isActive || isExitingPin || !event.touches?.length) return;
 
       const deltaY =
         touchStartY === null
           ? 0
           : event.touches[0].clientY - touchStartY;
       const goingDown = deltaY < 0;
+      const exitingPin =
+        isLocked &&
+        ((goingDown && currentIndex === LAST_SLIDE_INDEX) ||
+          (!goingDown && currentIndex === 0));
 
-      if (goingDown && currentIndex === LAST_SLIDE_INDEX) return;
-      if (!goingDown && currentIndex === 0) return;
+      if (
+        !exitingPin &&
+        (isEntryLocked() || isAnimating || isWheelSlideCoolingDown())
+      ) {
+        event.preventDefault();
+        return;
+      }
+
+      if (!isLocked) return;
 
       event.preventDefault();
 
@@ -622,18 +663,16 @@
       pinTrigger = ScrollTrigger.create({
         trigger: section,
         start: 'top top',
-        end: `+=${(LAST_SLIDE_INDEX + 2) * 100}%`,
+        end: PIN_SCROLL_LENGTH,
         pin: true,
         pinSpacing: true,
         anticipatePin: 1,
         invalidateOnRefresh: true,
-        onEnter: (self) => {
+        onEnter: () => {
           activate(0);
-          snapToPinStart(self);
         },
-        onEnterBack: (self) => {
+        onEnterBack: () => {
           activate(LAST_SLIDE_INDEX);
-          snapToPinStart(self);
         },
         onLeave: deactivate,
         onLeaveBack: deactivate,
@@ -1205,10 +1244,15 @@
       cards.forEach((card, cardIndex) => {
         const isActive = !compactQuery.matches || cardIndex === currentCardIndex;
         card.classList.toggle('is-active', isActive);
+        card.style.visibility = '';
+
         if (!compactQuery.matches) {
-          gsap.set(card, { clearProps: 'opacity' });
+          gsap.set(card, { clearProps: 'opacity,zIndex' });
         } else {
-          gsap.set(card, { opacity: isActive ? 1 : 0 });
+          gsap.set(card, {
+            opacity: isActive ? 1 : 0,
+            zIndex: isActive ? 2 : 1,
+          });
         }
       });
 
@@ -1233,8 +1277,11 @@
       const outgoing = cards[currentCardIndex];
       const incoming = cards[nextIndex];
 
+      /* 레이아웃은 건드리지 않고 opacity만 전환 (카드는 전부 absolute) */
       incoming.classList.add('is-active');
-      gsap.set(incoming, { opacity: 0 });
+      incoming.style.visibility = 'visible';
+      gsap.set(incoming, { opacity: 0, zIndex: 2 });
+      gsap.set(outgoing, { zIndex: 1 });
 
       if (cardTransitionTl) {
         cardTransitionTl.kill();
@@ -1243,7 +1290,10 @@
       cardTransitionTl = gsap.timeline({
         onComplete: () => {
           outgoing.classList.remove('is-active');
-          gsap.set(outgoing, { opacity: 0 });
+          outgoing.style.visibility = '';
+          incoming.style.visibility = '';
+          gsap.set(outgoing, { opacity: 0, clearProps: 'zIndex' });
+          gsap.set(incoming, { clearProps: 'zIndex' });
           currentCardIndex = nextIndex;
           isTransitioning = false;
           cardTransitionTl = null;
