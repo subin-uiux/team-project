@@ -331,33 +331,77 @@
 
     setStep(0, false);
 
-    const onWheel = (event) => {
-      if (!pinTrigger || !pinTrigger.isActive) return;
+    const SWIPE_THRESHOLD = 40;
+    let touchStartY = null;
+    let touchGestureHandled = false;
 
-      const goingDown = event.deltaY > 0;
+    const handleScrollIntent = (goingDown, event) => {
+      if (!pinTrigger || !pinTrigger.isActive) return false;
 
       if (isEntryLocked()) {
-        event.preventDefault();
-        return;
+        event?.preventDefault?.();
+        return true;
       }
 
       if (isTransitioning) {
+        event?.preventDefault?.();
+        return true;
+      }
+
+      if (goingDown && currentStep === LAST_STEP) {
+        return false;
+      }
+
+      if (!goingDown && currentStep === 0) {
+        return false;
+      }
+
+      event?.preventDefault?.();
+      if (isInCooldown()) return true;
+
+      setStep(goingDown ? currentStep + 1 : currentStep - 1, true);
+      return true;
+    };
+
+    const onWheel = (event) => {
+      handleScrollIntent(event.deltaY > 0, event);
+    };
+
+    const onPinTouchStart = (event) => {
+      if (!pinTrigger?.isActive || !event.touches?.length) return;
+      touchStartY = event.touches[0].clientY;
+      touchGestureHandled = false;
+    };
+
+    const onPinTouchMove = (event) => {
+      if (!pinTrigger?.isActive || !event.touches?.length) return;
+
+      const deltaY =
+        touchStartY === null ? 0 : event.touches[0].clientY - touchStartY;
+      const goingDown = deltaY < 0;
+      const exitingPin =
+        (goingDown && currentStep === LAST_STEP) ||
+        (!goingDown && currentStep === 0);
+
+      if (!exitingPin && (isEntryLocked() || isTransitioning || isInCooldown())) {
         event.preventDefault();
         return;
       }
 
-      if (goingDown && currentStep === LAST_STEP) {
-        return;
-      }
-
-      if (!goingDown && currentStep === 0) {
-        return;
-      }
+      if (exitingPin) return;
 
       event.preventDefault();
-      if (isInCooldown()) return;
 
-      setStep(goingDown ? currentStep + 1 : currentStep - 1, true);
+      if (touchStartY === null || touchGestureHandled) return;
+      if (Math.abs(deltaY) < SWIPE_THRESHOLD) return;
+
+      touchGestureHandled = true;
+      handleScrollIntent(goingDown, event);
+    };
+
+    const onPinTouchEnd = () => {
+      touchStartY = null;
+      touchGestureHandled = false;
     };
 
     pinTrigger = ScrollTrigger.create({
@@ -379,6 +423,10 @@
     });
 
     window.addEventListener('wheel', onWheel, { passive: false });
+    window.addEventListener('touchstart', onPinTouchStart, { passive: true });
+    window.addEventListener('touchmove', onPinTouchMove, { passive: false });
+    window.addEventListener('touchend', onPinTouchEnd, { passive: true });
+    window.addEventListener('touchcancel', onPinTouchEnd, { passive: true });
   };
 
   const initBeddingTechSeasonal = () => {

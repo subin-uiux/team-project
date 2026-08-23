@@ -464,6 +464,7 @@
   padding-inline: var(--grid-margin);
 }
 
+
 .mattress-tech-structure-overview__title {
   margin: 0;
   font-family: var(--font-suit);
@@ -516,7 +517,7 @@
 
   .mattress-tech-structure-overview__stage {
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
     padding-top: 5rem; /* 80px */
     padding-bottom: 4.5rem; /* 72px */
@@ -540,7 +541,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    flex: 1 1 auto;
+    /* flex: 1 1 auto; */
     min-height: 16.25rem; /* 260px */
     width: 100%;
     will-change: transform;
@@ -553,6 +554,7 @@
     height: auto;
     max-height: 100%;
     object-fit: contain;
+    margin-top: 2.5rem; /* 40px */
   }
 }
 
