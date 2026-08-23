@@ -1173,9 +1173,31 @@
     let entryLockUntil = 0;
     let slideTween = null;
     let scrollTrigger = null;
+    let compactPinTrigger = null;
     let postExpandHoldUntil = 0;
 
     const isCompact = () => compactMq.matches;
+
+    const releaseCompactPin = () => {
+      if (!compactPinTrigger) return;
+      compactPinTrigger.kill();
+      compactPinTrigger = null;
+      ScrollTrigger.refresh();
+    };
+
+    const startCompactPin = () => {
+      if (compactPinTrigger) return;
+
+      compactPinTrigger = ScrollTrigger.create({
+        trigger: section,
+        start: 'top top',
+        end: () => `+=${viewport.offsetHeight}`,
+        pin: viewport,
+        pinSpacing: true,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+      });
+    };
 
     const getFullHeight = () => viewport.offsetHeight;
 
@@ -1273,6 +1295,9 @@
       if (immediate || reduceMotion) {
         isAnimating = false;
         applyIndex(safeIndex, { animate: false });
+        if (isCompact()) {
+          releaseCompactPin();
+        }
         return true;
       }
 
@@ -1295,6 +1320,9 @@
           applyMediaState(expanded);
           applyOverlayState(expanded);
           applyHeaderState(expanded, { animate: false });
+          if (isCompact() && expanded) {
+            releaseCompactPin();
+          }
           if (expanded && !isCompact()) {
             postExpandHoldUntil = Date.now() + SECTION_HOLD_MS;
           }
@@ -1401,22 +1429,34 @@
     }
 
     if (isCompact()) {
+      ScrollTrigger.create({
+        trigger: section,
+        start: 'top bottom',
+        onLeaveBack: () => {
+          releaseCompactPin();
+          goTo(0, { immediate: true });
+        },
+      });
+
       scrollTrigger = ScrollTrigger.create({
         trigger: section,
         start: 'top top',
-        end: 'bottom top',
         invalidateOnRefresh: true,
         onRefresh: () => {
           applyMediaState(currentIndex >= LAST_INDEX);
           applyOverlayState(currentIndex >= LAST_INDEX);
         },
         onEnter: () => {
+          if (currentIndex >= LAST_INDEX) return;
+          startCompactPin();
           goTo(LAST_INDEX);
         },
-        onLeaveBack: () => {
-          goTo(0);
-        },
         onEnterBack: () => {
+          if (currentIndex >= LAST_INDEX) {
+            applyIndex(LAST_INDEX, { animate: false });
+            return;
+          }
+          startCompactPin();
           goTo(LAST_INDEX);
         },
       });
@@ -1427,11 +1467,11 @@
     scrollTrigger = ScrollTrigger.create({
       trigger: section,
       start: 'top top',
-      end: () => `+=${section.offsetHeight}`,
-      pin: true,
+      end: () => `+=${viewport.offsetHeight}`,
+      pin: viewport,
       pinSpacing: true,
       scrub: false,
-      anticipatePin: 0,
+      anticipatePin: 1,
       invalidateOnRefresh: true,
       onRefresh: () => {
         applyMediaState(currentIndex >= LAST_INDEX);
