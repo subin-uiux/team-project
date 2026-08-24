@@ -765,7 +765,8 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
   inset: 0;
 }
 
-.main-heating-solution__image {
+.main-heating-solution__image,
+.main-heating-solution__video {
   display: block;
   width: 100%;
   height: 100%;
@@ -795,11 +796,13 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
 @media (min-width: 48rem) and (max-width: 63.9375rem) {
   .main-heating-solution,
   .main-heating-solution__media,
-  .main-heating-solution__image {
+  .main-heating-solution__image,
+  .main-heating-solution__video {
     width: 100%;
   }
 
-  .main-heating-solution__image {
+  .main-heating-solution__image,
+  .main-heating-solution__video {
     height: 100%;
     object-fit: cover;
     object-position: center;
@@ -823,11 +826,13 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
 @media (max-width: 47.9375rem) {
   .main-heating-solution,
   .main-heating-solution__media,
-  .main-heating-solution__image {
+  .main-heating-solution__image,
+  .main-heating-solution__video {
     width: 100%;
   }
 
-  .main-heating-solution__image {
+  .main-heating-solution__image,
+  .main-heating-solution__video {
     height: 100%;
     object-fit: cover;
     object-position: center;

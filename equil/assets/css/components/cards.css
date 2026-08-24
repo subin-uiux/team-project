@@ -352,3 +352,9 @@ a.card-event {
   text-align: center;
   pointer-events: none;
 }
+
+@media (max-width: 63.9375rem) {
+  .card-event__status {
+    font-size: clamp(0.75rem, 1.368vw, 0.875rem); /* 14px */
+  }
+}

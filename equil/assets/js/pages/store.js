@@ -11,15 +11,32 @@
       watchSlidesProgress: true,
       loop: true,
       loopedSlides: 4,
+      breakpoints: {
+        0: {
+          slidesPerView: 3,
+        },
+        768: {
+          slidesPerView: 'auto',
+        },
+      },
     });
 
     new Swiper(mainEl, {
       spaceBetween: 10,
       loop: true,
       loopedSlides: 4,
+      autoplay: {
+        delay: 4000,
+        disableOnInteraction: false,
+        pauseOnMouseEnter: true,
+      },
       navigation: {
         nextEl: '.store-hero__nav--next',
         prevEl: '.store-hero__nav--prev',
+      },
+      pagination: {
+        el: '.store-hero__pagination',
+        clickable: true,
       },
       thumbs: {
         swiper: galleryThumbs,
@@ -32,6 +49,7 @@
 
   if (mapPanel) {
     mapPanel.addEventListener('mouseenter', () => {
+      if (window.matchMedia('(max-width: 47.9375rem)').matches) return;
       mapPanel.classList.add('is-open');
     });
   }
