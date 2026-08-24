@@ -1705,7 +1705,7 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
 
 .main-sleep-fit__header {
   display: flex;
-  align-items: center;
+  align-items: end;
   justify-content: space-between;
   gap: 2.5rem;
   opacity: 0;
@@ -1734,7 +1734,7 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
 .main-sleep-fit__brand {
   font-family: var(--font-paperlogy);
   font-weight: 900;
-  font-size: 1.875rem; /* 30px — 로고와 동일 */
+  font-size: 2.5rem; /* 40px — 로고와 동일 */
   letter-spacing: 0.1em;
 }
 
