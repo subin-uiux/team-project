@@ -1781,10 +1781,22 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
     background-color: var(--color-brand-light-2);
   }
 
+  .main-sleep-fit.is-animating,
+  .main-sleep-fit.is-animating .main-sleep-fit__viewport,
+  .main-sleep-fit.is-animating .main-sleep-fit__container,
   .main-sleep-fit.is-expanded.is-animating,
   .main-sleep-fit.is-expanded.is-animating .main-sleep-fit__viewport,
   .main-sleep-fit.is-expanded.is-animating .main-sleep-fit__container {
     height: 100vh;
+  }
+
+  .main-sleep-fit.is-measuring .main-sleep-fit__header {
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .main-sleep-fit.is-animating .main-sleep-fit__media {
+    will-change: transform;
   }
 
   .main-sleep-fit.is-expanded .main-sleep-fit__viewport {

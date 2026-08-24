@@ -72,6 +72,7 @@
 
     const title = section.querySelector('.heating-mat-tech-product-overview__title');
     const desc = section.querySelector('.heating-mat-tech-product-overview__desc');
+    const mobileQuery = window.matchMedia('(max-width: 47.9375rem)');
     if (!title || !desc) return;
 
     const TITLE_FADE_UP_DURATION = 1.6;
@@ -79,7 +80,9 @@
     const DESC_OVERLAP = 1.2;
     const charClass = 'heating-mat-tech-product-overview__char';
     const titleChars = splitTextChars(title, charClass);
-    const descChars = splitTextChars(desc, charClass);
+    const descChars = mobileQuery.matches
+      ? []
+      : splitTextChars(desc, charClass);
     if (!titleChars.length && !descChars.length) return;
 
     const titleStagger =
@@ -695,8 +698,10 @@
     };
 
     const onPinTouchMove = (event) => {
+      /* 모바일·태블릿: intro 이후 세로 스크롤 자유 — 슬라이드는 가로 스와이프·버튼으로만 전환 */
+      if (isCompactView()) return;
+
       if (
-        !isCompactView() ||
         !pinTrigger?.isActive ||
         !introComplete ||
         pinTouchStartY === null ||
@@ -1138,8 +1143,41 @@
 
     const mobileQuery = window.matchMedia('(max-width: 47.9375rem)');
     const SWIPE_THRESHOLD = 40;
+    const CARD_TEXT_FADE_UP_DURATION = 1.2;
     let currentIndex = 0;
     let touchStartX = 0;
+    let cardTextTween = null;
+
+    const playCardTextFadeUp = (item) => {
+      if (!mobileQuery.matches) return;
+
+      const cardText = item?.querySelector(
+        '.heating-mat-tech-certification__card-text'
+      );
+      if (!cardText) return;
+
+      if (cardTextTween) {
+        cardTextTween.kill();
+        cardTextTween = null;
+      }
+
+      gsap.set(cardText, {
+        opacity: 0,
+        y: 40,
+        willChange: 'transform, opacity',
+      });
+
+      cardTextTween = gsap.to(cardText, {
+        opacity: 1,
+        y: 0,
+        duration: CARD_TEXT_FADE_UP_DURATION,
+        ease: 'power3.out',
+        onComplete: () => {
+          gsap.set(cardText, { clearProps: 'will-change' });
+          cardTextTween = null;
+        },
+      });
+    };
 
     const updateNav = (index) => {
       navItems.forEach((item, itemIndex) => {
@@ -1168,8 +1206,8 @@
       if (nextIndex === currentIndex) return;
 
       currentIndex = nextIndex;
-      track.style.transform = `translate3d(-${currentIndex * 100}%, 0, 0)`;
       updateNav(currentIndex);
+      playCardTextFadeUp(items[currentIndex]);
     };
 
     navItems.forEach((item) => {
@@ -1209,11 +1247,12 @@
 
     mobileQuery.addEventListener('change', () => {
       currentIndex = 0;
-      resetTrack();
       updateNav(0);
+      resetTrack();
     });
 
     updateNav(0);
+    resetTrack();
   };
 
   const initHeatingMatTechSafety = () => {
@@ -1223,8 +1262,10 @@
     if (!heading) return;
 
     const title = heading.querySelector('.heating-mat-tech-safety__title');
-    const desc = heading.querySelector('.heating-mat-tech-safety__desc');
-    const targets = [title, desc].filter(Boolean);
+    const descs = [
+      ...heading.querySelectorAll('.heating-mat-tech-safety__desc'),
+    ];
+    const targets = [title, ...descs].filter(Boolean);
     if (!targets.length) return;
 
     initFadeUp(heading, targets, 'heating-mat-tech-safety__char');

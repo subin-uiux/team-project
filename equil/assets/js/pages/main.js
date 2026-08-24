@@ -1195,6 +1195,7 @@
     const FADE_UP_DURATION = 1.2; /* main-sleep-fit__header fadeUp 속도 */
     const FADE_UP_EASE = 'power3.out';
     const ENTRY_LOCK_MS = 900; /* PC — 섹션 pin 직후 풀스크린 유지 */
+    const COMPACT_ENTRY_HOLD_MS = 400; /* 모바일·태블릿 — pin 후 풀스크린 유지 */
     const SECTION_HOLD_MS = 1100; /* PC — shrink + fadeUp 완료 후 pin 유지 */
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const compactMq = window.matchMedia('(max-width: 63.9375rem)');
@@ -1205,8 +1206,14 @@
     let slideTween = null;
     let scrollTrigger = null;
     let postExpandHoldUntil = 0;
+    let compactAutoTimer = null;
 
     const isCompact = () => compactMq.matches;
+
+    const getHeaderOffset = () => {
+      const headerBar = document.querySelector('.site-header__bar');
+      return headerBar?.offsetHeight ?? 0;
+    };
 
     const getFullHeight = () => viewport.offsetHeight;
 
@@ -1235,6 +1242,39 @@
       };
     };
 
+    const clearMediaTransform = () => {
+      gsap.set(media, { clearProps: 'transform,x,y,scaleX,scaleY,willChange' });
+    };
+
+    const measureShrunkProps = () => {
+      const wasExpanded = section.classList.contains('is-expanded');
+      section.classList.add('is-expanded', 'is-measuring');
+      void frame.offsetHeight;
+      const props = getShrunkProps();
+      section.classList.remove('is-measuring');
+      if (!wasExpanded) {
+        section.classList.remove('is-expanded');
+      }
+      return props;
+    };
+
+    const getTransformTweenProps = (targetRect) => {
+      const fullWidth = viewport.offsetWidth;
+      const fullHeight = getFullHeight();
+      const scaleX = targetRect.width / fullWidth;
+      const scaleY = targetRect.height / fullHeight;
+
+      return {
+        x: targetRect.left + targetRect.width / 2 - fullWidth / 2,
+        y: targetRect.top + targetRect.height / 2 - fullHeight / 2,
+        scaleX,
+        scaleY,
+        borderRadius: targetRect.borderRadius,
+        transformOrigin: '50% 50%',
+        force3D: true,
+      };
+    };
+
     const applyOverlayState = (expanded) => {
       if (!overlay || isCompact()) return;
       gsap.set(overlay, {
@@ -1243,6 +1283,7 @@
     };
 
     const applyMediaState = (expanded) => {
+      clearMediaTransform();
       gsap.set(media, expanded ? getShrunkProps() : getFullProps());
     };
 
@@ -1314,7 +1355,13 @@
       isAnimating = true;
       currentIndex = safeIndex;
       section.classList.add('is-animating');
-      section.classList.toggle('is-expanded', expanded);
+      if (isCompact()) {
+        if (!expanded) {
+          section.classList.remove('is-expanded');
+        }
+      } else {
+        section.classList.toggle('is-expanded', expanded);
+      }
 
       const HEADER_OUT_DURATION = 0.45; /* header 사라지는 속도 (이미지 확대 전) */
 
@@ -1323,9 +1370,15 @@
           isAnimating = false;
           slideTween = null;
           section.classList.remove('is-animating');
+          if (isCompact() && expanded) {
+            section.classList.add('is-expanded');
+          }
           applyMediaState(expanded);
           applyOverlayState(expanded);
           applyHeaderState(expanded, { animate: false });
+          if (expanded && scrollTrigger) {
+            ScrollTrigger.refresh();
+          }
           if (expanded && !isCompact()) {
             postExpandHoldUntil = Date.now() + SECTION_HOLD_MS;
           }
@@ -1335,11 +1388,36 @@
       if (expanded) {
         gsap.set(header, { opacity: 0, y: 40 });
         if (overlay) gsap.set(overlay, { opacity: 0 });
-        slideTween.to(media, {
-          ...getShrunkProps(),
-          duration: SLIDE_DURATION,
-          ease: SLIDE_EASE,
-        }, 0);
+
+        if (isCompact()) {
+          const targetRect = measureShrunkProps();
+          applyMediaState(false);
+          gsap.set(media, {
+            ...getFullProps(),
+            x: 0,
+            y: 0,
+            scaleX: 1,
+            scaleY: 1,
+            transformOrigin: '50% 50%',
+            willChange: 'transform',
+          });
+          slideTween.to(
+            media,
+            {
+              ...getTransformTweenProps(targetRect),
+              duration: SLIDE_DURATION,
+              ease: SLIDE_EASE,
+            },
+            0,
+          );
+        } else {
+          slideTween.to(media, {
+            ...getShrunkProps(),
+            duration: SLIDE_DURATION,
+            ease: SLIDE_EASE,
+          }, 0);
+        }
+
         slideTween.to(header, {
           opacity: 1,
           y: 0,
@@ -1353,11 +1431,34 @@
           duration: HEADER_OUT_DURATION,
           ease: 'power2.in',
         }, 0);
-        slideTween.to(media, {
-          ...getFullProps(),
-          duration: SLIDE_DURATION,
-          ease: SLIDE_EASE,
-        }, HEADER_OUT_DURATION);
+
+        if (isCompact()) {
+          gsap.set(media, {
+            ...getFullProps(),
+            x: 0,
+            y: 0,
+            scaleX: 1,
+            scaleY: 1,
+            transformOrigin: '50% 50%',
+            willChange: 'transform',
+          });
+          slideTween.to(media, {
+            x: 0,
+            y: 0,
+            scaleX: 1,
+            scaleY: 1,
+            borderRadius: '0px',
+            duration: SLIDE_DURATION,
+            ease: SLIDE_EASE,
+            force3D: true,
+          }, HEADER_OUT_DURATION);
+        } else {
+          slideTween.to(media, {
+            ...getFullProps(),
+            duration: SLIDE_DURATION,
+            ease: SLIDE_EASE,
+          }, HEADER_OUT_DURATION);
+        }
       }
 
       if (scrollTrigger && !isCompact()) {
@@ -1432,23 +1533,51 @@
     }
 
     if (isCompact()) {
+      const clearCompactAutoTimer = () => {
+        if (compactAutoTimer) {
+          window.clearTimeout(compactAutoTimer);
+          compactAutoTimer = null;
+        }
+      };
+
+      const startCompactExpand = () => {
+        if (isAnimating) return;
+
+        clearCompactAutoTimer();
+        postExpandHoldUntil = 0;
+
+        if (currentIndex >= LAST_INDEX) {
+          applyIndex(LAST_INDEX, { animate: false });
+          return;
+        }
+
+        applyIndex(0, { animate: false });
+        entryLockUntil = Date.now() + COMPACT_ENTRY_HOLD_MS;
+        compactAutoTimer = window.setTimeout(() => {
+          compactAutoTimer = null;
+          if (!scrollTrigger?.isActive || currentIndex >= LAST_INDEX || isAnimating) return;
+          goTo(LAST_INDEX);
+        }, COMPACT_ENTRY_HOLD_MS);
+      };
+
       scrollTrigger = ScrollTrigger.create({
         trigger: section,
-        start: 'top top',
-        end: 'bottom top',
+        start: () => `top top+=${getHeaderOffset()}`,
+        end: () => `+=${Math.max(viewport.offsetHeight, window.innerHeight)}`,
+        pin: true,
+        pinSpacing: true,
+        anticipatePin: 0,
         invalidateOnRefresh: true,
         onRefresh: () => {
+          if (isAnimating) return;
           applyMediaState(currentIndex >= LAST_INDEX);
           applyOverlayState(currentIndex >= LAST_INDEX);
         },
-        onEnter: () => {
-          goTo(LAST_INDEX);
-        },
+        onEnter: startCompactExpand,
+        onEnterBack: startCompactExpand,
         onLeaveBack: () => {
-          goTo(0);
-        },
-        onEnterBack: () => {
-          goTo(LAST_INDEX);
+          clearCompactAutoTimer();
+          goTo(0, { immediate: true });
         },
       });
 

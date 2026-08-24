@@ -889,6 +889,7 @@
     const INITIAL_SPACER = 12;
     const MIN_PADDING_PC = 60;
     const compactQuery = window.matchMedia('(max-width: 63.9375rem)');
+    const mobileQuery = window.matchMedia('(max-width: 47.9375rem)');
     const tabletQuery = window.matchMedia(
       '(min-width: 48rem) and (max-width: 63.9375rem)'
     );
@@ -1053,7 +1054,9 @@
       invalidateOnRefresh: true,
       onEnter: () => {
         pinSettleUntil = Date.now() + 280;
-        playSequence();
+        if (!mobileQuery.matches) {
+          playSequence();
+        }
       },
       onEnterBack: () => {
         if (hasCompleted) {
@@ -1061,6 +1064,22 @@
         }
       },
     });
+
+    if (mobileQuery.matches) {
+      ScrollTrigger.create({
+        trigger: section,
+        start: 'top 70%',
+        invalidateOnRefresh: true,
+        onEnter: () => playSequence(),
+        onEnterBack: () => {
+          if (hasCompleted) {
+            setFinalVisualState();
+            return;
+          }
+          playSequence();
+        },
+      });
+    }
 
     window.addEventListener('wheel', onWheel, { passive: false });
     window.addEventListener('resize', updateSpacerLayout);
