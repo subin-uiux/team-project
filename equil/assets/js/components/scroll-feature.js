@@ -3,7 +3,7 @@
   const SCROLL_FEATURE = {
     PIN_START: 'top top',
     PIN_END: '+=100%',
-    ENTRY_LOCK_MS: 400,
+    ENTRY_LOCK_MS: 280,
     COOLDOWN_MS: 0,
     TRANSITION_DURATION: 1,
     FADE_OUT_RATIO: 0.55,
@@ -507,26 +507,20 @@
       return true;
     };
 
-    const isSectionStuckInViewport = () => {
-      const rect = section.getBoundingClientRect();
-      return rect.top <= 0.5 && rect.bottom >= window.innerHeight - 0.5;
-    };
-
     const onWheel = (event) => {
       if (!pinTrigger) return;
 
       const goingDown = event.deltaY > 0;
       const pinActive = isSectionPinnedInView();
 
-      if (
-        !pinActive &&
-        !(currentIndex < LAST_INDEX && isSectionStuckInViewport())
-      ) {
-        return;
-      }
+      /* 핀이 실제로 걸린 뒤에만 휠을 가로챔 — 진입 스크롤과 충돌하지 않음 */
+      if (!pinActive) return;
 
       if (isEntryLocked()) {
-        event.preventDefault();
+        /* 첫 특징 진입 직후 하향 스크롤은 네이티브에 맡겨 버벅임 완화 */
+        if (!(goingDown && currentIndex === 0)) {
+          event.preventDefault();
+        }
         return;
       }
 
@@ -537,9 +531,6 @@
 
       if (goingDown && currentIndex < LAST_INDEX) {
         event.preventDefault();
-        if (!pinActive) {
-          window.scrollTo(0, pinTrigger.start);
-        }
         if (isInCooldown()) return;
         activateFeature(currentIndex + 1, true);
         return;
@@ -581,7 +572,14 @@
       const deltaY = event.touches[0].clientY - touchStartY;
       const goingDown = deltaY < 0;
 
-      if (isEntryLocked() || isTransitioning) {
+      if (isEntryLocked()) {
+        if (!(goingDown && currentIndex === 0)) {
+          event.preventDefault();
+        }
+        return;
+      }
+
+      if (isTransitioning) {
         event.preventDefault();
         return;
       }
@@ -613,7 +611,7 @@
         end: PIN_SCROLL_END,
         pin: true,
         pinSpacing: true,
-        anticipatePin: 1,
+        anticipatePin: 0,
         invalidateOnRefresh: true,
         onEnter: () => {
           activateFeature(0, false);

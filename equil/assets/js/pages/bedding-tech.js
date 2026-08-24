@@ -130,10 +130,10 @@
   };
 
   const PROCESS_IMAGES = [
-    '../../assets/images/about/bedding-tech/bedding-tech-process_img01.webp',
-    '../../assets/images/about/bedding-tech/bedding-tech-process_img02.webp',
-    '../../assets/images/about/bedding-tech/bedding-tech-process_img03.webp',
-    '../../assets/images/about/bedding-tech/bedding-tech-process_img04.webp',
+    '../assets/images/about/bedding-tech/bedding-tech-process_img01.webp',
+    '../assets/images/about/bedding-tech/bedding-tech-process_img02.webp',
+    '../assets/images/about/bedding-tech/bedding-tech-process_img03.webp',
+    '../assets/images/about/bedding-tech/bedding-tech-process_img04.webp',
   ];
 
   const initBeddingTechProcess = () => {

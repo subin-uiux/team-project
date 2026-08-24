@@ -437,11 +437,11 @@
 .bedding-tech-seasonal {
   box-sizing: border-box;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  padding: 0 var(--grid-margin) 1.875rem; /* 30px */
+  justify-content: center;
+  padding: 7.5rem var(--grid-margin); /* 120px — 다른 섹션과 동일한 상하 여백 */
   background-color: var(--color-brand-light-2);
 }
 
@@ -636,6 +636,10 @@
 }
 
 @media (max-width: 47.9375rem) {
+  .bedding-tech-seasonal {
+    padding-block: 3.75rem; /* 60px */
+  }
+
   .bedding-tech-seasonal__break {
     display: block;
   }

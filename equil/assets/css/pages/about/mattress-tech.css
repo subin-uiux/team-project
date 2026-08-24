@@ -468,7 +468,7 @@
   margin: 0;
   font-family: var(--font-suit);
   font-weight: 400;
-  font-size: var(--fs-subtitle-lg); /* 36px */
+  font-size: 3.125rem; /* 50px */
   line-height: 130%;
   color: var(--color-white);
   text-align: center;
@@ -488,7 +488,7 @@
 
 .mattress-tech-structure-overview__emphasis {
   font-weight: 700;
-  font-size: var(--fs-subtitle-lg); /* 36px */
+  font-size: 3.125rem; /* 50px */
 }
 
 .mattress-tech-structure-overview__break {

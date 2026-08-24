@@ -981,6 +981,7 @@ html {
   margin: 0;
   padding: 0;
   list-style: none;
+  justify-content: center;
 }
 
 .heating-mat-tech-certification__item {

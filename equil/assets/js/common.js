@@ -437,6 +437,51 @@
   const header = document.querySelector('.site-header');
   if (!header) return;
 
+  /* 로고 클릭 시 메인 KV(맨 위)부터 보이도록 */
+  const INDEX_SCROLL_KEY = 'equil:index-scroll-y';
+  const INDEX_FORCE_TOP_KEY = 'equil:index-force-top';
+
+  const isLogoTargetCurrentPage = (logo) => {
+    try {
+      const target = new URL(logo.getAttribute('href') || '', window.location.href);
+      const current = new URL(window.location.href);
+      const normalize = (pathname) =>
+        pathname
+          .replace(/\\/g, '/')
+          .replace(/\/index\.html?$/i, '/')
+          .replace(/\/+$/, '/') || '/';
+      return normalize(target.pathname) === normalize(current.pathname);
+    } catch {
+      return false;
+    }
+  };
+
+  const goToMainKvTop = () => {
+    sessionStorage.setItem(INDEX_FORCE_TOP_KEY, '1');
+    sessionStorage.removeItem(INDEX_SCROLL_KEY);
+    header.classList.remove('is-hidden');
+
+    if (typeof window.resetEquilMainToHero === 'function') {
+      window.resetEquilMainToHero();
+    } else {
+      window.scrollTo(0, 0);
+      window.ScrollTrigger?.refresh();
+    }
+  };
+
+  header.querySelectorAll('.site-header__logo').forEach((logo) => {
+    logo.addEventListener('click', (event) => {
+      sessionStorage.setItem(INDEX_FORCE_TOP_KEY, '1');
+      sessionStorage.removeItem(INDEX_SCROLL_KEY);
+
+      if (!isLogoTargetCurrentPage(logo)) return;
+
+      event.preventDefault();
+      goToMainKvTop();
+      sessionStorage.removeItem(INDEX_FORCE_TOP_KEY);
+    });
+  });
+
   let lastScrollY = window.scrollY;
   const threshold = 6;
 

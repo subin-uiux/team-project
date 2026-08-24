@@ -276,7 +276,8 @@
   overflow: hidden;
 }
 
-.brand-story-origin__image {
+.brand-story-origin__image,
+.brand-story-origin__video {
   display: block;
   width: 100%;
   height: 100%;
@@ -291,6 +292,7 @@
 .brand-story-philosophy {
   padding-top: 7.5rem; /* 120px */
   padding-bottom: 7.5rem; /* 120px */
+  background-color: var(--color-brand-light-2);
 }
 
 .brand-story-philosophy__container {

@@ -1,5 +1,5 @@
 (() => {
-  const IMAGE_BASE = '../../assets/images/community/events/';
+  const IMAGE_BASE = '../assets/images/community/events/';
 
   const EVENT_DATA = {
     '01': {
