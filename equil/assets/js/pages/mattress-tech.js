@@ -1137,7 +1137,9 @@
       invalidateOnRefresh: true,
       onEnter: () => {
         pinSettleUntil = Date.now() + 280;
-        playSequence();
+        if (!mobileQuery.matches) {
+          playSequence();
+        }
       },
       onEnterBack: () => {
         if (hasCompleted) {
@@ -1145,6 +1147,22 @@
         }
       },
     });
+
+    if (mobileQuery.matches) {
+      ScrollTrigger.create({
+        trigger: section,
+        start: 'top 70%',
+        invalidateOnRefresh: true,
+        onEnter: () => playSequence(),
+        onEnterBack: () => {
+          if (hasCompleted) {
+            setFinalVisualState();
+            return;
+          }
+          playSequence();
+        },
+      });
+    }
 
     window.addEventListener('wheel', onWheel, { passive: false });
     window.addEventListener('touchmove', onPinTouchMove, { passive: false });

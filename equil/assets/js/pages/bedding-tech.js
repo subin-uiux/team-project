@@ -162,11 +162,13 @@
     const SPLIT_EASE = 'power2.inOut';
     const COOLDOWN_MS = 1200;
     const ENTRY_LOCK_MS = 800;
+    const MOBILE_AUTO_HOLD_MS = 400;
     const LAST_STEP = 2;
     const charClass = 'bedding-tech-wool__char';
     const titleChars = splitTextChars(title, charClass);
     const charStagger =
       FADE_UP_DURATION / Math.max(titleChars.length * 2.5, 1);
+    const mobileQuery = window.matchMedia('(max-width: 47.9375rem)');
 
     let currentStep = 0;
     let pinTrigger = null;
@@ -174,6 +176,9 @@
     let entryLockUntil = 0;
     let isTransitioning = false;
     let transitionTl = null;
+    let mobileAutoTimer = null;
+    let mobileAutoPlayed = false;
+    let mobileAutoComplete = false;
 
     const isInCooldown = () =>
       lastSwitchTime > 0 && Date.now() - lastSwitchTime < COOLDOWN_MS;
@@ -184,8 +189,11 @@
 
     const getSplitX = () => window.innerWidth * 0.28;
 
-    const setStep = (step, animate = true) => {
-      if (step === currentStep && animate) return;
+    const setStep = (step, animate = true, onDone) => {
+      if (step === currentStep && animate) {
+        onDone?.();
+        return;
+      }
 
       if (transitionTl) {
         transitionTl.kill();
@@ -231,6 +239,7 @@
 
         isTransitioning = false;
         lastSwitchTime = 0;
+        onDone?.();
         return;
       }
 
@@ -241,6 +250,7 @@
           transitionTl = null;
           // 최종 화면은 끝나자마자 스크롤 통과 가능
           lastSwitchTime = currentStep === LAST_STEP ? 0 : Date.now();
+          onDone?.();
         },
       });
 
@@ -331,12 +341,52 @@
 
     setStep(0, false);
 
-    const SWIPE_THRESHOLD = 40;
-    let touchStartY = null;
-    let touchGestureHandled = false;
+    const clearMobileAutoTimer = () => {
+      if (mobileAutoTimer) {
+        window.clearTimeout(mobileAutoTimer);
+        mobileAutoTimer = null;
+      }
+    };
 
-    const handleScrollIntent = (goingDown, event) => {
-      if (!pinTrigger || !pinTrigger.isActive) return false;
+    const playMobileAutoSequence = () => {
+      if (!mobileQuery.matches || mobileAutoPlayed) return;
+
+      clearMobileAutoTimer();
+      mobileAutoPlayed = true;
+      mobileAutoComplete = false;
+      setStep(0, false);
+      startEntryLock();
+
+      mobileAutoTimer = window.setTimeout(() => {
+        mobileAutoTimer = null;
+        if (!pinTrigger?.isActive) return;
+
+        setStep(1, true, () => {
+          if (!pinTrigger?.isActive) return;
+
+          setStep(2, true, () => {
+            mobileAutoComplete = true;
+          });
+        });
+      }, MOBILE_AUTO_HOLD_MS);
+    };
+
+    const shouldBlockMobileScroll = () =>
+      mobileQuery.matches &&
+      pinTrigger?.isActive &&
+      (!mobileAutoComplete || isTransitioning || isEntryLocked());
+
+    const onWheel = (event) => {
+      if (!pinTrigger || !pinTrigger.isActive) return;
+
+      if (mobileQuery.matches) {
+        if (shouldBlockMobileScroll()) {
+          event.preventDefault();
+        }
+        return;
+      }
+
+      const goingDown = event.deltaY > 0;
 
       if (isEntryLocked()) {
         event?.preventDefault?.();
@@ -410,15 +460,37 @@
       end: '+=120%',
       pin: true,
       pinSpacing: true,
-      anticipatePin: 1,
+      anticipatePin: mobileQuery.matches ? 0 : 1,
       invalidateOnRefresh: true,
       onEnter: () => {
+        if (mobileQuery.matches) {
+          mobileAutoPlayed = false;
+          mobileAutoComplete = false;
+          playMobileAutoSequence();
+          return;
+        }
+
         setStep(0, false);
         startEntryLock();
       },
       onEnterBack: () => {
+        clearMobileAutoTimer();
+
+        if (mobileQuery.matches) {
+          setStep(LAST_STEP, false);
+          mobileAutoPlayed = true;
+          mobileAutoComplete = true;
+          startEntryLock();
+          return;
+        }
+
         setStep(LAST_STEP, false);
         startEntryLock();
+      },
+      onLeaveBack: () => {
+        clearMobileAutoTimer();
+        mobileAutoPlayed = false;
+        mobileAutoComplete = false;
       },
     });
 
@@ -427,6 +499,15 @@
     window.addEventListener('touchmove', onPinTouchMove, { passive: false });
     window.addEventListener('touchend', onPinTouchEnd, { passive: true });
     window.addEventListener('touchcancel', onPinTouchEnd, { passive: true });
+    window.addEventListener(
+      'touchmove',
+      (event) => {
+        if (shouldBlockMobileScroll()) {
+          event.preventDefault();
+        }
+      },
+      { passive: false }
+    );
   };
 
   const initBeddingTechSeasonal = () => {

@@ -1195,6 +1195,7 @@
     const FADE_UP_DURATION = 1.2; /* main-sleep-fit__header fadeUp 속도 */
     const FADE_UP_EASE = 'power3.out';
     const ENTRY_LOCK_MS = 900; /* PC — 섹션 pin 직후 풀스크린 유지 */
+    const COMPACT_ENTRY_HOLD_MS = 400; /* 모바일·태블릿 — pin 후 풀스크린 유지 */
     const SECTION_HOLD_MS = 1100; /* PC — shrink + fadeUp 완료 후 pin 유지 */
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const compactMq = window.matchMedia('(max-width: 63.9375rem)');
@@ -1206,6 +1207,7 @@
     let scrollTrigger = null;
     let compactPinTrigger = null;
     let postExpandHoldUntil = 0;
+    let compactAutoTimer = null;
 
     const isCompact = () => compactMq.matches;
 
@@ -1214,6 +1216,11 @@
       compactPinTrigger.kill();
       compactPinTrigger = null;
       ScrollTrigger.refresh();
+    };
+
+    const getHeaderOffset = () => {
+      const headerBar = document.querySelector('.site-header__bar');
+      return headerBar?.offsetHeight ?? 0;
     };
 
     const startCompactPin = () => {
@@ -1228,371 +1235,492 @@
         anticipatePin: 1,
         invalidateOnRefresh: true,
       });
-    };
 
-    const getFullHeight = () => viewport.offsetHeight;
 
-    const getFullProps = () => {
-      const height = getFullHeight();
+      const getFullHeight = () => viewport.offsetHeight;
 
-      return {
-        top: 0,
-        left: 0,
-        width: viewport.offsetWidth,
-        height,
-        borderRadius: '0px',
+      const getFullProps = () => {
+        const height = getFullHeight();
+
+        return {
+          top: 0,
+          left: 0,
+          width: viewport.offsetWidth,
+          height,
+          borderRadius: '0px',
+        };
       };
-    };
 
-    const getShrunkProps = () => {
-      const viewportRect = viewport.getBoundingClientRect();
-      const frameRect = frame.getBoundingClientRect();
+      const getShrunkProps = () => {
+        const viewportRect = viewport.getBoundingClientRect();
+        const frameRect = frame.getBoundingClientRect();
 
-      return {
-        top: frameRect.top - viewportRect.top,
-        left: frameRect.left - viewportRect.left,
-        width: frameRect.width,
-        height: frameRect.height,
-        borderRadius: '30px',
+        return {
+          top: frameRect.top - viewportRect.top,
+          left: frameRect.left - viewportRect.left,
+          width: frameRect.width,
+          height: frameRect.height,
+          borderRadius: '30px',
+        };
       };
-    };
 
-    const applyOverlayState = (expanded) => {
-      if (!overlay || isCompact()) return;
-      gsap.set(overlay, {
-        opacity: 0,
-      });
-    };
+      const clearMediaTransform = () => {
+        gsap.set(media, { clearProps: 'transform,x,y,scaleX,scaleY,willChange' });
+      };
 
-    const applyMediaState = (expanded) => {
-      gsap.set(media, expanded ? getShrunkProps() : getFullProps());
-    };
+      const measureShrunkProps = () => {
+        const wasExpanded = section.classList.contains('is-expanded');
+        section.classList.add('is-expanded', 'is-measuring');
+        void frame.offsetHeight;
+        const props = getShrunkProps();
+        section.classList.remove('is-measuring');
+        if (!wasExpanded) {
+          section.classList.remove('is-expanded');
+        }
+        return props;
+      };
 
-    const applyHeaderState = (expanded, { animate = false } = {}) => {
-      if (!animate || reduceMotion) {
-        gsap.set(header, {
-          opacity: expanded ? 1 : 0,
-          y: expanded ? 0 : 40,
+      const getTransformTweenProps = (targetRect) => {
+        const fullWidth = viewport.offsetWidth;
+        const fullHeight = getFullHeight();
+        const scaleX = targetRect.width / fullWidth;
+        const scaleY = targetRect.height / fullHeight;
+
+        return {
+          x: targetRect.left + targetRect.width / 2 - fullWidth / 2,
+          y: targetRect.top + targetRect.height / 2 - fullHeight / 2,
+          scaleX,
+          scaleY,
+          borderRadius: targetRect.borderRadius,
+          transformOrigin: '50% 50%',
+          force3D: true,
+        };
+      };
+
+      const applyOverlayState = (expanded) => {
+        if (!overlay || isCompact()) return;
+        gsap.set(overlay, {
+          opacity: 0,
         });
-        return;
-      }
+      };
 
-      if (expanded) {
-        gsap.fromTo(
-          header,
-          { opacity: 0, y: 40 },
-          {
+      const applyMediaState = (expanded) => {
+        clearMediaTransform();
+        gsap.set(media, expanded ? getShrunkProps() : getFullProps());
+      };
+
+      const applyHeaderState = (expanded, { animate = false } = {}) => {
+        if (!animate || reduceMotion) {
+          gsap.set(header, {
+            opacity: expanded ? 1 : 0,
+            y: expanded ? 0 : 40,
+          });
+          return;
+        }
+
+        if (expanded) {
+          gsap.fromTo(
+            header,
+            { opacity: 0, y: 40 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: FADE_UP_DURATION,
+              ease: FADE_UP_EASE,
+            },
+          );
+          return;
+        }
+
+        gsap.to(header, {
+          opacity: 0,
+          y: 40,
+          duration: 0.45,
+          ease: 'power2.in',
+        });
+      };
+
+      const applyIndex = (index, { animate = false } = {}) => {
+        const expanded = index >= LAST_INDEX;
+        currentIndex = expanded ? LAST_INDEX : 0;
+        section.classList.toggle('is-expanded', expanded);
+        applyMediaState(expanded);
+        applyOverlayState(expanded);
+        applyHeaderState(expanded, { animate });
+      };
+
+      const getScrollYForIndex = (index) => {
+        if (!scrollTrigger) return window.scrollY;
+        const progress = LAST_INDEX === 0 ? 0 : index / LAST_INDEX;
+        return scrollTrigger.start + (scrollTrigger.end - scrollTrigger.start) * progress;
+      };
+
+      const goTo = (index, { immediate = false } = {}) => {
+        const safeIndex = Math.max(0, Math.min(LAST_INDEX, index));
+        if (!immediate && (isAnimating || safeIndex === currentIndex)) return false;
+
+        if (slideTween) {
+          slideTween.kill();
+          slideTween = null;
+        }
+
+        if (immediate || reduceMotion) {
+          isAnimating = false;
+          applyIndex(safeIndex, { animate: false });
+          if (isCompact()) {
+            releaseCompactPin();
+          }
+          return true;
+        }
+
+        const expanded = safeIndex >= LAST_INDEX;
+        const startY = window.scrollY;
+        const targetY = getScrollYForIndex(safeIndex);
+
+        isAnimating = true;
+        currentIndex = safeIndex;
+        section.classList.add('is-animating');
+        if (isCompact()) {
+          if (!expanded) {
+            section.classList.remove('is-expanded');
+          }
+        } else {
+          section.classList.toggle('is-expanded', expanded);
+        }
+
+        const HEADER_OUT_DURATION = 0.45; /* header 사라지는 속도 (이미지 확대 전) */
+
+        slideTween = gsap.timeline({
+          onComplete: () => {
+            isAnimating = false;
+            slideTween = null;
+            section.classList.remove('is-animating');
+            if (isCompact() && expanded) {
+              section.classList.add('is-expanded');
+            }
+            applyMediaState(expanded);
+            applyOverlayState(expanded);
+            applyHeaderState(expanded, { animate: false });
+            if (isCompact() && expanded) {
+              releaseCompactPin();
+            }
+
+            if (expanded && scrollTrigger) {
+              ScrollTrigger.refresh();
+            }
+
+            if (expanded && !isCompact()) {
+              postExpandHoldUntil = Date.now() + SECTION_HOLD_MS;
+            }
+          },
+        });
+
+        if (expanded) {
+          gsap.set(header, { opacity: 0, y: 40 });
+          if (overlay) gsap.set(overlay, { opacity: 0 });
+
+          if (isCompact()) {
+            const targetRect = measureShrunkProps();
+            applyMediaState(false);
+            gsap.set(media, {
+              ...getFullProps(),
+              x: 0,
+              y: 0,
+              scaleX: 1,
+              scaleY: 1,
+              transformOrigin: '50% 50%',
+              willChange: 'transform',
+            });
+            slideTween.to(
+              media,
+              {
+                ...getTransformTweenProps(targetRect),
+                duration: SLIDE_DURATION,
+                ease: SLIDE_EASE,
+              },
+              0,
+            );
+          } else {
+            slideTween.to(media, {
+              ...getShrunkProps(),
+              duration: SLIDE_DURATION,
+              ease: SLIDE_EASE,
+            }, 0);
+          }
+
+          slideTween.to(header, {
             opacity: 1,
             y: 0,
             duration: FADE_UP_DURATION,
             ease: FADE_UP_EASE,
-          },
-        );
+          }, SLIDE_DURATION);
+        } else {
+          slideTween.to(header, {
+            opacity: 0,
+            y: 40,
+            duration: HEADER_OUT_DURATION,
+            ease: 'power2.in',
+          }, 0);
+
+          if (isCompact()) {
+            gsap.set(media, {
+              ...getFullProps(),
+              x: 0,
+              y: 0,
+              scaleX: 1,
+              scaleY: 1,
+              transformOrigin: '50% 50%',
+              willChange: 'transform',
+            });
+            slideTween.to(media, {
+              x: 0,
+              y: 0,
+              scaleX: 1,
+              scaleY: 1,
+              borderRadius: '0px',
+              duration: SLIDE_DURATION,
+              ease: SLIDE_EASE,
+              force3D: true,
+            }, HEADER_OUT_DURATION);
+          } else {
+            slideTween.to(media, {
+              ...getFullProps(),
+              duration: SLIDE_DURATION,
+              ease: SLIDE_EASE,
+            }, HEADER_OUT_DURATION);
+          }
+        }
+
+        if (scrollTrigger && !isCompact()) {
+          slideTween.to(
+            { progress: 0 },
+            {
+              progress: 1,
+              duration: SLIDE_DURATION,
+              ease: SLIDE_EASE,
+              onUpdate() {
+                const t = this.targets()[0].progress;
+                window.scrollTo(0, startY + (targetY - startY) * t);
+              },
+            },
+            expanded ? 0 : HEADER_OUT_DURATION,
+          );
+        }
+
+        return true;
+      };
+
+      const handleStepInput = (direction) => {
+        if (!scrollTrigger?.isActive || isAnimating) return false;
+        if (Date.now() < entryLockUntil) return true;
+
+        if (direction > 0) {
+          if (currentIndex >= LAST_INDEX) {
+            if (Date.now() < postExpandHoldUntil) return true;
+            return false;
+          }
+          goTo(currentIndex + 1);
+          return true;
+        }
+
+        if (direction < 0) {
+          if (currentIndex <= 0) return false;
+          postExpandHoldUntil = 0;
+          goTo(currentIndex - 1);
+          return true;
+        }
+
+        return false;
+      };
+
+      const bindWheelNavigation = () => {
+        const onWheel = (event) => {
+          if (!scrollTrigger?.isActive) return;
+
+          if (isAnimating || Date.now() < entryLockUntil || Date.now() < postExpandHoldUntil) {
+            event.preventDefault();
+            return;
+          }
+
+          const direction = event.deltaY > 0 ? 1 : event.deltaY < 0 ? -1 : 0;
+          if (!direction) return;
+
+          const handled = handleStepInput(direction);
+          if (handled) {
+            event.preventDefault();
+          }
+        };
+
+        viewport.addEventListener('wheel', onWheel, { passive: false });
+        section.addEventListener('wheel', onWheel, { passive: false });
+      };
+
+      applyIndex(0, { animate: false });
+
+      if (reduceMotion) {
+        applyIndex(LAST_INDEX, { animate: false });
         return;
       }
 
-      gsap.to(header, {
-        opacity: 0,
-        y: 40,
-        duration: 0.45,
-        ease: 'power2.in',
-      });
-    };
-
-    const applyIndex = (index, { animate = false } = {}) => {
-      const expanded = index >= LAST_INDEX;
-      currentIndex = expanded ? LAST_INDEX : 0;
-      section.classList.toggle('is-expanded', expanded);
-      applyMediaState(expanded);
-      applyOverlayState(expanded);
-      applyHeaderState(expanded, { animate });
-    };
-
-    const getScrollYForIndex = (index) => {
-      if (!scrollTrigger) return window.scrollY;
-      const progress = LAST_INDEX === 0 ? 0 : index / LAST_INDEX;
-      return scrollTrigger.start + (scrollTrigger.end - scrollTrigger.start) * progress;
-    };
-
-    const goTo = (index, { immediate = false } = {}) => {
-      const safeIndex = Math.max(0, Math.min(LAST_INDEX, index));
-      if (!immediate && (isAnimating || safeIndex === currentIndex)) return false;
-
-      if (slideTween) {
-        slideTween.kill();
-        slideTween = null;
-      }
-
-      if (immediate || reduceMotion) {
-        isAnimating = false;
-        applyIndex(safeIndex, { animate: false });
-        if (isCompact()) {
-          releaseCompactPin();
-        }
-        return true;
-      }
-
-      const expanded = safeIndex >= LAST_INDEX;
-      const startY = window.scrollY;
-      const targetY = getScrollYForIndex(safeIndex);
-
-      isAnimating = true;
-      currentIndex = safeIndex;
-      section.classList.add('is-animating');
-      section.classList.toggle('is-expanded', expanded);
-
-      const HEADER_OUT_DURATION = 0.45; /* header 사라지는 속도 (이미지 확대 전) */
-
-      slideTween = gsap.timeline({
-        onComplete: () => {
-          isAnimating = false;
-          slideTween = null;
-          section.classList.remove('is-animating');
-          applyMediaState(expanded);
-          applyOverlayState(expanded);
-          applyHeaderState(expanded, { animate: false });
-          if (isCompact() && expanded) {
-            releaseCompactPin();
+      if (isCompact()) {
+        const clearCompactAutoTimer = () => {
+          if (compactAutoTimer) {
+            window.clearTimeout(compactAutoTimer);
+            compactAutoTimer = null;
           }
-          if (expanded && !isCompact()) {
-            postExpandHoldUntil = Date.now() + SECTION_HOLD_MS;
+        };
+
+        const startCompactExpand = () => {
+          if (isAnimating) return;
+
+          clearCompactAutoTimer();
+          postExpandHoldUntil = 0;
+
+          if (currentIndex >= LAST_INDEX) {
+            applyIndex(LAST_INDEX, { animate: false });
+            return;
           }
-        },
-      });
 
-      if (expanded) {
-        gsap.set(header, { opacity: 0, y: 40 });
-        if (overlay) gsap.set(overlay, { opacity: 0 });
-        slideTween.to(media, {
-          ...getShrunkProps(),
-          duration: SLIDE_DURATION,
-          ease: SLIDE_EASE,
-        }, 0);
-        slideTween.to(header, {
-          opacity: 1,
-          y: 0,
-          duration: FADE_UP_DURATION,
-          ease: FADE_UP_EASE,
-        }, SLIDE_DURATION);
-      } else {
-        slideTween.to(header, {
-          opacity: 0,
-          y: 40,
-          duration: HEADER_OUT_DURATION,
-          ease: 'power2.in',
-        }, 0);
-        slideTween.to(media, {
-          ...getFullProps(),
-          duration: SLIDE_DURATION,
-          ease: SLIDE_EASE,
-        }, HEADER_OUT_DURATION);
-      }
+          applyIndex(0, { animate: false });
+          entryLockUntil = Date.now() + COMPACT_ENTRY_HOLD_MS;
 
-      if (scrollTrigger && !isCompact()) {
-        slideTween.to(
-          { progress: 0 },
-          {
-            progress: 1,
-            duration: SLIDE_DURATION,
-            ease: SLIDE_EASE,
-            onUpdate() {
-              const t = this.targets()[0].progress;
-              window.scrollTo(0, startY + (targetY - startY) * t);
-            },
+          compactAutoTimer = window.setTimeout(() => {
+            compactAutoTimer = null;
+
+            if (!scrollTrigger?.isActive || currentIndex >= LAST_INDEX || isAnimating) return;
+
+            goTo(LAST_INDEX);
+          }, COMPACT_ENTRY_HOLD_MS);
+        };
+
+        scrollTrigger = ScrollTrigger.create({
+          trigger: section,
+          start: () => `top top+=${getHeaderOffset()}`,
+          end: () => `+=${Math.max(viewport.offsetHeight, window.innerHeight)}`,
+          pin: true,
+          pinSpacing: true,
+          anticipatePin: 0,
+
+          invalidateOnRefresh: true,
+          onRefresh: () => {
+            if (isAnimating) return;
+
+            applyMediaState(currentIndex >= LAST_INDEX);
+            applyOverlayState(currentIndex >= LAST_INDEX);
           },
-          expanded ? 0 : HEADER_OUT_DURATION,
-        );
+
+          onEnter: startCompactExpand,
+          onEnterBack: startCompactExpand,
+          onLeaveBack: () => {
+            clearCompactAutoTimer();
+            goTo(0, { immediate: true });
+          },
+
+        });
+
+        return;
       }
-
-      return true;
-    };
-
-    const handleStepInput = (direction) => {
-      if (!scrollTrigger?.isActive || isAnimating) return false;
-      if (Date.now() < entryLockUntil) return true;
-
-      if (direction > 0) {
-        if (currentIndex >= LAST_INDEX) {
-          if (Date.now() < postExpandHoldUntil) return true;
-          return false;
-        }
-        goTo(currentIndex + 1);
-        return true;
-      }
-
-      if (direction < 0) {
-        if (currentIndex <= 0) return false;
-        postExpandHoldUntil = 0;
-        goTo(currentIndex - 1);
-        return true;
-      }
-
-      return false;
-    };
-
-    const bindWheelNavigation = () => {
-      const onWheel = (event) => {
-        if (!scrollTrigger?.isActive) return;
-
-        if (isAnimating || Date.now() < entryLockUntil || Date.now() < postExpandHoldUntil) {
-          event.preventDefault();
-          return;
-        }
-
-        const direction = event.deltaY > 0 ? 1 : event.deltaY < 0 ? -1 : 0;
-        if (!direction) return;
-
-        const handled = handleStepInput(direction);
-        if (handled) {
-          event.preventDefault();
-        }
-      };
-
-      viewport.addEventListener('wheel', onWheel, { passive: false });
-      section.addEventListener('wheel', onWheel, { passive: false });
-    };
-
-    applyIndex(0, { animate: false });
-
-    if (reduceMotion) {
-      applyIndex(LAST_INDEX, { animate: false });
-      return;
-    }
-
-    if (isCompact()) {
-      ScrollTrigger.create({
-        trigger: section,
-        start: 'top bottom',
-        onLeaveBack: () => {
-          releaseCompactPin();
-          goTo(0, { immediate: true });
-        },
-      });
 
       scrollTrigger = ScrollTrigger.create({
         trigger: section,
         start: 'top top',
+        end: () => `+=${viewport.offsetHeight}`,
+        pin: viewport,
+        pinSpacing: true,
+        scrub: false,
+        anticipatePin: 1,
         invalidateOnRefresh: true,
         onRefresh: () => {
           applyMediaState(currentIndex >= LAST_INDEX);
           applyOverlayState(currentIndex >= LAST_INDEX);
         },
         onEnter: () => {
-          if (currentIndex >= LAST_INDEX) return;
-          startCompactPin();
-          goTo(LAST_INDEX);
+          entryLockUntil = Date.now() + ENTRY_LOCK_MS;
+          postExpandHoldUntil = 0;
+          applyIndex(0, { animate: false });
         },
         onEnterBack: () => {
-          if (currentIndex >= LAST_INDEX) {
-            applyIndex(LAST_INDEX, { animate: false });
-            return;
-          }
-          startCompactPin();
-          goTo(LAST_INDEX);
+          entryLockUntil = Date.now() + ENTRY_LOCK_MS;
+          postExpandHoldUntil = 0;
+          applyIndex(LAST_INDEX, { animate: false });
+        },
+        onLeaveBack: () => {
+          postExpandHoldUntil = 0;
+          applyIndex(0, { animate: false });
         },
       });
 
-      return;
-    }
-
-    scrollTrigger = ScrollTrigger.create({
-      trigger: section,
-      start: 'top top',
-      end: () => `+=${viewport.offsetHeight}`,
-      pin: viewport,
-      pinSpacing: true,
-      scrub: false,
-      anticipatePin: 1,
-      invalidateOnRefresh: true,
-      onRefresh: () => {
-        applyMediaState(currentIndex >= LAST_INDEX);
-        applyOverlayState(currentIndex >= LAST_INDEX);
-      },
-      onEnter: () => {
-        entryLockUntil = Date.now() + ENTRY_LOCK_MS;
-        postExpandHoldUntil = 0;
-        applyIndex(0, { animate: false });
-      },
-      onEnterBack: () => {
-        entryLockUntil = Date.now() + ENTRY_LOCK_MS;
-        postExpandHoldUntil = 0;
-        applyIndex(LAST_INDEX, { animate: false });
-      },
-      onLeaveBack: () => {
-        postExpandHoldUntil = 0;
-        applyIndex(0, { animate: false });
-      },
-    });
-
-    bindWheelNavigation();
-  };
-
-  const SCROLL_POSITION_KEY = 'equil:index-scroll-y';
-  const FORCE_TOP_KEY = 'equil:index-force-top';
-
-  const start = () => {
-    if ('scrollRestoration' in history) {
-      history.scrollRestoration = 'manual';
-    }
-
-    window.addEventListener('pagehide', () => {
-      /* 로고로 메인 KV 이동 시에는 이전 스크롤 위치를 저장하지 않음 */
-      if (sessionStorage.getItem(FORCE_TOP_KEY) === '1') return;
-      sessionStorage.setItem(SCROLL_POSITION_KEY, String(window.scrollY));
-    });
-
-    const init = () => {
-      initMainScroll();
-      initMainMattressSolution();
-      initMainPillowSolution();
-      initMainSleepFit();
-      initMainSleepBalanceFadeDown();
-      ScrollTrigger.refresh();
-
-      const forceTop = sessionStorage.getItem(FORCE_TOP_KEY) === '1';
-      if (forceTop) {
-        sessionStorage.removeItem(FORCE_TOP_KEY);
-        sessionStorage.removeItem(SCROLL_POSITION_KEY);
-        if (typeof window.resetEquilMainToHero === 'function') {
-          window.resetEquilMainToHero();
-        } else {
-          window.scrollTo(0, 0);
-        }
-      } else {
-        const savedY = Number(sessionStorage.getItem(SCROLL_POSITION_KEY));
-        if (Number.isFinite(savedY) && savedY > 0) {
-          window.scrollTo(0, savedY);
-        }
-      }
-
-      window.initEquilHeading3tierFadeUp?.();
-      ScrollTrigger.refresh();
-
-      if (typeof window.AOS !== 'undefined') {
-        window.AOS.init({
-          once: false,
-          mirror: true,
-          offset: 80,
-          duration: 1000,
-          easing: 'ease-out-cubic',
-        });
-        window.AOS.refreshHard();
-      }
+      bindWheelNavigation();
     };
 
-    if (!window.equilLibsReady) {
-      init();
-      return;
+    const SCROLL_POSITION_KEY = 'equil:index-scroll-y';
+    const FORCE_TOP_KEY = 'equil:index-force-top';
+
+    const start = () => {
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
+
+      window.addEventListener('pagehide', () => {
+        /* 로고로 메인 KV 이동 시에는 이전 스크롤 위치를 저장하지 않음 */
+        if (sessionStorage.getItem(FORCE_TOP_KEY) === '1') return;
+        sessionStorage.setItem(SCROLL_POSITION_KEY, String(window.scrollY));
+      });
+
+      const init = () => {
+        initMainScroll();
+        initMainMattressSolution();
+        initMainPillowSolution();
+        initMainSleepFit();
+        initMainSleepBalanceFadeDown();
+        ScrollTrigger.refresh();
+
+        const forceTop = sessionStorage.getItem(FORCE_TOP_KEY) === '1';
+        if (forceTop) {
+          sessionStorage.removeItem(FORCE_TOP_KEY);
+          sessionStorage.removeItem(SCROLL_POSITION_KEY);
+          if (typeof window.resetEquilMainToHero === 'function') {
+            window.resetEquilMainToHero();
+          } else {
+            window.scrollTo(0, 0);
+          }
+        } else {
+          const savedY = Number(sessionStorage.getItem(SCROLL_POSITION_KEY));
+          if (Number.isFinite(savedY) && savedY > 0) {
+            window.scrollTo(0, savedY);
+          }
+        }
+
+        window.initEquilHeading3tierFadeUp?.();
+        ScrollTrigger.refresh();
+
+        if (typeof window.AOS !== 'undefined') {
+          window.AOS.init({
+            once: false,
+            mirror: true,
+            offset: 80,
+            duration: 1000,
+            easing: 'ease-out-cubic',
+          });
+          window.AOS.refreshHard();
+        }
+      };
+
+      if (!window.equilLibsReady) {
+        init();
+        return;
+      }
+
+      window.equilLibsReady.then(init).catch((error) => {
+        console.error('[main] GSAP init failed:', error);
+      });
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', start, { once: true });
+    } else {
+      start();
     }
 
-    window.equilLibsReady.then(init).catch((error) => {
-      console.error('[main] GSAP init failed:', error);
-    });
   };
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', start, { once: true });
-  } else {
-    start();
-  }
 })();
