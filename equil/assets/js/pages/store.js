@@ -11,14 +11,6 @@
       watchSlidesProgress: true,
       loop: true,
       loopedSlides: 4,
-      breakpoints: {
-        0: {
-          slidesPerView: 3,
-        },
-        768: {
-          slidesPerView: 'auto',
-        },
-      },
     });
 
     new Swiper(mainEl, {
@@ -54,18 +46,17 @@
     });
   }
 
-  /* ---------- Kakao Map (placeholder — 추후 APP KEY 교체) ---------- */
+  /* ---------- Kakao Map ---------- */
   const STORE_MAP = {
-    appKey: 'EQUIL_KAKAO_APP_KEY',
-    lat: 37.5446,
-    lng: 127.0559,
+    lat: 37.5432858,
+    lng: 127.0537459,
     level: 3,
     title: 'EQUIL POP-UP STORE 성수',
   };
 
   const initKakaoMap = () => {
     const container = document.getElementById('store-kakao-map');
-    if (!container || typeof kakao === 'undefined' || !kakao.maps) return;
+    if (!container || typeof kakao === 'undefined' || !kakao.maps) return null;
 
     const center = new kakao.maps.LatLng(STORE_MAP.lat, STORE_MAP.lng);
     const map = new kakao.maps.Map(container, {
@@ -73,19 +64,52 @@
       level: STORE_MAP.level,
     });
 
-    const marker = new kakao.maps.Marker({
+    new kakao.maps.Marker({
       position: center,
       map,
       title: STORE_MAP.title,
     });
 
-    return { map, marker };
+    map.relayout();
+    window.storeKakaoMap = map;
+    return map;
+  };
+
+  const bootKakaoMap = () => {
+    if (typeof kakao === 'undefined' || !kakao.maps) return false;
+    kakao.maps.load(initKakaoMap);
+    return true;
+  };
+
+  const warnKakaoMapSetup = () => {
+    console.error(
+      '[EQUIL Store] 카카오맵을 불러오지 못했습니다.\n' +
+        '1) 카카오 디벨로퍼스 → 제품 설정 → 카카오맵 → 활성화 ON\n' +
+        '2) 플랫폼 키 → JavaScript 키 → JavaScript SDK 도메인 (접속 URL과 동일한 포트)\n' +
+        '3) 저장 후 새로고침'
+    );
   };
 
   window.STORE_MAP_CONFIG = STORE_MAP;
   window.initStoreKakaoMap = initKakaoMap;
 
-  if (typeof kakao !== 'undefined' && kakao.maps) {
-    kakao.maps.load(initKakaoMap);
+  if (!bootKakaoMap()) {
+    const sdkScript = document.querySelector('script[src*="dapi.kakao.com"]');
+    if (sdkScript) {
+      sdkScript.addEventListener(
+        'load',
+        () => {
+          if (!bootKakaoMap()) warnKakaoMapSetup();
+        },
+        { once: true }
+      );
+      sdkScript.addEventListener('error', warnKakaoMapSetup, { once: true });
+    } else {
+      warnKakaoMapSetup();
+    }
   }
+
+  window.addEventListener('resize', () => {
+    window.storeKakaoMap?.relayout();
+  });
 })();

@@ -244,6 +244,7 @@ body.is-popup-open {
     width: min(100%, 45.5625rem); /* 729px */
     height: auto;
 
+
     max-width: 100%;
   }
 
@@ -324,11 +325,11 @@ body.is-popup-open {
   }
 
   .popup-news__title {
-    font-size: clamp(0.75rem, 2.608vw, 1.25rem); /* 20px, mo/subtitle03 */
+    font-size: clamp(0.909rem, 4.545vw, 1.25rem); /* 20px, mo/subtitle03 */
   }
 
   .popup-news__date {
-    font-size: clamp(0.75rem, 2.086vw, 1rem); /* 16px, mo/body03 */
+    font-size: clamp(0.75rem, 3.636vw, 1rem); /* 16px, mo/body03 */
   }
 
   .popup-news__media {
@@ -337,7 +338,6 @@ body.is-popup-open {
     height: auto;
     aspect-ratio: 780 / 271;
     margin-block: 0.875rem; /* 14px */
- }
 
   .popup-news__body {
     width: 100%;
@@ -346,7 +346,7 @@ body.is-popup-open {
 
   .popup-news__text {
     width: 100%;
-    font-size: clamp(0.75rem, 2.086vw, 1rem); /* 16px, mo/body03 */
+    font-size: clamp(0.75rem, 3.636vw, 1rem); /* 16px, mo/body03 */
   }
 
   .popup-event {
@@ -367,11 +367,11 @@ body.is-popup-open {
   }
 
   .popup-event__title {
-    font-size: clamp(0.75rem, 2.608vw, 1.25rem); /* 20px, mo/subtitle03 */
+    font-size: clamp(0.909rem, 4.545vw, 1.25rem); /* 20px, mo/subtitle03 */
   }
 
   .popup-event__date {
-    font-size: clamp(0.75rem, 2.086vw, 1rem); /* 16px, mo/body03 */
+    font-size: clamp(0.75rem, 3.636vw, 1rem); /* 16px, mo/body03 */
   }
 
   .popup-event__content {
@@ -383,7 +383,7 @@ body.is-popup-open {
   .popup-event__media {
     width: 100%;
     max-width: none;
-    height: clamp(5.189rem, 25.945vw, 12.4375rem); /* 199px */
+    height: clamp(9.045rem, 45.227vw, 12.4375rem); /* 199px */
   }
 
   .popup-event__body {
@@ -392,11 +392,11 @@ body.is-popup-open {
   }
 
   .popup-event__body-title {
-    font-size: clamp(0.75rem, 2.086vw, 1rem); /* 16px */
+    font-size: clamp(0.75rem, 3.636vw, 1rem); /* 16px */
   }
 
   .popup-event__body-text {
-    font-size: clamp(0.75rem, 1.825vw, 0.875rem); /* 14px */
+    font-size: clamp(0.75rem, 3.182vw, 0.875rem); /* 14px */
   }
 }
 
@@ -416,7 +416,7 @@ body.is-popup-open {
 
   .popup-news__close {
     top: 0.5rem;
-    right: 1.875rem; /* 30px */
+    right: 0.5rem; /* 8px */
   }
 
   .popup-news__header {
@@ -438,7 +438,7 @@ body.is-popup-open {
   .popup-news__media {
     width: min(100%, 21.25rem); /* 340px */
     height: auto;
-    aspect-ratio: 340 / 280;
+    aspect-ratio: 340 / 214;
     margin-inline: auto;
     margin-top: 0.9375rem; /* 15px — line ↔ image */
     margin-bottom: 1.5625rem; /* 25px — image ↔ body */
@@ -450,3 +450,4 @@ body.is-popup-open {
   }
 }
 
+}

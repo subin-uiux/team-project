@@ -57,6 +57,6 @@
 
 @media (max-width: 47.9375rem) {
   .section-cta__title {
-    font-size: clamp(0.875rem, 3.129vw, 1.5rem); /* 24px */
+    font-size: clamp(1.091rem, 5.455vw, 1.5rem); /* 24px */
   }
 }

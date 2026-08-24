@@ -87,7 +87,11 @@
   :root {
     --grid-columns: 12;
     --grid-gutter: 1.25rem;
-    --grid-margin: 7.5rem; /* 120px */
+    --grid-margin: clamp(
+      3.75rem,
+      calc(3.75rem + (100vw - 64.0625rem) * 3.75 / 55.9375),
+      7.5rem
+    ); /* 60px @1025, 120px @1920 */
 
     /* Typography — PC (1024+) */
     --fs-extra-large: 4rem; /* 64px */
@@ -311,26 +315,26 @@ a {
   margin: 0;
   font-family: var(--font-paperlogy);
   font-weight: 400;
-  font-size: var(--fs-body-02); /* 22px */
+  font-size: 1rem; /* 16px — mobile */
   line-height: 130%;
   color: var(--color-brand-point);
 }
 
 .heading-3tier__title {
-  margin: 0.875rem 0 0; /* 14px */
+  margin: 0.5rem 0 0; /* 8px — mobile */
   font-family: var(--font-suit);
   font-weight: 600;
-  font-size: var(--fs-title); /* 40px */
+  font-size: 1.75rem; /* 28px — mobile */
   line-height: 130%;
   color: var(--color-brand-dark);
 }
 
 .heading-3tier__desc {
-  margin: 0.75rem 0 0; /* 12px */
+  margin: 1.25rem 0 0; /* 20px — mobile */
   font-family: var(--font-suit);
   font-weight: 300;
-  font-size: var(--fs-body-03); /* 20px */
-  line-height: 130%;
+  font-size: 1rem; /* 16px — mobile */
+  line-height: 160%;
   color: var(--color-brand-dark);
 }
 
@@ -339,31 +343,66 @@ a {
   will-change: transform, opacity;
 }
 
+.heading-3tier__desc-keep {
+  white-space: nowrap;
+}
+
 @media (min-width: 48rem) and (max-width: 63.9375rem) {
   .heading-3tier__sub-title {
-    font-size: clamp(0.844rem, 1.76vw, 1.125rem); /* 18px */
+    font-size: 1.125rem; /* 18px */
   }
 
   .heading-3tier__title {
-    font-size: clamp(1.5rem, 3.128vw, 2rem); /* 32px */
+    margin-top: 0.875rem; /* 14px */
+    font-size: 2rem; /* 32px */
   }
 
   .heading-3tier__desc {
-    font-size: clamp(0.938rem, 1.955vw, 1.25rem); /* 20px */
+    font-size: 1.25rem; /* 20px */
+    line-height: 130%;
+    margin-top: 0.75rem; /* 12px */
+  }
+}
+
+@media (min-width: 64rem) {
+  .heading-3tier__sub-title {
+    font-size: 1.375rem; /* 22px */
+  }
+
+  .heading-3tier__title {
+    margin-top: 0.875rem; /* 14px */
+    font-size: 2.5rem; /* 40px */
+  }
+
+  .heading-3tier__desc {
+    font-size: 1.375rem; /* 22px */
+    line-height: 130%;
+    margin-top: 0.75rem; /* 12px */
   }
 }
 
 @media (max-width: 47.9375rem) {
-  .heading-3tier__sub-title {
-    font-size: clamp(0.75rem, 2.086vw, 1rem); /* 16px */
-  }
-
-  .heading-3tier__title {
-    font-size: clamp(0.875rem, 3.651vw, 1.75rem); /* 28px */
-  }
-
   .heading-3tier__desc {
-    font-size: clamp(0.75rem, 2.086vw, 1rem); /* 16px */
+    max-width: 21.25rem; /* 340px */
+    word-break: keep-all;
+    text-wrap: pretty;
+  }
+}
+
+/* ========================================
+   Mobile — 한글 줄바꿈 (띄어쓰기 단위)
+   ======================================== */
+
+@media (max-width: 47.9375rem) {
+  body {
+    padding-top: 3.75rem; /* fixed header bar 60px */
+    word-break: keep-all;
+  }
+
+  /* 긴 URL·연속 영문 등 overflow 방지 */
+  .site-footer__meta,
+  .site-footer__link {
+    overflow-wrap: anywhere;
   }
 }
 

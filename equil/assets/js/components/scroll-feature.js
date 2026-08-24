@@ -19,12 +19,16 @@
    * @param {string[]|null} [options.images]
    * @param {Array<{ left: string, top: string }>|null} [options.hotspotPositions]
    * @param {'fade'|'crossfade'|'none'} [options.imageTransition]
+   * @param {boolean} [options.pinOnCompact] 모바일·태블릿에서도 pin + 세로 슬라이드 전환
+   * @param {boolean} [options.pinOnMobile] 모바일(767px 이하)에서 pin 사용 여부
    */
   const initScrollFeature = ({
     sectionSelector,
     images = null,
     hotspotPositions = null,
     imageTransition = 'crossfade',
+    pinOnCompact = false,
+    pinOnMobile = true,
   }) => {
     const section = document.querySelector(sectionSelector);
     if (!section) return;
@@ -51,14 +55,6 @@
     let transitionTl = null;
     let imageTween = null;
     let revealImage = null;
-    let compactPrevButton = null;
-    let compactNextButton = null;
-
-    const updateCompactArrows = () => {
-      if (!compactPrevButton || !compactNextButton) return;
-      compactPrevButton.classList.toggle('is-hidden', currentIndex <= 0);
-      compactNextButton.classList.toggle('is-hidden', currentIndex >= LAST_INDEX);
-    };
 
     const isInCooldown = () =>
       SCROLL_FEATURE.COOLDOWN_MS > 0 &&
@@ -156,30 +152,8 @@
       });
     };
 
-    const ARROW_LEFT_SRC =
-      '../../assets/images/about/mattress-tech/mobile/mattress-tech-research_icon_arrow_left.svg';
-    const ARROW_RIGHT_SRC =
-      '../../assets/images/about/mattress-tech/mobile/mattress-tech-research_icon_arrow_right.svg';
-
     const setupCompactNav = () => {
-      if (!media || media.querySelector('.scroll-feature__media-nav')) return;
-
-      const nav = document.createElement('div');
-      nav.className = 'scroll-feature__media-nav';
-
-      const prevButton = document.createElement('button');
-      prevButton.type = 'button';
-      prevButton.className = 'scroll-feature__arrow scroll-feature__arrow--prev';
-      prevButton.setAttribute('aria-label', '이전 특징');
-      prevButton.innerHTML = `<img src="${ARROW_LEFT_SRC}" alt="">`;
-
-      const nextButton = document.createElement('button');
-      nextButton.type = 'button';
-      nextButton.className = 'scroll-feature__arrow scroll-feature__arrow--next';
-      nextButton.setAttribute('aria-label', '다음 특징');
-      nextButton.innerHTML = `<img src="${ARROW_RIGHT_SRC}" alt="">`;
-      compactPrevButton = prevButton;
-      compactNextButton = nextButton;
+      if (!media || media.querySelector('.scroll-feature__dots')) return;
 
       const dots = document.createElement('div');
       dots.className = 'scroll-feature__dots';
@@ -199,26 +173,22 @@
         dots.appendChild(dot);
       });
 
-      prevButton.addEventListener('click', () => {
-        if (isEntryLocked() || isTransitioning) return;
-        if (currentIndex > 0) activateFeature(currentIndex - 1, true);
-      });
-
-      nextButton.addEventListener('click', () => {
-        if (isEntryLocked() || isTransitioning) return;
-        if (currentIndex < LAST_INDEX) activateFeature(currentIndex + 1, true);
-      });
-
-      nav.append(prevButton, nextButton);
-      media.appendChild(nav);
       media.closest('.scroll-feature').appendChild(dots);
     };
 
     const compactMq = window.matchMedia('(max-width: 63.9375rem)');
+    const mobileMq = window.matchMedia('(max-width: 47.9375rem)');
     const isCompactView = () => compactMq.matches;
+    const isMobileView = () => mobileMq.matches;
+    const shouldPin = () => {
+      if (isMobileView() && !pinOnMobile) return false;
+      return !isCompactView() || pinOnCompact;
+    };
     const SWIPE_THRESHOLD = 40;
     let pointerStartX = null;
     let pointerStartY = null;
+    let touchStartY = null;
+    let touchGestureHandled = false;
 
     const setupCompactSwipe = () => {
       const root = section.querySelector('.scroll-feature');
@@ -262,11 +232,13 @@
 
     const activateFeature = (index, animate = true) => {
       if (index === currentIndex && animate) return;
+      if (animate && isTransitioning) return;
 
       const prevIndex = currentIndex;
       currentIndex = index;
 
-      if (isCompactView()) {
+      /* 스와이프 전용 컴팩트(비-pin): 즉시 전환 */
+      if (isCompactView() && !shouldPin()) {
         features.forEach((feature, i) => {
           const isActive = i === index;
           feature.classList.toggle('is-active', isActive);
@@ -279,7 +251,6 @@
         });
         setImage(index, animate);
         updateDots(index);
-        updateCompactArrows();
 
         const hotspotPos = hotspotPositions?.[index];
         if (hotspotPos && hotspot) {
@@ -452,17 +423,54 @@
     setupCompactSwipe();
     activateFeature(0, false);
 
+    const splitTitleChars = (title) => {
+      const existing = title.querySelectorAll('.scroll-feature__char');
+      if (existing.length) return Array.from(existing);
+
+      const walk = (node) => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const chars = Array.from(node.textContent);
+          const fragment = document.createDocumentFragment();
+
+          chars.forEach((char) => {
+            if (/^\s$/.test(char)) {
+              fragment.appendChild(document.createTextNode(char));
+              return;
+            }
+
+            const span = document.createElement('span');
+            span.className = 'scroll-feature__char';
+            span.textContent = char;
+            fragment.appendChild(span);
+          });
+
+          node.parentNode.replaceChild(fragment, node);
+          return;
+        }
+
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          if (node.tagName === 'BR') return;
+          Array.from(node.childNodes).forEach(walk);
+        }
+      };
+
+      Array.from(title.childNodes).forEach(walk);
+      return Array.from(title.querySelectorAll('.scroll-feature__char'));
+    };
+
     const revealTitle = () => {
       const title = section.querySelector('.scroll-feature__title--ko');
       if (!title || title.dataset.revealed === 'true') return;
 
-      const chars = title.querySelectorAll('.scroll-feature__char');
+      const chars = splitTitleChars(title);
       if (!chars.length) return;
 
       title.dataset.revealed = 'true';
       const charStagger =
         1.26 / Math.max(chars.length * 2.5, 1);
 
+      gsap.killTweensOf(chars);
+      gsap.set(chars, { opacity: 0, y: 40 });
       gsap.to(chars, {
         opacity: 1,
         y: 0,
@@ -473,6 +481,25 @@
           gsap.set(chars, { clearProps: 'will-change' });
         },
       });
+    };
+
+    let titleRevealTrigger = null;
+
+    const enableCompactTitleReveal = () => {
+      if (titleRevealTrigger) return;
+
+      titleRevealTrigger = ScrollTrigger.create({
+        trigger: section,
+        start: 'top 90%',
+        once: true,
+        onEnter: revealTitle,
+      });
+    };
+
+    const disableCompactTitleReveal = () => {
+      if (!titleRevealTrigger) return;
+      titleRevealTrigger.kill();
+      titleRevealTrigger = null;
     };
 
     const isSectionPinnedInView = () => {
@@ -491,7 +518,10 @@
       const goingDown = event.deltaY > 0;
       const pinActive = isSectionPinnedInView();
 
-      if (!pinActive && !(currentIndex < LAST_INDEX && isSectionStuckInViewport())) {
+      if (
+        !pinActive &&
+        !(currentIndex < LAST_INDEX && isSectionStuckInViewport())
+      ) {
         return;
       }
 
@@ -507,6 +537,9 @@
 
       if (goingDown && currentIndex < LAST_INDEX) {
         event.preventDefault();
+        if (!pinActive) {
+          window.scrollTo(0, pinTrigger.start);
+        }
         if (isInCooldown()) return;
         activateFeature(currentIndex + 1, true);
         return;
@@ -520,10 +553,58 @@
         event.preventDefault();
         if (isInCooldown()) return;
         activateFeature(currentIndex - 1, true);
+        return;
+      }
+
+      if (goingDown && currentIndex === LAST_INDEX) {
+        if (isInCooldown()) {
+          event.preventDefault();
+        }
       }
     };
 
-    const enableDesktopPin = () => {
+    const onTouchStart = (event) => {
+      if (!pinTrigger?.isActive || !event.touches?.length) return;
+      touchStartY = event.touches[0].clientY;
+      touchGestureHandled = false;
+    };
+
+    const onTouchMove = (event) => {
+      if (
+        touchStartY === null ||
+        !pinTrigger?.isActive ||
+        !event.touches?.length
+      ) {
+        return;
+      }
+
+      const deltaY = event.touches[0].clientY - touchStartY;
+      const goingDown = deltaY < 0;
+
+      if (isEntryLocked() || isTransitioning) {
+        event.preventDefault();
+        return;
+      }
+
+      if (goingDown && currentIndex >= LAST_INDEX) return;
+      if (!goingDown && currentIndex <= 0) return;
+
+      event.preventDefault();
+
+      if (touchGestureHandled) return;
+      if (Math.abs(deltaY) < SWIPE_THRESHOLD) return;
+
+      touchGestureHandled = true;
+      if (goingDown) activateFeature(currentIndex + 1, true);
+      else activateFeature(currentIndex - 1, true);
+    };
+
+    const onTouchEnd = () => {
+      touchStartY = null;
+      touchGestureHandled = false;
+    };
+
+    const enablePin = () => {
       if (pinTrigger) return;
 
       pinTrigger = ScrollTrigger.create({
@@ -537,42 +618,54 @@
         onEnter: () => {
           activateFeature(0, false);
           startEntryLock();
-          revealTitle();
         },
         onEnterBack: () => {
           activateFeature(LAST_INDEX, false);
           startEntryLock();
-          revealTitle();
         },
       });
 
       window.addEventListener('wheel', onWheel, { passive: false });
+      section.addEventListener('touchstart', onTouchStart, { passive: true });
+      section.addEventListener('touchmove', onTouchMove, { passive: false });
+      section.addEventListener('touchend', onTouchEnd, { passive: true });
+      section.addEventListener('touchcancel', onTouchEnd, { passive: true });
     };
 
-    const disableDesktopPin = () => {
+    const disablePin = () => {
       if (pinTrigger) {
         pinTrigger.kill();
         pinTrigger = null;
         ScrollTrigger.refresh();
       }
       window.removeEventListener('wheel', onWheel);
+      section.removeEventListener('touchstart', onTouchStart);
+      section.removeEventListener('touchmove', onTouchMove);
+      section.removeEventListener('touchend', onTouchEnd);
+      section.removeEventListener('touchcancel', onTouchEnd);
+      touchStartY = null;
+      touchGestureHandled = false;
     };
 
     const syncPinToViewport = () => {
-      if (isCompactView()) {
-        disableDesktopPin();
-        revealTitle();
+      if (shouldPin()) {
+        disableCompactTitleReveal();
+        enablePin();
         return;
       }
 
-      enableDesktopPin();
+      disablePin();
+      enableCompactTitleReveal();
     };
 
     syncPinToViewport();
+    const onViewportChange = () => syncPinToViewport();
     if (compactMq.addEventListener) {
-      compactMq.addEventListener('change', syncPinToViewport);
+      compactMq.addEventListener('change', onViewportChange);
+      mobileMq.addEventListener('change', onViewportChange);
     } else {
-      compactMq.addListener(syncPinToViewport);
+      compactMq.addListener(onViewportChange);
+      mobileMq.addListener(onViewportChange);
     }
 
     return pinTrigger;

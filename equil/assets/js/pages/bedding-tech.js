@@ -79,9 +79,13 @@
 
     const overlay = section.querySelector('.bedding-tech-design__overlay');
     const title = section.querySelector('.bedding-tech-design__title');
-    const descs = Array.from(
-      section.querySelectorAll('.bedding-tech-design__desc')
-    );
+    const mobileQuery = window.matchMedia('(max-width: 47.9375rem)');
+    const bodyMobile = section.querySelector('.bedding-tech-design__body-mobile');
+    const descs = mobileQuery.matches && bodyMobile
+      ? [bodyMobile]
+      : Array.from(
+          section.querySelectorAll('.bedding-tech-design__body-pc .bedding-tech-design__desc')
+        );
     if (!overlay || !title || !descs.length) return;
 
     const POST_HERO_FADE_UP_DURATION = 2;
@@ -136,6 +140,8 @@
     window.initScrollFeature({
       sectionSelector: '.bedding-tech-process',
       images: PROCESS_IMAGES,
+      pinOnCompact: true,
+      pinOnMobile: false,
     });
   };
 
@@ -199,7 +205,7 @@
           });
           gsap.set(titleChars, { opacity: 0, y: 40 });
           gsap.set(section, {
-            backgroundColor: 'var(--color-brand-light-3)',
+            backgroundColor: 'var(--color-brand-light-1)',
           });
         } else if (step === 1) {
           const splitX = getSplitX();
@@ -213,13 +219,13 @@
           });
           gsap.set(titleChars, { opacity: 0, y: 40 });
           gsap.set(section, {
-            backgroundColor: 'var(--color-brand-light-3)',
+            backgroundColor: 'var(--color-brand-light-1)',
           });
         } else {
           gsap.set([brandEq, brandUil, image], { opacity: 0 });
           gsap.set(titleChars, { opacity: 1, y: 0 });
           gsap.set(section, {
-            backgroundColor: 'var(--color-brand-light-2)',
+            backgroundColor: 'var(--color-brand-light-1)',
           });
         }
 
@@ -241,9 +247,6 @@
       if (step === 1) {
         const splitX = getSplitX();
         gsap.set(titleChars, { opacity: 0, y: 40 });
-        gsap.set(section, {
-          backgroundColor: 'var(--color-brand-light-3)',
-        });
         gsap.set([brandEq, brandUil], { opacity: 1 });
 
         transitionTl
@@ -286,15 +289,6 @@
             duration: 0.55,
             ease: 'power1.in',
           })
-          .to(
-            section,
-            {
-              backgroundColor: 'var(--color-brand-light-2)',
-              duration: 0.45,
-              ease: 'power1.inOut',
-            },
-            '-=0.15'
-          )
           .to(titleChars, {
             opacity: 1,
             y: 0,
@@ -313,15 +307,6 @@
           duration: 0.35,
           ease: 'power1.in',
         })
-        .to(
-          section,
-          {
-            backgroundColor: 'var(--color-brand-light-3)',
-            duration: 0.35,
-            ease: 'power1.inOut',
-          },
-          0
-        )
         .to(
           [brandEq, brandUil],
           {
@@ -346,33 +331,77 @@
 
     setStep(0, false);
 
-    const onWheel = (event) => {
-      if (!pinTrigger || !pinTrigger.isActive) return;
+    const SWIPE_THRESHOLD = 40;
+    let touchStartY = null;
+    let touchGestureHandled = false;
 
-      const goingDown = event.deltaY > 0;
+    const handleScrollIntent = (goingDown, event) => {
+      if (!pinTrigger || !pinTrigger.isActive) return false;
 
       if (isEntryLocked()) {
-        event.preventDefault();
-        return;
+        event?.preventDefault?.();
+        return true;
       }
 
       if (isTransitioning) {
+        event?.preventDefault?.();
+        return true;
+      }
+
+      if (goingDown && currentStep === LAST_STEP) {
+        return false;
+      }
+
+      if (!goingDown && currentStep === 0) {
+        return false;
+      }
+
+      event?.preventDefault?.();
+      if (isInCooldown()) return true;
+
+      setStep(goingDown ? currentStep + 1 : currentStep - 1, true);
+      return true;
+    };
+
+    const onWheel = (event) => {
+      handleScrollIntent(event.deltaY > 0, event);
+    };
+
+    const onPinTouchStart = (event) => {
+      if (!pinTrigger?.isActive || !event.touches?.length) return;
+      touchStartY = event.touches[0].clientY;
+      touchGestureHandled = false;
+    };
+
+    const onPinTouchMove = (event) => {
+      if (!pinTrigger?.isActive || !event.touches?.length) return;
+
+      const deltaY =
+        touchStartY === null ? 0 : event.touches[0].clientY - touchStartY;
+      const goingDown = deltaY < 0;
+      const exitingPin =
+        (goingDown && currentStep === LAST_STEP) ||
+        (!goingDown && currentStep === 0);
+
+      if (!exitingPin && (isEntryLocked() || isTransitioning || isInCooldown())) {
         event.preventDefault();
         return;
       }
 
-      if (goingDown && currentStep === LAST_STEP) {
-        return;
-      }
-
-      if (!goingDown && currentStep === 0) {
-        return;
-      }
+      if (exitingPin) return;
 
       event.preventDefault();
-      if (isInCooldown()) return;
 
-      setStep(goingDown ? currentStep + 1 : currentStep - 1, true);
+      if (touchStartY === null || touchGestureHandled) return;
+      if (Math.abs(deltaY) < SWIPE_THRESHOLD) return;
+
+      touchGestureHandled = true;
+      handleScrollIntent(goingDown, event);
+    };
+
+    const onPinTouchEnd = () => {
+      touchStartY = null;
+      touchGestureHandled = false;
     };
 
     pinTrigger = ScrollTrigger.create({
@@ -394,6 +423,10 @@
     });
 
     window.addEventListener('wheel', onWheel, { passive: false });
+    window.addEventListener('touchstart', onPinTouchStart, { passive: true });
+    window.addEventListener('touchmove', onPinTouchMove, { passive: false });
+    window.addEventListener('touchend', onPinTouchEnd, { passive: true });
+    window.addEventListener('touchcancel', onPinTouchEnd, { passive: true });
   };
 
   const initBeddingTechSeasonal = () => {
@@ -406,9 +439,6 @@
     );
     const medias = Array.from(
       section.querySelectorAll('.bedding-tech-seasonal__media')
-    );
-    const arrows = Array.from(
-      section.querySelectorAll('.bedding-tech-seasonal__arrow')
     );
     const dots = Array.from(
       section.querySelectorAll('.bedding-tech-seasonal__dot')
@@ -424,7 +454,6 @@
     const fadeOutDuration = TRANSITION_DURATION * FADE_OUT_RATIO;
     let currentIndex = 0;
     let mediaStarted = false;
-    let arrowsShown = false;
     let compactRevealed = !compactMq.matches;
     let compactCover = null;
     let isTransitioning = false;
@@ -442,16 +471,6 @@
       });
       dots.forEach((dot, i) => {
         dot.classList.toggle('is-active', i === index);
-      });
-      arrows.forEach((arrow) => {
-        const isPrev = arrow.classList.contains(
-          'bedding-tech-seasonal__arrow--prev'
-        );
-        const isNext = arrow.classList.contains(
-          'bedding-tech-seasonal__arrow--next'
-        );
-        if (isPrev) arrow.classList.toggle('is-hidden', index <= 0);
-        if (isNext) arrow.classList.toggle('is-hidden', index >= LAST_INDEX);
       });
     };
 
@@ -508,16 +527,6 @@
       }
     };
 
-    const showArrows = () => {
-      if (arrowsShown || !arrows.length) return;
-      arrowsShown = true;
-      gsap.to(arrows, {
-        opacity: 1,
-        duration: 0.45,
-        ease: 'power2.out',
-      });
-    };
-
     const coverActiveMedia = () => {
       if (compactCover) return compactCover;
 
@@ -545,7 +554,6 @@
 
     if (isCompact()) {
       showCard(0);
-      gsap.set(arrows, { opacity: 0 });
       cards.forEach((card, index) => {
         const copy = getCopy(card);
         if (!copy) return;
@@ -564,7 +572,6 @@
         const cover = coverActiveMedia();
         if (!cover) {
           compactRevealed = true;
-          showArrows();
           return;
         }
 
@@ -579,7 +586,6 @@
             });
             gsap.set(cover.card, { clearProps: 'minHeight' });
             compactRevealed = true;
-            showArrows();
           },
         });
         return;
@@ -595,19 +601,7 @@
 
     section.addEventListener('click', (event) => {
       if (!isCompact()) return;
-      const prev = event.target.closest('.bedding-tech-seasonal__arrow--prev');
-      const next = event.target.closest('.bedding-tech-seasonal__arrow--next');
       const dot = event.target.closest('.bedding-tech-seasonal__dot');
-
-      if (prev) {
-        goTo(currentIndex - 1);
-        return;
-      }
-
-      if (next) {
-        goTo(currentIndex + 1);
-        return;
-      }
 
       if (dot) {
         const index = dots.indexOf(dot);
@@ -619,7 +613,6 @@
     if (cardsEl) {
       cardsEl.addEventListener('pointerdown', (event) => {
         if (!isCompact()) return;
-        if (event.target.closest('.bedding-tech-seasonal__arrow')) return;
         if (event.pointerType === 'mouse' && event.button !== 0) return;
         pointerStartX = event.clientX;
         pointerStartY = event.clientY;
@@ -667,30 +660,43 @@
 
     gsap.set(headingChars, { opacity: 0, y: 40 });
 
-    gsap.to(headingChars, {
-      opacity: 1,
-      y: 0,
-      duration: FADE_UP_DURATION,
-      ease: 'power3.out',
-      stagger: headingChars.length > 1 ? charStagger : 0,
-      scrollTrigger: {
-        trigger: heading,
-        start: 'top 90%',
-        once: true,
-      },
-      onUpdate() {
-        if (!mediaStarted && this.progress() >= 0.5) {
-          mediaStarted = true;
-          playMediaReveal();
-        }
-      },
-      onComplete: () => {
-        gsap.set(headingChars, { clearProps: 'will-change' });
-        if (!mediaStarted) {
-          mediaStarted = true;
-          playMediaReveal();
-        }
-      },
+    const headingFadeUpTimeline = gsap
+      .timeline({
+        paused: true,
+        scrollTrigger: {
+          trigger: heading.closest('section') || section,
+          start: 'top 90%',
+          toggleActions: 'restart none none reset',
+          invalidateOnRefresh: true,
+          onLeaveBack: () => {
+            mediaStarted = false;
+          },
+        },
+        onComplete: () => {
+          gsap.set(headingChars, { clearProps: 'will-change' });
+          if (!mediaStarted) {
+            mediaStarted = true;
+            playMediaReveal();
+          }
+        },
+      })
+      .fromTo(
+        headingChars,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: FADE_UP_DURATION,
+          ease: 'power3.out',
+          stagger: headingChars.length > 1 ? charStagger : 0,
+        },
+      );
+
+    headingFadeUpTimeline.eventCallback('onUpdate', function onHeadingFadeUpUpdate() {
+      if (!mediaStarted && this.progress() >= 0.5) {
+        mediaStarted = true;
+        playMediaReveal();
+      }
     });
   };
 

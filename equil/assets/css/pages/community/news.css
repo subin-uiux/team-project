@@ -114,7 +114,6 @@
   .news-hero__title {
     font-family: var(--font-paperlogy);
     font-weight: 700;
-
     font-size: 1.75rem; /* 28px — Subtitle01 tablet */
     letter-spacing: normal;
   }
@@ -152,7 +151,7 @@
 
   .news-list__image-frame {
     width: 100%;
-    height: clamp(3.598rem, 17.992vw, 8.625rem); /* 138px */
+    height: clamp(6.273rem, 31.364vw, 8.625rem); /* 138px */
   }
 
   .news-list__content {
@@ -165,7 +164,7 @@
   }
 
   .news-list__title {
-    font-size: clamp(0.75rem, 2.086vw, 1rem); /* 16px, mo/body03 */
+    font-size: clamp(0.75rem, 3.636vw, 1rem); /* 16px, mo/body03 */
   }
 
   .news-list__date {

@@ -75,6 +75,8 @@
     if (!title || !desc) return;
 
     const TITLE_FADE_UP_DURATION = 1.6;
+    /* title 트윈이 끝나기 전에 desc를 시작 (초). 클수록 title↔desc 텀이 짧아짐 */
+    const DESC_OVERLAP = 1.2;
     const charClass = 'heating-mat-tech-product-overview__char';
     const titleChars = splitTextChars(title, charClass);
     const descChars = splitTextChars(desc, charClass);
@@ -151,13 +153,17 @@
       }
 
       if (descChars.length) {
-        fadeTl.to(descChars, {
-          opacity: 1,
-          y: 0,
-          duration: FADE_UP_DURATION,
-          ease: 'power3.out',
-          stagger: descChars.length > 1 ? descStagger : 0,
-        });
+        fadeTl.to(
+          descChars,
+          {
+            opacity: 1,
+            y: 0,
+            duration: FADE_UP_DURATION,
+            ease: 'power3.out',
+            stagger: descChars.length > 1 ? descStagger : 0,
+          },
+          titleChars.length ? `-=${DESC_OVERLAP}` : 0
+        );
       }
     };
 
@@ -282,6 +288,7 @@
     }
 
     const SHRINK_PORTION = 0.45;
+    const SHRINK_HIDE_PORTION = 0.38;
     const COOLDOWN_MS = 1000;
     const ENTRY_LOCK_MS = 800;
 
@@ -292,6 +299,7 @@
     let isSliding = false;
     let introComplete = false;
     let slideTimer = null;
+    let hasSnappedToShrink = false;
 
     const SLIDE_SPEED = 900;
     const slides = Array.from(swiperEl.querySelectorAll('.swiper-slide'));
@@ -416,11 +424,29 @@
     };
 
     const setIntroPhase = (progress) => {
-      if (progress < SHRINK_PORTION) {
-        updateIntroFrame(progress / SHRINK_PORTION);
+      const p = gsap.utils.clamp(0, 1, progress);
+
+      /* 히스테리시스: 완료 후 살짝 되돌아가도 텍스트가 사라지지 않음 */
+      if (introComplete) {
+        if (p < SHRINK_HIDE_PORTION) {
+          updateIntroFrame(p / SHRINK_PORTION);
+          intro.style.opacity = '1';
+          content.classList.remove('is-visible');
+          introComplete = false;
+          hasSnappedToShrink = false;
+          return;
+        }
+
+        /* 이미 완료된 상태면 매 프레임 레이아웃 재계산하지 않음 (모바일 버벅임 방지) */
+        intro.style.opacity = '0';
+        content.classList.add('is-visible');
+        return;
+      }
+
+      if (p < SHRINK_PORTION) {
+        updateIntroFrame(p / SHRINK_PORTION);
         intro.style.opacity = '1';
         content.classList.remove('is-visible');
-        introComplete = false;
         return;
       }
 
@@ -431,6 +457,11 @@
       introComplete = true;
 
       if (!wasVisible) {
+        /* 모바일은 매 프레임 scrollTo 클램핑 대신 1회만 스냅 */
+        if (!hasSnappedToShrink) {
+          hasSnappedToShrink = true;
+          window.scrollTo(0, getShrinkScroll());
+        }
         playCopyItemFadeUp(copyItems[currentIndex]);
       }
     };
@@ -602,6 +633,8 @@
     };
 
     const clampSwiperScroll = () => {
+      /* 터치는 scrollTo 매 프레임 호출 시 버벅임 → PC(휠)만 클램프 */
+      if (isCompactView()) return;
       if (!shouldLockSwiperScroll()) return;
       const targetY = getShrinkScroll();
       if (Math.abs(window.scrollY - targetY) > 2) {
@@ -640,11 +673,69 @@
       event.preventDefault();
       if (isInCooldown()) return;
 
+      /* 휠로 슬라이드 전환 시에만 위치 고정 */
+      window.scrollTo(0, getShrinkScroll());
+
       if (goingDown) {
         goToSlide(currentIndex + 1);
       } else {
         goToSlide(currentIndex - 1);
       }
+    };
+
+    let pinTouchStartY = null;
+    let pinTouchStartX = null;
+
+    const onPinTouchStart = (event) => {
+      if (!isCompactView() || !pinTrigger?.isActive || !event.touches?.length) {
+        return;
+      }
+      pinTouchStartY = event.touches[0].clientY;
+      pinTouchStartX = event.touches[0].clientX;
+    };
+
+    const onPinTouchMove = (event) => {
+      if (
+        !isCompactView() ||
+        !pinTrigger?.isActive ||
+        !introComplete ||
+        pinTouchStartY === null ||
+        !event.touches?.length
+      ) {
+        return;
+      }
+
+      const deltaY = event.touches[0].clientY - pinTouchStartY;
+      const deltaX = event.touches[0].clientX - (pinTouchStartX ?? 0);
+      if (Math.abs(deltaX) > Math.abs(deltaY)) return;
+
+      const goingDown = deltaY < 0;
+
+      /* 중간 슬라이드에서는 세로 스크롤 잠금 (scrollTo 클램프 대신) */
+      if (goingDown && currentIndex < LAST_INDEX) {
+        event.preventDefault();
+        return;
+      }
+
+      if (!goingDown && currentIndex > 0) {
+        event.preventDefault();
+        return;
+      }
+
+      if (!goingDown && currentIndex === 0) {
+        /* 첫 슬라이드에서 위로 → shrink 구간으로 자연 스크롤 허용 */
+        return;
+      }
+
+      if (goingDown && currentIndex === LAST_INDEX) {
+        /* 마지막에서 아래로 → 다음 섹션으로 자연 스크롤 허용 */
+        return;
+      }
+    };
+
+    const onPinTouchEnd = () => {
+      pinTouchStartY = null;
+      pinTouchStartX = null;
     };
 
     pinTrigger = ScrollTrigger.create({
@@ -656,21 +747,31 @@
       anticipatePin: 1,
       invalidateOnRefresh: true,
       onUpdate: (self) => {
-        if (self.progress < SHRINK_PORTION) {
-          setIntroPhase(self.progress);
-          return;
+        setIntroPhase(self.progress);
+        if (introComplete) {
+          clampSwiperScroll();
         }
-
-        setIntroPhase(SHRINK_PORTION);
-        clampSwiperScroll();
       },
       onEnter: () => {
         updateSlideState(0, false);
         startEntryLock();
+        hasSnappedToShrink = false;
       },
       onEnterBack: () => {
         updateSlideState(LAST_INDEX, false);
         startEntryLock();
+        hasSnappedToShrink = true;
+        introComplete = true;
+        content.classList.add('is-visible');
+        intro.style.opacity = '0';
+        updateIntroFrame(1);
+      },
+      onLeave: () => {
+        hasSnappedToShrink = false;
+      },
+      onLeaveBack: () => {
+        hasSnappedToShrink = false;
+        introComplete = false;
       },
       onRefresh: () => {
         updateIntroFrame(introComplete ? 1 : 0);
@@ -679,6 +780,10 @@
     });
 
     window.addEventListener('wheel', onWheel, { passive: false });
+    window.addEventListener('touchstart', onPinTouchStart, { passive: true });
+    window.addEventListener('touchmove', onPinTouchMove, { passive: false });
+    window.addEventListener('touchend', onPinTouchEnd, { passive: true });
+    window.addEventListener('touchcancel', onPinTouchEnd, { passive: true });
     window.addEventListener('resize', () => {
       updateIntroFrame(introComplete ? 1 : 0);
       syncTrackLayout(false);
@@ -1014,12 +1119,101 @@
   };
 
   const initHeatingMatTechCertification = () => {
-    const title = document.querySelector(
-      '.heating-mat-tech-certification__title'
-    );
-    if (!title) return;
+    const section = document.querySelector('.heating-mat-tech-certification');
+    if (!section) return;
 
-    initFadeUp(title, [title], 'heating-mat-tech-certification__char');
+    const title = section.querySelector('.heating-mat-tech-certification__title');
+    if (title) {
+      initFadeUp(title, [title], 'heating-mat-tech-certification__char');
+    }
+
+    const track = section.querySelector('.heating-mat-tech-certification__items');
+    const items = [
+      ...section.querySelectorAll('.heating-mat-tech-certification__item'),
+    ];
+    const navItems = [
+      ...section.querySelectorAll('.heating-mat-tech-certification__nav-item'),
+    ];
+    if (!track || !items.length || !navItems.length) return;
+
+    const mobileQuery = window.matchMedia('(max-width: 47.9375rem)');
+    const SWIPE_THRESHOLD = 40;
+    let currentIndex = 0;
+    let touchStartX = 0;
+
+    const updateNav = (index) => {
+      navItems.forEach((item, itemIndex) => {
+        const isActive = itemIndex === index;
+        item.classList.toggle('is-active', isActive);
+        if (isActive) {
+          item.setAttribute('aria-current', 'true');
+        } else {
+          item.removeAttribute('aria-current');
+        }
+      });
+
+      items.forEach((item, itemIndex) => {
+        item.classList.toggle('is-active', itemIndex === index);
+      });
+    };
+
+    const resetTrack = () => {
+      track.style.transform = '';
+    };
+
+    const goTo = (index) => {
+      if (!mobileQuery.matches) return;
+
+      const nextIndex = Math.max(0, Math.min(items.length - 1, index));
+      if (nextIndex === currentIndex) return;
+
+      currentIndex = nextIndex;
+      track.style.transform = `translate3d(-${currentIndex * 100}%, 0, 0)`;
+      updateNav(currentIndex);
+    };
+
+    navItems.forEach((item) => {
+      item.addEventListener('click', () => {
+        const index = Number(item.dataset.index);
+        if (Number.isNaN(index)) return;
+        goTo(index);
+      });
+    });
+
+    track.addEventListener(
+      'touchstart',
+      (event) => {
+        if (!mobileQuery.matches) return;
+        touchStartX = event.touches[0]?.clientX ?? 0;
+      },
+      { passive: true }
+    );
+
+    track.addEventListener(
+      'touchend',
+      (event) => {
+        if (!mobileQuery.matches) return;
+
+        const touchEndX = event.changedTouches[0]?.clientX ?? 0;
+        const deltaX = touchStartX - touchEndX;
+        if (Math.abs(deltaX) < SWIPE_THRESHOLD) return;
+
+        if (deltaX > 0) {
+          goTo(currentIndex + 1);
+        } else {
+          goTo(currentIndex - 1);
+        }
+      },
+      { passive: true }
+    );
+
+    mobileQuery.addEventListener('change', () => {
+      currentIndex = 0;
+      resetTrack();
+      updateNav(0);
+    });
+
+    updateNav(0);
   };
 
   const initHeatingMatTechSafety = () => {

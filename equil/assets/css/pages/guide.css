@@ -486,7 +486,7 @@
 }
 
 .guide-btn--mo.btn-tab-ctg {
-  width: 6.4375rem; /* 103px */
+  width: 9.375rem; /* 150px */
   height: 4.875rem; /* 78px */
   gap: 0.125rem;
   padding: 0.625rem 0.9375rem; /* 10px 15px */
@@ -508,4 +508,45 @@
 
 .guide__row + .guide__row {
   margin-top: 1.5rem;
+}
+
+/* Guide previews — viewport와 관계없이 Tab/Mo 카드 사이즈를 보여 줌 */
+.guide-card-cta--tab.card-cta-product {
+  width: 22.125rem; /* 354px */
+  height: 25.6875rem; /* 411px */
+  padding: 2.5rem 1.25rem; /* 40px 20px */
+}
+
+.guide-card-cta--tab .card-cta-product__overlay {
+  gap: 0.75rem; /* 12px */
+  padding: 2.5rem 1.25rem; /* 40px 20px */
+  opacity: 1;
+}
+
+.guide-card-cta--tab .card-cta-product__title {
+  font-size: 1.5rem; /* 24px */
+}
+
+.guide-card-cta--tab .card-cta-product__text {
+  font-size: 1rem; /* 16px */
+}
+
+.guide-card-cta--mo.card-cta-product {
+  width: 17.5rem; /* 280px */
+  height: 20.3125rem; /* 325px */
+  padding: 2.5rem 1.25rem; /* 40px 20px */
+}
+
+.guide-card-cta--mo .card-cta-product__overlay {
+  gap: 0.625rem; /* 10px */
+  padding: 2.5rem 1.25rem; /* 40px 20px */
+  opacity: 1;
+}
+
+.guide-card-cta--mo .card-cta-product__title {
+  font-size: 1.25rem; /* 20px */
+}
+
+.guide-card-cta--mo .card-cta-product__text {
+  font-size: 1rem; /* 16px */
 }

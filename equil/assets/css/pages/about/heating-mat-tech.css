@@ -104,7 +104,7 @@
   }
 
   .heating-mat-tech-hero {
-    --hero-end-height: 400px;
+    --hero-end-height: 244px;
   }
 
   .heating-mat-tech-hero__image {
@@ -118,12 +118,12 @@
   }
 
   .heating-mat-tech-hero__title {
-    font-size: clamp(0.75rem, 3.911vw, 1.875rem); /* 30px, mo/hero-title */
+    font-size: clamp(1.364rem, 6.818vw, 1.875rem); /* 30px, mo/hero-title */
     line-height: 100%;
   }
 
   .heating-mat-tech-hero__desc {
-    font-size: clamp(0.75rem, 2.347vw, 1.125rem); /* 18px, mo/body02 */
+    display: none;
   }
 }
 
@@ -143,6 +143,10 @@
   display: flex;
   flex-direction: column;
   gap: 3.125rem; /* 50px */
+}
+
+.heating-mat-tech-problem__title-mobile {
+  display: none;
 }
 
 .heating-mat-tech-problem__cards {
@@ -233,12 +237,12 @@
     margin-top: 0;
     font-family: var(--font-suit);
     font-weight: 700;
-    font-size: clamp(1.5rem, 3.128vw, 2rem); /* 32px, tab/title01 */
+    font-size: 2rem; /* 32px, tab/title01 */
   }
 
   .heating-mat-tech-problem__heading .heading-3tier__desc {
     font-weight: 400;
-    font-size: clamp(0.844rem, 1.76vw, 1.125rem); /* 18px, tab/body03 */
+    font-size: 1.125rem; /* 18px, tab/body03 */
   }
 
   .heating-mat-tech-problem__overlay {
@@ -263,21 +267,29 @@
 
 @media (min-width: 48rem) and (max-width: 63.9375rem) {
   .heating-mat-tech-problem__heading .heading-3tier__title {
-    font-size: clamp(1.5rem, 3.128vw, 2rem); /* 32px, tab/title01 */
+    font-size: 2rem; /* 32px, tab/title01 */
   }
 
   .heating-mat-tech-problem__heading .heading-3tier__desc {
-    font-size: clamp(0.844rem, 1.76vw, 1.125rem); /* 18px, tab/body03 */
+    font-size: 1.125rem; /* 18px, tab/body03 */
   }
 }
 
 @media (max-width: 47.9375rem) {
   .heating-mat-tech-problem__heading .heading-3tier__title {
-    font-size: clamp(0.875rem, 3.651vw, 1.75rem); /* 28px, mo/title01 */
+    font-size: 1.75rem; /* 28px, mo/title01 */
   }
 
   .heating-mat-tech-problem__heading .heading-3tier__desc {
-    font-size: clamp(0.75rem, 2.086vw, 1rem); /* 16px, mo/body03 */
+    font-size: 1rem; /* 16px, mo/body03 */
+  }
+
+  .heating-mat-tech-problem__title-pc {
+    display: none;
+  }
+
+  .heating-mat-tech-problem__title-mobile {
+    display: inline;
   }
 
   .heating-mat-tech-problem__viewport {
@@ -302,19 +314,21 @@
   .heating-mat-tech-problem__card {
     flex: 0 0 100%;
     width: 100%;
-    height: clamp(10.43rem, 52.151vw, 25rem); /* 400px */
+    height: clamp(18.182rem, 90.909vw, 25rem); /* 400px */
     border-radius: 1.875rem; /* 30px */
   }
 
   .heating-mat-tech-problem__dots {
-    position: absolute;
-    left: 50%;
-    bottom: 1.25rem; /* 20px */
+    position: relative;
+    left: auto;
+    bottom: auto;
     z-index: 3;
     display: flex;
+    justify-content: center;
     align-items: center;
     gap: 0.625rem; /* 10px */
-    transform: translateX(-50%);
+    margin-top: 0.875rem; /* 14px */
+    transform: none;
   }
 
   .heating-mat-tech-problem__dot {
@@ -323,7 +337,7 @@
     padding: 0;
     border: 0;
     border-radius: 6.25rem;
-    background-color: var(--color-white);
+    background-color: var(--color-brand-light-1);
     cursor: pointer;
   }
 
@@ -368,6 +382,16 @@
   color: var(--color-brand-dark);
 }
 
+.heating-mat-tech-product-overview__title-break {
+  display: none;
+}
+
+@media (max-width: 47.9375rem) {
+  .heating-mat-tech-product-overview__title-break {
+    display: block;
+  }
+}
+
 .heating-mat-tech-product-overview__desc {
   margin: 0;
   font-family: var(--font-suit);
@@ -375,6 +399,8 @@
   font-size: var(--fs-body-02); /* 22px */
   line-height: 150%;
   color: var(--color-brand-dark);
+  word-break: keep-all;
+  text-wrap: balance;
 }
 
 .heating-mat-tech-product-overview__char {
@@ -413,7 +439,7 @@ html {
   width: 100%;
   max-width: 100%;
   overflow: hidden;
-  background-color: var(--co100vhlor-white);
+  background-color: var(--color-white);
   --heating-mat-tech-technology-circle-active: 37.5rem; /* 600px */
   --heating-mat-tech-technology-circle-inactive: 25rem; /* 400px */
   --heating-mat-tech-technology-circle-offset-y: -3.75rem; /* 60px up */
@@ -825,26 +851,56 @@ html {
 
 @media (max-width: 47.9375rem) {
   .heating-mat-tech-technology {
-    --heating-mat-tech-technology-circle-active: min(24.0625rem, calc(100vw - 2.5rem)); /* 385px */
+    --heating-mat-tech-technology-circle-active: min(17.5rem, calc(100vw - 4rem)); /* 280px */
     --heating-mat-tech-technology-circle-inactive: var(--heating-mat-tech-technology-circle-active);
   }
 
+  .heating-mat-tech-technology__content {
+    justify-content: center; /* 100vh 안 남는 공간을 위·아래로 균등 분배 */
+    gap: 0.75rem; /* 12px */
+    height: 100%; /* sticky(100vh)를 채움 — pin 레이아웃용 */
+    padding: 1.25rem var(--grid-margin) 1.5rem; /* 20px / 24px */
+    overflow: hidden;
+  }
+
+  .heating-mat-tech-technology__inner {
+    gap: 1rem; /* 16px */
+    flex: 0 0 auto; /* 남은 높이를 억지로 늘리지 않음 */
+    min-height: 0;
+    justify-content: flex-start;
+  }
+
   .heating-mat-tech-technology__title {
-    font-size: clamp(0.75rem, 3.129vw, 1.5rem); /* 24px, mo/subtitle02 */
+    font-size: clamp(1.091rem, 5.455vw, 1.5rem); /* 24px, mo/subtitle02 */
   }
 
   .heating-mat-tech-technology__desc {
-    font-size: clamp(0.75rem, 2.086vw, 1rem); /* 16px, mo/body03 */
+    margin-top: 0.5rem; /* 8px */
+    font-size: clamp(0.75rem, 3.636vw, 1rem); /* 16px, mo/body03 */
   }
 
   .heating-mat-tech-technology__features {
     flex-wrap: wrap;
     justify-content: center;
+    gap: 0.75rem 0; /* 12px row */
   }
 
   .heating-mat-tech-technology__feature {
     flex: 0 0 33.333%;
     width: 33.333%;
+    gap: 0.5rem; /* 8px */
+  }
+
+  .heating-mat-tech-technology__feature-icon {
+    height: 2.5rem; /* 40px */
+  }
+
+  .heating-mat-tech-technology__feature-label {
+    font-size: clamp(0.75rem, 3.182vw, 0.875rem); /* 14px */
+  }
+
+  .heating-mat-tech-technology__content.is-visible .heating-mat-tech-technology__controls {
+    margin-top: 0.75rem; /* 12px */
   }
 }
 
@@ -985,6 +1041,14 @@ html {
   flex-shrink: 0;
 }
 
+.heating-mat-tech-certification__slider {
+  width: 100%;
+}
+
+.heating-mat-tech-certification__nav {
+  display: none;
+}
+
 @media (min-width: 48rem) and (max-width: 63.9375rem) {
   .heating-mat-tech-certification {
     height: auto;
@@ -1012,20 +1076,23 @@ html {
   }
 
   .heating-mat-tech-certification__items {
-    grid-template-columns: 1fr;
-    justify-items: center;
-    row-gap: 1.25rem; /* 20px */
+    display: grid;
+    grid-template-columns: repeat(2, 21.25rem); /* 340px */
+    column-gap: 1.25rem; /* 20px */
+    row-gap: 1.25rem; /* 20px — badge 여유 + 20px */
+    justify-content: center;
     width: 100%;
   }
 
   .heating-mat-tech-certification__item {
-    justify-content: center;
-    width: fit-content;
+    position: relative;
+    display: block;
+    width: 21.25rem; /* 340px */
+    padding-top: 2.125rem; /* 34px — verified 68px 상단 겹침 */
   }
 
   .heating-mat-tech-certification__card {
-    /* flex: auto; */
-    width: 23rem; /* 420px */
+    width: 100%;
     min-width: 0;
     padding: 0.625rem 1.25rem; /* 10px 20px */
   }
@@ -1044,8 +1111,12 @@ html {
   }
 
   .heating-mat-tech-certification__verified {
-    width: 7.5rem; /* 120px */
-    height: 7.5rem;
+    position: absolute;
+    top: 0;
+    right: 0.625rem; /* 10px */
+    width: 4.25rem; /* 68px */
+    height: 4.25rem;
+    margin-left: 0;
   }
 }
 
@@ -1060,11 +1131,11 @@ html {
   }
 
   .heating-mat-tech-certification__sub-title {
-    font-size: clamp(0.75rem, 2.346vw, 1.125rem); /* 18px */
+    font-size: clamp(0.818rem, 4.091vw, 1.125rem); /* 18px */
   }
 
   .heating-mat-tech-certification__title {
-    font-size: clamp(0.75rem, 2.607vw, 1.25rem); /* 20px */
+    font-size: clamp(0.909rem, 4.545vw, 1.25rem); /* 20px */
   }
 
   .heating-mat-tech-certification__certificates {
@@ -1075,28 +1146,40 @@ html {
   }
 
   .heating-mat-tech-certification__certificate {
-    width: 12rem; /* 146px */
+    width: 9.25rem; /* 148px */
     height: auto;
     object-fit: cover;
   }
 
-  .heating-mat-tech-certification__items {
-    grid-template-columns: 1fr;
-    justify-items: center;
-    row-gap: 1.25rem; /* 20px */
+  .heating-mat-tech-certification__slider {
+    overflow: hidden;
     width: 100%;
   }
 
+  .heating-mat-tech-certification__items {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    transition: transform 0.4s ease;
+  }
+
   .heating-mat-tech-certification__item {
-    justify-content: center;
-    width: fit-content;
+    position: relative;
+    flex: 0 0 100%;
+    width: 100%;
+    padding-top: 2.125rem; /* 34px — verified 68px 상단 겹침 */
   }
 
   .heating-mat-tech-certification__card {
-    /* flex: 1 1 auto; */
-    width: 17rem;
+    width: 26.875rem; /* 430px */
+    max-width: 100%;
     min-width: 0;
+    margin-inline: auto;
     padding: 0.625rem 1.25rem; /* 10px 20px */
+    box-sizing: border-box;
   }
 
   .heating-mat-tech-certification__check {
@@ -1105,17 +1188,48 @@ html {
   }
 
   .heating-mat-tech-certification__card-title {
-    font-size: clamp(0.75rem, 2.086vw, 1rem); /* 16px */
+    font-size: clamp(0.75rem, 3.636vw, 1rem); /* 16px */
   }
 
   .heating-mat-tech-certification__card-desc {
-    font-size: clamp(0.75rem, 1.825vw, 0.875rem); /* 14px */
+    font-size: clamp(0.75rem, 3.182vw, 0.875rem); /* 14px */
   }
 
   .heating-mat-tech-certification__verified {
-    width: 6.25rem; /* 100px */
-    height: 6.25rem;
-    margin-left: -1.25rem; /* -20px */
+    position: absolute;
+    top: 0;
+    right: calc((100% - min(26.875rem, 100%)) / 2 + 0.625rem); /* 카드 430px 우측 + 10px */
+    width: 4.25rem; /* 68px */
+    height: 4.25rem;
+    margin-left: 0;
+  }
+
+  .heating-mat-tech-certification__nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.9375rem; /* 15px */
+    margin-top: 0.875rem; /* 14px */
+  }
+
+  .heating-mat-tech-certification__nav-item {
+    width: 0.375rem; /* 6px */
+    height: 0.375rem; /* 6px */
+    padding: 0;
+    border: 0;
+    border-radius: 6.25rem;
+    background-color: var(--color-brand-light-1);
+    cursor: pointer;
+    font-size: 0;
+    color: transparent;
+    transition:
+      width 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.4s ease;
+  }
+
+  .heating-mat-tech-certification__nav-item.is-active {
+    width: 1.25rem; /* 20px */
+    background-color: var(--color-brand-dark);
   }
 }
 
@@ -1175,6 +1289,10 @@ html {
   font-size: var(--fs-title); /* 40px */
   line-height: 150%;
   color: var(--color-brand-dark);
+}
+
+.heating-mat-tech-controller__title-break {
+  display: none;
 }
 
 .heating-mat-tech-controller__desc {
@@ -1562,7 +1680,7 @@ html {
 
   .heating-mat-tech-controller__dot.is-active {
     width: 1.25rem; /* 20px */
-    background-color: #737373;
+    background-color: var(--color-brand-dark);
   }
 }
 
@@ -1577,11 +1695,15 @@ html {
   }
 
   .heating-mat-tech-controller__title {
-    font-size: clamp(0.875rem, 3.651vw, 1.75rem); /* 28px, mo/title03 */
+    font-size: clamp(1.273rem, 6.364vw, 1.75rem); /* 28px, mo/title03 */
+  }
+
+  .heating-mat-tech-controller__title-break {
+    display: block;
   }
 
   .heating-mat-tech-controller__desc {
-    font-size: clamp(0.75rem, 2.086vw, 1rem); /* 16px, mo/body03 */
+    font-size: clamp(0.75rem, 3.636vw, 1rem); /* 16px, mo/body03 */
   }
 
   .heating-mat-tech-controller__media {
@@ -1600,8 +1722,8 @@ html {
     left: 50%;
     top: 50%;
     z-index: 0;
-    width: 25rem; /* 400px */
-    height: 25rem;
+    width: 20rem; /* 320px */
+    height: 20rem;
     border-radius: 50%;
     background-color: var(--color-brand-light-2);
     transform: translate(-50%, -50%);
@@ -1712,7 +1834,7 @@ html {
     padding: 0;
     border-radius: 0;
     font-weight: var(--fw-suit-bold);
-    font-size: clamp(0.75rem, 2.607vw, 1.25rem); /* 20px, mo/body01 */
+    font-size: clamp(0.909rem, 4.545vw, 1.25rem); /* 20px, mo/body01 */
     line-height: 130%;
     text-align: left;
     color: var(--color-brand-dark);
@@ -1722,7 +1844,7 @@ html {
   .heating-mat-tech-controller__compact-panel .heating-mat-tech-controller__callout-desc {
     width: 100%;
     max-width: none;
-    font-size: clamp(0.75rem, 2.086vw, 1rem); /* 16px, mo/body03 */
+    font-size: clamp(0.75rem, 3.636vw, 1rem); /* 16px, mo/body03 */
     line-height: 150%;
     text-align: left;
   }
@@ -1746,7 +1868,7 @@ html {
 
   .heating-mat-tech-controller__dot.is-active {
     width: 1.25rem; /* 20px */
-    background-color: #737373;
+    background-color: var(--color-brand-dark);
   }
 }
 
@@ -1767,7 +1889,7 @@ html {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 3.125rem; /* 50px */
+  gap: 2.5rem; /* 40px */
 }
 
 .heating-mat-tech-safety__heading {
@@ -1794,6 +1916,10 @@ html {
 
 .heating-mat-tech-safety__title-point {
   color: var(--color-brand-point);
+}
+
+.heating-mat-tech-safety__title-break {
+  display: none;
 }
 
 .heating-mat-tech-safety__desc {
@@ -1956,6 +2082,10 @@ html {
     text-align: center;
   }
 
+  .heating-mat-tech-safety__title-break {
+    display: block;
+  }
+
   .heating-mat-tech-safety__flow {
     flex-direction: column;
     align-items: stretch;
@@ -2001,5 +2131,10 @@ html {
     width: 4.625rem; /* 74px */
     height: 3.625rem; /* 58px */
     transform: rotate(90deg);
+  }
+  
+  .heating-mat-tech-safety__desc {
+    word-break: keep-all;
+    /* text-wrap: balance; */
   }
 }

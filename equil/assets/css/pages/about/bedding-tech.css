@@ -80,7 +80,7 @@
 
 @media (max-width: 47.9375rem) {
   .bedding-tech-hero {
-    --hero-end-height: 400px;
+    --hero-end-height: 244px;
   }
 
   .bedding-tech-hero__title {
@@ -89,7 +89,7 @@
   }
 
   .bedding-tech-hero__desc {
-    font-size: 1.125rem; /* 18px */
+    display: none;
   }
 }
 
@@ -152,7 +152,7 @@
   }
 
   .bedding-tech-overview__title {
-    font-size: clamp(0.75rem, 3.651vw, 1.75rem); /* 28px */
+    font-size: clamp(1.273rem, 6.364vw, 1.75rem); /* 28px */
   }
 }
 
@@ -203,6 +203,8 @@
   flex-direction: column;
   align-items: flex-start;
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .bedding-tech-design__title {
@@ -220,6 +222,8 @@
   flex-direction: column;
   gap: 0.625rem; /* 10px */
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .bedding-tech-design__desc {
@@ -229,7 +233,14 @@
   font-size: var(--fs-body-02); /* 22px */
   line-height: 150%;
   color: var(--color-white);
-  white-space: nowrap;
+  white-space: normal;
+}
+
+@media (min-width: 48rem) {
+  .bedding-tech-design__body-pc .bedding-tech-design__desc {
+    word-break: keep-all;
+    text-wrap: pretty;
+  }
 }
 
 .bedding-tech-design__char {
@@ -253,9 +264,23 @@
   }
 }
 
+.bedding-tech-design__body-mobile {
+  display: none;
+}
+
 @media (max-width: 47.9375rem) {
+  .bedding-tech-design__body-pc {
+    display: none;
+  }
+
+  .bedding-tech-design__body-mobile {
+    display: block;
+  }
+
   .bedding-tech-design__desc {
-    font-size: clamp(0.75rem, 2.347vw, 1.125rem); /* 18px */
+    font-size: clamp(0.818rem, 4.091vw, 1.125rem); /* 18px */
+    word-break: keep-all;
+    text-wrap: pretty;
   }
 }
 
@@ -274,6 +299,24 @@
   background-color: var(--color-white);
 }
 
+@media (max-width: 63.9375rem) {
+  .bedding-tech-process {
+    height: auto;
+    min-height: 0;
+  }
+}
+
+.bedding-tech-process .scroll-feature__feature-desc {
+  word-break: keep-all;
+  text-wrap: pretty;
+}
+
+@media (max-width: 47.9375rem) {
+  .bedding-tech-process .scroll-feature__feature-desc {
+    max-width: 21.25rem; /* 340px */
+  }
+}
+
 /* ========================================
    bedding-tech-wool
    ======================================== */
@@ -283,7 +326,7 @@
   width: 100%;
   height: 100vh;
   overflow: hidden;
-  background-color: var(--color-brand-light-3);
+  background-color: var(--color-brand-light-1);
 }
 
 .bedding-tech-wool__stage {
@@ -315,6 +358,47 @@
   will-change: transform;
 }
 
+.bedding-tech-wool__title {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 3;
+  margin: 0;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-suit);
+  font-weight: 800;
+  font-size: 6.25rem; /* 100px */
+  line-height: 130%;
+  color: var(--color-brand-dark);
+  text-align: center;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+@media (min-width: 48rem) and (max-width: 63.9375rem) {
+  .bedding-tech-wool__brand-part,
+  .bedding-tech-wool__title {
+    font-size: clamp(
+      2.5rem,
+      calc(2.5rem + (100vw - 47.9375rem) * 2.5 / 16),
+      5rem
+    ); /* 40px @768, 80px @1023 */
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .bedding-tech-wool__brand-part,
+  .bedding-tech-wool__title {
+    font-size: 2.5rem; /* 40px */
+  }
+}
+
+@media (max-width: 26.25rem) {
+  .bedding-tech-wool__title {
+    font-size: clamp(1.429rem, 7.143vw, 1.875rem); /* 30px @420 */
+  }
+}
+
 .bedding-tech-wool__image {
   position: absolute;
   top: 50%;
@@ -328,21 +412,16 @@
   will-change: transform, opacity;
 }
 
-.bedding-tech-wool__title {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  z-index: 3;
-  margin: 0;
-  transform: translate(-50%, -50%);
-  font-family: var(--font-suit);
-  font-weight: 800;
-  font-size: 5rem; /* 80px */
-  line-height: 130%;
-  color: var(--color-brand-dark);
-  text-align: center;
-  white-space: nowrap;
-  pointer-events: none;
+@media (min-width: 48rem) and (max-width: 63.9375rem) {
+  .bedding-tech-wool__image {
+    width: 45.5625rem; /* 729px */
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .bedding-tech-wool__image {
+    width: 25rem; /* 400px */
+  }
 }
 
 .bedding-tech-wool__char {
@@ -446,8 +525,15 @@
   color: var(--color-brand-dark);
 }
 
-.bedding-tech-seasonal__arrow,
+.bedding-tech-seasonal__desc-mobile {
+  display: none;
+}
+
 .bedding-tech-seasonal__pagination {
+  display: none;
+}
+
+.bedding-tech-seasonal__break {
   display: none;
 }
 
@@ -497,6 +583,16 @@
     height: 4.375rem; /* 70px */
   }
 
+  .bedding-tech-seasonal__desc-pc {
+    display: none;
+  }
+
+  .bedding-tech-seasonal__desc-mobile {
+    display: block;
+    word-break: keep-all;
+    text-wrap: pretty;
+  }
+
   .bedding-tech-seasonal__media {
     position: relative;
     top: auto;
@@ -513,38 +609,6 @@
   .bedding-tech-seasonal__card.is-active .bedding-tech-seasonal__media {
     z-index: 3;
     opacity: 1;
-  }
-
-  .bedding-tech-seasonal__arrow {
-    display: block;
-    position: absolute;
-    top: 50%;
-    z-index: 3;
-    width: 3.125rem; /* 50px */
-    height: 3.125rem;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    transform: translateY(-50%);
-    cursor: pointer;
-  }
-
-  .bedding-tech-seasonal__arrow--prev {
-    left: 1.25rem; /* 20px */
-  }
-
-  .bedding-tech-seasonal__arrow--next {
-    right: 1.25rem; /* 20px */
-  }
-
-  .bedding-tech-seasonal__arrow.is-hidden {
-    display: none;
-  }
-
-  .bedding-tech-seasonal__arrow-icon {
-    display: block;
-    width: 100%;
-    height: 100%;
   }
 
   .bedding-tech-seasonal__pagination {
@@ -567,25 +631,33 @@
 
   .bedding-tech-seasonal__dot.is-active {
     width: 1.25rem; /* 20px */
-    background-color: #737373;
+    background-color: var(--color-brand-dark);
   }
 }
 
 @media (max-width: 47.9375rem) {
+  .bedding-tech-seasonal__break {
+    display: block;
+  }
+
   .bedding-tech-seasonal__copy {
     padding: 1.25rem; /* 20px */
   }
 
   .bedding-tech-seasonal__title {
-    font-size: clamp(0.75rem, 3.129vw, 1.5rem); /* 24px */
+    font-size: 1.75rem; /* 28px */
   }
 
   .bedding-tech-seasonal__desc {
-    font-size: clamp(0.75rem, 2.086vw, 1rem); /* 16px */
-    height: 6.5625rem; /* 105px */
+    font-size: clamp(0.75rem, 3.636vw, 1rem); /* 16px */
+    height: auto;
   }
 
   .bedding-tech-seasonal__media {
-    height: 25rem; /* 400px */
+    height: 17.5rem; /* 280px */
+  }
+
+  .bedding-tech-seasonal__cards {
+    margin-top: 2.5rem; /* 40px */
   }
 }

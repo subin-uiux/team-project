@@ -198,8 +198,6 @@
   display: none;
 }
 
-.scroll-feature__media-nav,
-.scroll-feature__arrow,
 .scroll-feature__dots {
   display: none;
 }
@@ -252,7 +250,7 @@
 
   .scroll-feature__features {
     display: grid;
-    margin-top: 0;
+    margin-top: 1.875rem; /* 30px — 제목 ↔ 특징 */
     gap: 0;
   }
 
@@ -272,45 +270,6 @@
   .scroll-feature__feature-row {
     flex-direction: column;
     gap: 0;
-  }
-
-  .scroll-feature__media-nav {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    display: block;
-    pointer-events: none;
-  }
-
-  .scroll-feature__arrow {
-    position: absolute;
-    top: 50%;
-    z-index: 2;
-    display: block;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    transform: translateY(-50%);
-    pointer-events: auto;
-    cursor: pointer;
-  }
-
-  .scroll-feature__arrow img {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-
-  .scroll-feature__arrow--prev {
-    left: 1.25rem; /* 20px */
-  }
-
-  .scroll-feature__arrow--next {
-    right: 1.25rem; /* 20px */
-  }
-
-  .scroll-feature__arrow.is-hidden {
-    display: none;
   }
 
   .scroll-feature__dots {
@@ -333,7 +292,7 @@
 
   .scroll-feature__dot.is-active {
     width: 1.25rem; /* 20px */
-    background-color: #737373;
+    background-color: var(--color-brand-dark);
   }
 }
 
@@ -341,10 +300,6 @@
   .scroll-feature__title,
   .scroll-feature__title--ko {
     font-size: 2rem; /* 32px */
-  }
-
-  .scroll-feature__features {
-    margin-top: 3.125rem; /* 50px */
   }
 
   .scroll-feature__feature-number {
@@ -358,21 +313,12 @@
   .scroll-feature__feature-desc {
     font-size: 1rem; /* 16px */
   }
-
-  .scroll-feature__arrow {
-    width: 4.0625rem; /* 65px */
-    height: 4.0625rem; /* 65px */
-  }
 }
 
 @media (max-width: 47.9375rem) {
   .scroll-feature__title,
   .scroll-feature__title--ko {
     font-size: 1.75rem; /* 28px */
-  }
-
-  .scroll-feature__features {
-    margin-top: 1.875rem; /* 30px */
   }
 
   .scroll-feature__feature-number {
@@ -386,9 +332,83 @@
   .scroll-feature__feature-desc {
     font-size: 1rem; /* 16px */
   }
+}
 
-  .scroll-feature__arrow {
-    width: 2.5rem; /* 40px */
-    height: 2.5rem; /* 40px */
+/* compact-stack: 제목 → 이미지 → 특징 → pagination (mattress / bedding) */
+@media (max-width: 63.9375rem) {
+  .mattress-tech-top-layer,
+  .bedding-tech-process {
+    height: auto;
+    min-height: 0;
+  }
+
+  .scroll-feature--compact-stack.scroll-feature {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    height: auto;
+    min-height: 0;
+    padding-block: 5rem; /* 80px */
+  }
+
+  .scroll-feature--compact-stack .scroll-feature__content,
+  .scroll-feature--compact-stack.scroll-feature--media-end .scroll-feature__content {
+    display: contents;
+    margin: 0;
+    padding: 0;
+  }
+
+  .scroll-feature--compact-stack .scroll-feature__title,
+  .scroll-feature--compact-stack .scroll-feature__title--ko {
+    order: 1;
+    margin-bottom: 1.25rem; /* 20px — 제목 ↔ 이미지 (mobile) */
+  }
+
+  .scroll-feature--compact-stack .scroll-feature__media,
+  .scroll-feature--compact-stack.scroll-feature--media-end .scroll-feature__media,
+  .scroll-feature--compact-stack.scroll-feature--media-60.scroll-feature--media-end .scroll-feature__media {
+    order: 2;
+    width: 100%;
+    height: 30vh;
+    flex: 0 0 30vh;
+    margin: 0;
+  }
+
+  .scroll-feature--compact-stack .scroll-feature__features {
+    order: 3;
+    position: relative;
+    display: block;
+    margin-top: 0; /* 이미지 ↔ 특징 0 */
+    padding-block: 1.25rem; /* 20px */
+  }
+
+  .scroll-feature--compact-stack .scroll-feature__feature {
+    grid-area: auto;
+    visibility: visible;
+  }
+
+  .scroll-feature--compact-stack .scroll-feature__feature:not(.is-active) {
+    position: absolute;
+    inset: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .scroll-feature--compact-stack .scroll-feature__feature.is-active {
+    position: relative;
+    visibility: visible;
+  }
+
+  .scroll-feature--compact-stack .scroll-feature__dots {
+    order: 4;
+    margin-top: 0.875rem; /* 14px — 특징 ↔ pagination */
+  }
+}
+
+@media (min-width: 48rem) and (max-width: 63.9375rem) {
+  .scroll-feature--compact-stack .scroll-feature__title,
+  .scroll-feature--compact-stack .scroll-feature__title--ko {
+    margin-bottom: 1.875rem; /* 30px — 제목 ↔ 이미지 (tablet) */
   }
 }

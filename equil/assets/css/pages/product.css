@@ -115,24 +115,32 @@
   }
 
   .product-list__grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     justify-items: center;
     gap: 6rem; /* 32px */
+    width: 100%;
   }
 
   .product-list__item {
     width: 100%;
     max-width: 30.125rem; /* 482px */
+    min-width: 0;
   }
 
   .product-list__item .card-product,
   .product-list__item .card-product__media {
-    width: 30.125rem; /* 482px */
+    width: 100%;
     max-width: 100%;
+    min-width: 0;
   }
 
   .product-list__item .card-product__media {
     height: 13.75rem; /* 220px */
+  }
+
+  .product-list__item .card-product__body {
+    width: 100%;
+    min-width: 0;
   }
 
   .product-list__item .card-product__title,
@@ -155,7 +163,9 @@
   }
 
   .product-ctg__tabs {
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(2, max-content);
+    justify-content: center;
     gap: 0.75rem; /* 12px */
   }
 
@@ -166,40 +176,48 @@
 
   .product-list__title {
     margin-bottom: 2.5rem; /* 40px */
-    font-size: clamp(0.75rem, 3.129vw, 1.5rem); /* 24px, mo/subtitle01 */
+    font-size: clamp(1.091rem, 5.455vw, 1.5rem); /* 24px, mo/subtitle01 */
   }
 
   .product-list__grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     justify-items: center;
     gap: 4rem; /* 64px */
+    width: 100%;
   }
 
   .product-list__item {
     width: 100%;
     max-width: 25rem; /* 400px */
+    min-width: 0;
   }
 
   .product-list__item .card-product,
   .product-list__item .card-product__media {
-    width: 25rem; /* 400px */
+    width: 100%;
     max-width: 100%;
+    min-width: 0;
   }
 
   .product-list__item .card-product__media {
     height: 12.5rem; /* 200px */
   }
 
+  .product-list__item .card-product__body {
+    width: 100%;
+    min-width: 0;
+  }
+
   .product-list__item .card-product__title,
   .product-list__item .card-product__name {
-    font-size: clamp(0.75rem, 2.347vw, 1.125rem); /* 18px */
+    font-size: clamp(0.818rem, 4.091vw, 1.125rem); /* 18px */
   }
 
   .product-list__item .card-product__text {
-    font-size: clamp(0.75rem, 2.086vw, 1rem); /* 16px */
+    font-size: clamp(0.75rem, 3.636vw, 1rem); /* 16px */
   }
 
   .product-list__item .card-product__sizes {
-    font-size: clamp(0.75rem, 1.825vw, 0.875rem); /* 14px */
+    font-size: clamp(0.75rem, 3.182vw, 0.875rem); /* 14px */
   }
 }
