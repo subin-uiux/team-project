@@ -630,6 +630,8 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
   max-width: none;
   object-fit: cover;
   will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .main-mattress-solution__nav {
@@ -1677,6 +1679,8 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
   height: 100vh;
   max-width: 120rem; /* 1920px */
   margin-inline: auto;
+  /* 이미지 pin 중 뒷 섹션이 비치지 않도록 섹션 배경 확보 */
+  background-color: var(--color-brand-light-2);
 }
 
 .main-sleep-fit__viewport {
@@ -1684,6 +1688,9 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  /* 이미지 축소 중 viewport 밖 영역(뒷 섹션)이 비치지 않도록 배경 고정 */
+  background-color: var(--color-brand-light-2);
+  isolation: isolate;
 }
 
 .main-sleep-fit__container {
@@ -1761,6 +1768,16 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
   height: 100%;
   overflow: hidden;
   border-radius: 0;
+}
+
+/* 이미지가 줄어들 때 미디어 뒤 viewport가 드러나도 뒷 섹션이 보이지 않게 막음 */
+.main-sleep-fit__viewport::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-color: var(--color-brand-light-2);
+  pointer-events: none;
 }
 
 .main-sleep-fit__image {

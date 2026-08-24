@@ -66,9 +66,15 @@
 
   const FADE_UP_DURATION = 1.26;
   const HEADING_3TIER_SCROLL_START = 'top 90%';
+  const HEADING_3TIER_SCROLL_START_COMPACT = 'top 70%';
 
   const getHeading3tierScrollTrigger = (heading) =>
     heading.closest('section') || heading;
+
+  const getHeading3tierScrollStart = () =>
+    window.matchMedia('(max-width: 63.9375rem)').matches
+      ? HEADING_3TIER_SCROLL_START_COMPACT
+      : HEADING_3TIER_SCROLL_START;
 
   const splitHeadingChars = (element, charClass) => {
     const walk = (node) => {
@@ -86,6 +92,48 @@
           span.className = charClass;
           span.textContent = char;
           fragment.appendChild(span);
+        });
+
+        node.parentNode.replaceChild(fragment, node);
+        return;
+      }
+
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        if (node.tagName === 'BR') return;
+        Array.from(node.childNodes).forEach(walk);
+      }
+    };
+
+    Array.from(element.childNodes).forEach(walk);
+    return Array.from(element.querySelectorAll(`.${charClass}`));
+  };
+
+  /* 단어 단위로 묶어 줄바꿈·띄어쓰기 유지 (section-cta 등) */
+  const splitCharsPreserveWords = (element, charClass, wordClass) => {
+    const walk = (node) => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const parts = node.textContent.split(/(\s+)/);
+        const fragment = document.createDocumentFragment();
+
+        parts.forEach((part) => {
+          if (!part) return;
+
+          if (/^\s+$/.test(part)) {
+            fragment.appendChild(document.createTextNode(part));
+            return;
+          }
+
+          const word = document.createElement('span');
+          word.className = wordClass;
+
+          Array.from(part).forEach((char) => {
+            const span = document.createElement('span');
+            span.className = charClass;
+            span.textContent = char;
+            word.appendChild(span);
+          });
+
+          fragment.appendChild(word);
         });
 
         node.parentNode.replaceChild(fragment, node);
@@ -160,7 +208,7 @@
         stagger: allChars.length > 1 ? charStagger : 0,
         scrollTrigger: {
           trigger: getHeading3tierScrollTrigger(heading),
-          start: HEADING_3TIER_SCROLL_START,
+          start: getHeading3tierScrollStart(),
           once: true,
           invalidateOnRefresh: true,
         },
@@ -218,8 +266,11 @@
       if (!title) return;
 
       const charClass = 'section-cta__char';
-      const titleChars = splitHeadingChars(title, charClass);
-      const descChars = desc ? splitHeadingChars(desc, charClass) : [];
+      const wordClass = 'section-cta__word';
+      const titleChars = splitCharsPreserveWords(title, charClass, wordClass);
+      const descChars = desc
+        ? splitCharsPreserveWords(desc, charClass, wordClass)
+        : [];
 
       gsap.set(titleChars, { opacity: 0, y: 40 });
       if (descChars.length) gsap.set(descChars, { opacity: 0, y: 40 });
@@ -228,7 +279,9 @@
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: block,
-          start: 'top 90%',
+          start: window.matchMedia('(max-width: 63.9375rem)').matches
+            ? 'top 70%'
+            : 'top 90%',
           once: true,
         },
       });

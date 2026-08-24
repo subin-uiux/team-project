@@ -380,16 +380,23 @@
     const revealCutaway = () => {
       if (hasRevealed) return;
 
+      const showCalloutAndFooter = () => {
+        if (hasRevealed) return;
+        hasRevealed = true;
+        section.classList.add('is-ready');
+        gsap.to(marker, { opacity: 1, duration: 0.2, ease: 'power2.out' });
+        activateZone(currentIndex, false);
+      };
+
       gsap.to(pillowIn, {
         opacity: 1,
         duration: IMAGE_FADE_DURATION,
         ease: 'none',
-        onComplete: () => {
-          hasRevealed = true;
-          section.classList.add('is-ready');
-          gsap.to(marker, { opacity: 1, duration: 0.2, ease: 'power2.out' });
-          activateZone(currentIndex, false);
+        onUpdate() {
+          /* 이미지 페이드 40% 지점에서 callout·footer 표시 */
+          if (this.progress() >= 0.4) showCalloutAndFooter();
         },
+        onComplete: showCalloutAndFooter,
       });
     };
 
@@ -397,7 +404,7 @@
 
     ScrollTrigger.create({
       trigger: section,
-      start: 'top 75%',
+      start: 'top 40%',
       once: true,
       onEnter: revealCutaway,
     });

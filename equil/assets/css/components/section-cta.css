@@ -29,6 +29,8 @@
   font-size: var(--fs-title); /* 40px */
   line-height: 130%;
   color: var(--color-white);
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 .section-cta__desc {
@@ -38,15 +40,26 @@
   font-size: var(--fs-body-02); /* 22px */
   line-height: 130%;
   color: var(--color-brand-light-1);
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 .section-cta__button {
   margin-top: 1.875rem; /* 30px */
 }
 
+.section-cta__word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
 .section-cta__char {
   display: inline-block;
   will-change: transform, opacity;
+}
+
+.section-cta__title-break {
+  display: none;
 }
 
 @media (min-width: 48rem) and (max-width: 63.9375rem) {
@@ -63,5 +76,9 @@
 
   .section-cta__title {
     font-size: clamp(1.091rem, 5.455vw, 1.5rem); /* 24px */
+  }
+
+  .section-cta__title-break {
+    display: block;
   }
 }

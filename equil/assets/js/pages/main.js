@@ -43,6 +43,19 @@
     let textTween = null;
     let animatingProblemIndex = -1;
     let suppressEnterBack = false;
+    let heroFillTween = null;
+    /* Tab/Mo — 자동 채움 완료 전까지 다음 섹션 이동 차단 */
+    let heroFillReady = !isCompact();
+    let unblockHeroFillScroll = null;
+
+    const isHeroFillBlocking = () => isCompact() && !heroFillReady;
+
+    const clearHeroFillScrollLock = () => {
+      if (typeof unblockHeroFillScroll === 'function') {
+        unblockHeroFillScroll();
+        unblockHeroFillScroll = null;
+      }
+    };
 
     const getProblemTextElements = (item) => ({
       fadeDown: gsap.utils.toArray('.main-problem__number, .main-problem__title', item),
@@ -295,6 +308,7 @@
 
     const handleStepInput = (direction) => {
       if (!scrollTrigger?.isActive || isAnimating) return false;
+      if (isHeroFillBlocking()) return true;
 
       if (direction > 0) {
         if (currentStep >= STEPS.length - 1) return false;
@@ -315,7 +329,7 @@
       const onWheel = (event) => {
         if (!scrollTrigger?.isActive) return;
 
-        if (isAnimating) {
+        if (isAnimating || isHeroFillBlocking()) {
           event.preventDefault();
           return;
         }
@@ -342,9 +356,22 @@
       );
 
       viewport.addEventListener(
+        'touchmove',
+        (event) => {
+          if (!scrollTrigger?.isActive) return;
+          if (isAnimating || isHeroFillBlocking()) {
+            event.preventDefault();
+          }
+        },
+        { passive: false },
+      );
+
+      viewport.addEventListener(
         'touchend',
         (event) => {
-          if (!scrollTrigger?.isActive || isAnimating) return;
+          if (!scrollTrigger?.isActive || isAnimating || isHeroFillBlocking()) {
+            return;
+          }
 
           const touchEndY = event.changedTouches[0]?.clientY ?? 0;
           const deltaY = touchStartY - touchEndY;
@@ -363,8 +390,28 @@
     const playHeroFillOnLoad = () => {
       if (!fill || !isCompact()) return;
 
+      if (heroFillTween) {
+        heroFillTween.kill();
+        heroFillTween = null;
+      }
+      clearHeroFillScrollLock();
+
+      heroFillReady = false;
       setFillProgress(0);
-      gsap.to(
+
+      const blockPageScroll = (event) => {
+        if (!isHeroFillBlocking()) return;
+        event.preventDefault();
+      };
+
+      window.addEventListener('wheel', blockPageScroll, { passive: false });
+      window.addEventListener('touchmove', blockPageScroll, { passive: false });
+      unblockHeroFillScroll = () => {
+        window.removeEventListener('wheel', blockPageScroll);
+        window.removeEventListener('touchmove', blockPageScroll);
+      };
+
+      heroFillTween = gsap.to(
         { progress: 0 },
         {
           progress: 1,
@@ -372,9 +419,15 @@
           ease: 'power2.out',
           onUpdate() {
             setFillProgress(this.targets()[0].progress);
+            if (scrollTrigger?.isActive) {
+              window.scrollTo(0, scrollTrigger.start);
+            }
           },
           onComplete() {
             setFillProgress(1);
+            heroFillReady = true;
+            heroFillTween = null;
+            clearHeroFillScrollLock();
           },
         },
       );
@@ -414,7 +467,7 @@
         applyStep(STEPS.length - 1, { immediate: true, animateText: true });
       },
       onUpdate: (self) => {
-        if (isAnimating || textTween) return;
+        if (isAnimating || textTween || isHeroFillBlocking()) return;
 
         const maxStep = STEPS.length - 1;
         const syncedStep = Math.min(
@@ -432,6 +485,7 @@
 
     navItems.forEach((btn) => {
       btn.addEventListener('click', () => {
+        if (isHeroFillBlocking()) return;
         const problemIndex = Number(btn.dataset.index);
         if (Number.isNaN(problemIndex)) return;
 
@@ -463,6 +517,7 @@
 
       requestAnimationFrame(() => {
         applyStep(0, { immediate: true });
+        if (isCompact()) playHeroFillOnLoad();
         suppressEnterBack = false;
       });
     };
@@ -480,15 +535,15 @@
     }
 
     const LAST_INDEX = panels.length - 1;
-    const SLIDE_DURATION = 0.9; /* 매트리스 이미지 슬라이드 전환 속도 */
-    const SLIDE_EASE = 'power2.inOut';
+    const SLIDE_DURATION = 1.15; /* 매트리스 이미지 슬라이드 전환 속도 */
+    const SLIDE_EASE = 'expo.inOut'; /* 시작·끝이 부드럽게 감속하는 expo 커브 */
     const HEADING_FADE_UP_DURATION = 1.26; /* 3단 타이틀 fadeUp — common.js FADE_UP_DURATION과 동일 */
     const FEATURES_FADE_UP_DURATION = 1.2; /* features fadeUp 속도 (조정: main.js) */
     const FEATURES_DELAY = 0.15; /* heading 이후 features 지연 (조정: main.js) */
     const FADE_UP_EASE = 'power3.out';
     const FADE_UP_Y = 40;
     const HEADING_CHAR_CLASS = 'heading-3tier__char';
-    const ENTRY_LOCK_MS = 800;
+    const ENTRY_LOCK_MS = 400; /* 진입 직후 첫 휠을 바로 받아 끊김 없이 전환 */
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const compactMq = window.matchMedia('(max-width: 63.9375rem)');
     const isCompact = () => compactMq.matches;
@@ -743,7 +798,6 @@
           setImagesImmediate(safeIndex);
           if (!isCompact()) {
             setThumbImmediate(safeIndex);
-            window.scrollTo(0, targetY);
           }
         },
       });
@@ -780,14 +834,13 @@
             0,
           )
           .to(
-            { progress: 0 },
+            { value: startY },
             {
-              progress: 1,
+              value: targetY,
               duration: SLIDE_DURATION,
               ease: SLIDE_EASE,
               onUpdate() {
-                const t = this.targets()[0].progress;
-                window.scrollTo(0, startY + (targetY - startY) * t);
+                window.scrollTo(0, Math.round(this.targets()[0].value));
               },
             },
             0,
@@ -904,7 +957,8 @@
 
     ScrollTrigger.create({
       trigger: section,
-      start: 'top 90%',
+      /* 모바일·태블릿: 섹션이 화면에 충분히 들어와야 텍스트 등장 */
+      start: isCompact() ? 'top 70%' : 'top 90%',
       onEnter: () => {
         sectionEntered = true;
         activatePanel(0, { animate: true });
@@ -960,7 +1014,7 @@
 
         const syncedIndex = Math.round(self.progress * LAST_INDEX);
         if (syncedIndex !== Math.max(0, currentIndex)) {
-          applyIndex(syncedIndex, { animateText: true });
+          goTo(syncedIndex);
         }
       },
     });
@@ -1171,7 +1225,9 @@
       stagger: chars.length > 1 ? stagger : 0,
       scrollTrigger: {
         trigger: title,
-        start: 'top 90%',
+        start: window.matchMedia('(max-width: 63.9375rem)').matches
+          ? 'top 70%'
+          : 'top 90%',
         once: true,
       },
       onComplete: () => {
@@ -1240,10 +1296,13 @@
     const getShrunkProps = () => {
       const viewportRect = viewport.getBoundingClientRect();
       const frameRect = frame.getBoundingClientRect();
+      const relTop = frameRect.top - viewportRect.top;
+      const relLeft = frameRect.left - viewportRect.left;
 
       return {
-        top: frameRect.top - viewportRect.top,
-        left: frameRect.left - viewportRect.left,
+        /* viewport 안으로 클램프 — 이미지가 섹션 아래로 벗어나 뒷 섹션이 노출되는 현상 방지 */
+        top: Math.max(0, Math.min(relTop, viewportRect.height - frameRect.height)),
+        left: Math.max(0, Math.min(relLeft, viewportRect.width - frameRect.width)),
         width: frameRect.width,
         height: frameRect.height,
         borderRadius: '30px',
@@ -1310,7 +1369,10 @@
     const getScrollYForIndex = (index) => {
       if (!scrollTrigger) return window.scrollY;
       const progress = LAST_INDEX === 0 ? 0 : index / LAST_INDEX;
-      return scrollTrigger.start + (scrollTrigger.end - scrollTrigger.start) * progress;
+      const range = scrollTrigger.end - scrollTrigger.start;
+      /* pin end에 정확히 닿으면 unpin 되면서 이미지가 풀스크린으로 튕김 */
+      const clamped = index >= LAST_INDEX ? Math.min(progress, 0.999) : progress;
+      return scrollTrigger.start + range * clamped;
     };
 
     const goTo = (index, { immediate = false } = {}) => {
@@ -1355,7 +1417,8 @@
           applyOverlayState(expanded);
           applyHeaderState(expanded, { animate: false });
           syncFullBleedHeader();
-          if (expanded && scrollTrigger) {
+          /* compact만 높이 변경 → refresh. PC에서 refresh하면 onEnter가 풀스크린으로 되돌림 */
+          if (expanded && scrollTrigger && isCompact()) {
             ScrollTrigger.refresh();
           }
           if (expanded && !isCompact()) {
@@ -1557,22 +1620,27 @@
       return;
     }
 
+    /* pin 구간 = 뷰포트 2개 높이: 진입 후 충분히 머물다 휠로 다음 단계 전환 */
+    const PIN_EXTRA = () => window.innerHeight * 1.5;
+
     scrollTrigger = ScrollTrigger.create({
       trigger: section,
       start: 'top top',
-      end: () => `+=${section.offsetHeight}`,
+      end: () => `+=${window.innerHeight + PIN_EXTRA()}`,
       pin: true,
       pinSpacing: true,
       scrub: false,
-      anticipatePin: 0,
+      anticipatePin: 1,
       invalidateOnRefresh: true,
       onRefresh: () => {
+        if (isAnimating) return;
         applyMediaState(currentIndex >= LAST_INDEX);
         applyOverlayState(currentIndex >= LAST_INDEX);
       },
       onEnter: () => {
         entryLockUntil = Date.now() + ENTRY_LOCK_MS;
         postExpandHoldUntil = 0;
+        if (currentIndex >= LAST_INDEX) return;
         applyIndex(0, { animate: false });
       },
       onEnterBack: () => {
@@ -1631,9 +1699,11 @@
       ScrollTrigger.refresh();
 
       if (typeof window.AOS !== 'undefined') {
+        const isCompactView = window.matchMedia('(max-width: 63.9375rem)').matches;
         window.AOS.init({
           once: true,
-          offset: 80,
+          /* 모바일: 섹션이 더 들어와야 AOS 재생 */
+          offset: isCompactView ? Math.round(window.innerHeight * 0.35) : 80,
           duration: 1000,
           easing: 'ease-out-cubic',
         });
