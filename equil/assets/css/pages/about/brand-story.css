@@ -276,7 +276,8 @@
   overflow: hidden;
 }
 
-.brand-story-origin__image {
+.brand-story-origin__image,
+.brand-story-origin__video {
   display: block;
   width: 100%;
   height: 100%;

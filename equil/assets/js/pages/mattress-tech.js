@@ -101,7 +101,7 @@
     const RESEARCH_SLIDE_DURATION = 1.5;
     const RESEARCH_SLIDE_EASE = 'power2.inOut';
     const SWIPE_THRESHOLD = 40;
-    const ENTRY_LOCK_MS = 400;
+    const ENTRY_LOCK_MS = 280;
     const WHEEL_SLIDE_COOLDOWN_MS = 320;
     const PIN_SCROLL_LENGTH = '+=120%';
     const compactQuery = window.matchMedia('(max-width: 63.9375rem)');
@@ -131,6 +131,7 @@
     let wheelSlideCooldownUntil = 0;
     let mobileRevealTrigger = null;
     let pinListenersAttached = false;
+    let activateTimer = null;
 
     const startEntryLock = () => {
       entryLockUntil = Date.now() + ENTRY_LOCK_MS;
@@ -143,16 +144,6 @@
     };
 
     const isWheelSlideCoolingDown = () => Date.now() < wheelSlideCooldownUntil;
-
-    const isSectionStuckInViewport = () => {
-      const rect = section.getBoundingClientRect();
-      return rect.top <= 0.5 && rect.bottom >= window.innerHeight - 0.5;
-    };
-
-    const snapToPinStart = (trigger = pinTrigger) => {
-      if (!trigger) return;
-      window.scrollTo(0, trigger.start);
-    };
 
     const snapToPinEnd = (trigger = pinTrigger) => {
       if (!trigger) return;
@@ -271,6 +262,10 @@
     const getOffAxis = () => (isHorizontal() ? 'y' : 'x');
 
     const stopTimers = () => {
+      if (activateTimer) {
+        window.clearTimeout(activateTimer);
+        activateTimer = null;
+      }
       if (autoTimer) {
         autoTimer.kill();
         autoTimer = null;
@@ -359,37 +354,37 @@
       }
 
       if (index === 0) {
-        const onTimeUpdate = () => {
-          if (
-            video.duration &&
-            Number.isFinite(video.duration) &&
-            video.duration > 0
-          ) {
-            gsap.set(gauge, {
-              scaleX: video.currentTime / video.duration,
-              transformOrigin: 'left center',
-            });
-          }
-        };
-
-        const onEnded = () => {
-          gsap.set(gauge, { scaleX: 1, transformOrigin: 'left center' });
-          goTo(1);
-        };
+        const PLAYBACK_RATE = 1.8;
 
         stopVideoSync = () => {
-          video.removeEventListener('timeupdate', onTimeUpdate);
-          video.removeEventListener('ended', onEnded);
           video.pause();
         };
 
-        video.addEventListener('timeupdate', onTimeUpdate);
-        video.addEventListener('ended', onEnded);
-        video.playbackRate = 1.8;
+        video.playbackRate = PLAYBACK_RATE;
         video.currentTime = 0;
 
-        getVideoDuration().then(() => {
-          if (currentIndex !== 0) return;
+        getVideoDuration().then((duration) => {
+          if (currentIndex !== 0 || isMobileView()) return;
+
+          /* timeupdate 동기화는 ~4fps로 끊김 → 영상 길이에 맞춘 GSAP으로 부드럽게 채움 */
+          const gaugeDuration =
+            duration && Number.isFinite(duration) && duration > 0
+              ? duration / PLAYBACK_RATE
+              : STATIC_SLIDE_DURATION;
+
+          gaugeTween = gsap.to(gauge, {
+            scaleX: 1,
+            duration: gaugeDuration,
+            ease: 'none',
+            transformOrigin: 'left center',
+          });
+
+          autoTimer = gsap.delayedCall(gaugeDuration, () => {
+            if (currentIndex !== 0) return;
+            gsap.set(gauge, { scaleX: 1, transformOrigin: 'left center' });
+            goTo(1);
+          });
+
           const playPromise = video.play();
           if (playPromise) {
             playPromise.catch(() => {});
@@ -514,7 +509,13 @@
         resetSlides(startIndex);
       }
       resetGauge();
-      startSlideTimers(startIndex);
+
+      /* 핀 레이아웃 안정화 후 영상·게이지·텍스트 시작 — 진입 버벅임 완화 */
+      activateTimer = window.setTimeout(() => {
+        activateTimer = null;
+        if (!isLocked || currentIndex !== startIndex) return;
+        startSlideTimers(startIndex);
+      }, 80);
     };
 
     const deactivate = () => {
@@ -559,14 +560,8 @@
     const handleScrollIntent = (goingDown, event) => {
       if (!pinTrigger || isExitingPin) return;
 
-      const pinActive = pinTrigger.isActive;
-
-      if (
-        !pinActive &&
-        !(isLocked && isSectionStuckInViewport())
-      ) {
-        return;
-      }
+      /* 핀이 실제로 걸린 뒤에만 휠을 가로챔 */
+      if (!pinTrigger.isActive) return;
 
       /* 마지막 슬라이드에서 아래로 → 다음 섹션 */
       if (goingDown && currentIndex === LAST_SLIDE_INDEX && isLocked) {
@@ -582,8 +577,16 @@
         return;
       }
 
-      if (isEntryLocked() || isAnimating || isWheelSlideCoolingDown()) {
+      if (isAnimating || isWheelSlideCoolingDown()) {
         event?.preventDefault?.();
+        return;
+      }
+
+      /* 핀 진입 직후: 슬라이드 전환만 막고, overview→research 네이티브 스크롤은 가로채지 않음 */
+      if (isEntryLocked()) {
+        if (!(goingDown && currentIndex === 0)) {
+          event?.preventDefault?.();
+        }
         return;
       }
 
@@ -625,11 +628,23 @@
 
       if (
         !exitingPin &&
-        (isEntryLocked() || isAnimating || isWheelSlideCoolingDown())
+        (isAnimating || isWheelSlideCoolingDown())
       ) {
         event.preventDefault();
         return;
       }
+
+      /* 진입 직후 첫 슬라이드 하향 스와이프는 네이티브 스크롤에 맡김 */
+      if (
+        !exitingPin &&
+        isEntryLocked() &&
+        !(goingDown && currentIndex === 0)
+      ) {
+        event.preventDefault();
+        return;
+      }
+
+      if (isEntryLocked()) return;
 
       if (!isLocked) return;
 
@@ -683,7 +698,7 @@
         end: PIN_SCROLL_LENGTH,
         pin: true,
         pinSpacing: true,
-        anticipatePin: 1,
+        anticipatePin: 0,
         invalidateOnRefresh: true,
         onEnter: () => {
           activate(0);
@@ -863,19 +878,21 @@
     const title = section?.querySelector('.mattress-tech-structure-overview__title');
     if (!section || !title) return;
 
+    const STRUCTURE_OVERVIEW_FADE_UP_DURATION = 2; /* 기본 1.26s보다 느리게 */
+
     const chars = splitChars(
       title,
       'mattress-tech-structure-overview__char'
     );
     const charStagger =
-      FADE_UP_DURATION / Math.max(chars.length * 2.5, 1);
+      STRUCTURE_OVERVIEW_FADE_UP_DURATION / Math.max(chars.length * 2.5, 1);
 
     gsap.set(chars, { opacity: 0, y: 40 });
 
     gsap.to(chars, {
       opacity: 1,
       y: 0,
-      duration: FADE_UP_DURATION,
+      duration: STRUCTURE_OVERVIEW_FADE_UP_DURATION,
       ease: 'power3.out',
       stagger: chars.length > 1 ? charStagger : 0,
       scrollTrigger: {
@@ -890,9 +907,9 @@
   };
 
   const TOP_LAYER_IMAGES = [
-    '../../assets/images/about/mattress-tech/mattress-tech-top-layer_char01.webp',
-    '../../assets/images/about/mattress-tech/mattress-tech-top-layer_char02.webp',
-    '../../assets/images/about/mattress-tech/mattress-tech-top-layer_char03.webp',
+    '../assets/images/about/mattress-tech/mattress-tech-top-layer_char01.webp',
+    '../assets/images/about/mattress-tech/mattress-tech-top-layer_char02.webp',
+    '../assets/images/about/mattress-tech/mattress-tech-top-layer_char03.webp',
   ];
 
   const initMattressTechTopLayer = () => {
@@ -989,6 +1006,7 @@
     let pinTrigger = null;
     let sequenceTl = null;
     let holdCall = null;
+    let pinSettleUntil = 0;
 
     const leftChars = splitChars(leftText, 'mattress-tech-support-layers-overview__char');
     const rightChars = splitChars(
@@ -1101,6 +1119,9 @@
 
     const onPinTouchMove = (event) => {
       if (!isMobile() || !pinTrigger?.isActive || hasCompleted) return;
+      if (!pinTrigger || !pinTrigger.isActive) return;
+      /* 핀 진입 직후 짧은 구간은 네이티브 스크롤 허용 */
+      if (Date.now() < pinSettleUntil) return;
       event.preventDefault();
     };
 
@@ -1112,9 +1133,12 @@
       end: () => (isMobile() ? '+=1' : '+=100%'),
       pin: true,
       pinSpacing: true,
-      anticipatePin: 1,
+      anticipatePin: 0,
       invalidateOnRefresh: true,
-      onEnter: playSequence,
+      onEnter: () => {
+        pinSettleUntil = Date.now() + 280;
+        playSequence();
+      },
       onEnterBack: () => {
         if (hasCompleted) {
           setFinalVisualState();
@@ -1142,21 +1166,21 @@
       cards: [
         {
           image:
-            '../../assets/images/about/mattress-tech/mattress-tech-support-layer_soft01.webp',
+            '../assets/images/about/mattress-tech/mattress-tech-support-layer_soft01.webp',
           engTitle: 'Soft Memory Foam',
           title: '소프트 메모리폼',
           text: '몸의 굴곡을 부드럽게 감싸며 어깨와 골반처럼<br>압력이 집중되는 부위의 부담을 분산해 줍니다.',
         },
         {
           image:
-            '../../assets/images/about/mattress-tech/mattress-tech-support-layer_soft02.webp',
+            '../assets/images/about/mattress-tech/mattress-tech-support-layer_soft02.webp',
           engTitle: 'High-Resilience Support Foam',
           title: '고탄성 지지폼',
           text: '몸이 지나치게 가라앉지 않도록 안정적으로 받쳐주며,<br>부드러운 착와감과 균형 잡힌 지지력을 유지합니다.',
         },
         {
           image:
-            '../../assets/images/about/mattress-tech/mattress-tech-support-layer_soft03.webp',
+            '../assets/images/about/mattress-tech/mattress-tech-support-layer_soft03.webp',
           engTitle: 'Soft Zoned Pocket Spring',
           title: '소프트 존 포켓스프링',
           text: '독립 포켓스프링이 신체 움직임과 부위별 하중에 유연하게 반응해,<br>부드러운 반발력과 안정적인 지지를 제공합니다.',
@@ -1167,21 +1191,21 @@
       cards: [
         {
           image:
-            '../../assets/images/about/mattress-tech/mattress-tech-support-layer_balance01.webp',
+            '../assets/images/about/mattress-tech/mattress-tech-support-layer_balance01.webp',
           engTitle: 'Responsive Comfort Foam',
           title: '반응형 컴포트폼',
           text: '몸의 움직임과 하중 변화에 빠르게 반응해<br>신체 굴곡을 자연스럽게 따라가며 편안하게 밀착됩니다.',
         },
         {
           image:
-            '../../assets/images/about/mattress-tech/mattress-tech-support-layer_balance02.webp',
+            '../assets/images/about/mattress-tech/mattress-tech-support-layer_balance02.webp',
           engTitle: 'Balance HR Foam',
           title: '밸런스 고탄성폼',
           text: '적당한 탄성과 복원력으로 몸을 안정적으로 받쳐주며,<br>부드러운 착와감과 탄탄한 지지감의 균형을 잡아줍니다.',
         },
         {
           image:
-            '../../assets/images/about/mattress-tech/mattress-tech-support-layer_balance03.webp',
+            '../assets/images/about/mattress-tech/mattress-tech-support-layer_balance03.webp',
           engTitle: 'Medium Zoned Pocket Spring',
           title: '미디엄 존 포켓스프링',
           text: '부위별 하중에 세밀하게 반응해 어깨와 골반을 안정적으로 받치며,<br>수면 중에도 균형 잡힌 자세를 유지하도록 돕습니다.',
@@ -1192,21 +1216,21 @@
       cards: [
         {
           image:
-            '../../assets/images/about/mattress-tech/mattress-tech-support-layer_firm01.webp',
+            '../assets/images/about/mattress-tech/mattress-tech-support-layer_firm01.webp',
           engTitle: 'High-Resilience Comfort Foam',
           title: '고탄성 컴포트폼',
           text: '몸의 움직임과 압력에 탄력 있게 반응해 단단하면서도<br>지나치게 딱딱하지 않은 착와감을 제공합니다.',
         },
         {
           image:
-            '../../assets/images/about/mattress-tech/mattress-tech-support-layer_firm02.webp',
+            '../assets/images/about/mattress-tech/mattress-tech-support-layer_firm02.webp',
           engTitle: 'High-Density Support Foam',
           title: '고밀도 서포트폼',
           text: '높은 밀도의 폼이 신체 하중을 견고하게 받쳐 깊은 꺼짐을 줄이고,<br>오랜 시간 안정적인 지지감과 구조적 균형을 유지합니다.',
         },
         {
           image:
-            '../../assets/images/about/mattress-tech/mattress-tech-support-layer_firm03.webp',
+            '../assets/images/about/mattress-tech/mattress-tech-support-layer_firm03.webp',
           engTitle: 'Firm Zoned Pocket Spring',
           title: '펌 존 포켓스프링',
           text: '단단한 독립 포켓스프링이 허리와 골반을 안정적으로 지지하며,<br>탄탄한 반발력으로 균형 잡힌 수면 자세를 유지합니다.',

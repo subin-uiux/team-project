@@ -42,6 +42,7 @@
     let stepTween = null;
     let textTween = null;
     let animatingProblemIndex = -1;
+    let suppressEnterBack = false;
 
     const getProblemTextElements = (item) => ({
       fadeDown: gsap.utils.toArray('.main-problem__number, .main-problem__title', item),
@@ -395,7 +396,7 @@
       end: () => `+=${viewport.offsetHeight * (STEPS.length - 1)}`,
       pin: viewport,
       scrub: false,
-      anticipatePin: 1,
+      anticipatePin: 0,
       invalidateOnRefresh: true,
       onToggle: (self) => {
         document.body.classList.toggle('is-main-scroll-pinned', self.isActive);
@@ -409,6 +410,7 @@
         setFillProgress(1);
       },
       onEnterBack: () => {
+        if (suppressEnterBack) return;
         applyStep(STEPS.length - 1, { immediate: true, animateText: true });
       },
       onUpdate: (self) => {
@@ -437,6 +439,33 @@
         goToStep(problemIndex + heroStepCount());
       });
     });
+
+    /* 헤더 로고 등 — main-hero(KV) 시작 상태로 강제 복귀 */
+    window.resetEquilMainToHero = () => {
+      if (stepTween) {
+        stepTween.kill();
+        stepTween = null;
+      }
+      if (textTween) {
+        textTween.kill();
+        textTween = null;
+      }
+      isAnimating = false;
+      animatingProblemIndex = -1;
+      suppressEnterBack = true;
+
+      applyStep(0, { immediate: true });
+      document.body.classList.remove('is-main-scroll-nav-visible');
+
+      const targetY = scrollTrigger ? scrollTrigger.start : 0;
+      window.scrollTo(0, Math.max(0, targetY));
+      ScrollTrigger.update();
+
+      requestAnimationFrame(() => {
+        applyStep(0, { immediate: true });
+        suppressEnterBack = false;
+      });
+    };
   };
 
   const initMainMattressSolution = () => {
@@ -809,6 +838,7 @@
       };
 
       viewport.addEventListener('wheel', onWheel, { passive: false });
+      section.addEventListener('wheel', onWheel, { passive: false });
 
       let touchStartY = 0;
 
@@ -913,8 +943,9 @@
       start: 'top top',
       end: () => `+=${viewport.offsetHeight * LAST_INDEX}`,
       pin: viewport,
+      pinSpacing: true,
       scrub: false,
-      anticipatePin: 1,
+      anticipatePin: 0,
       invalidateOnRefresh: true,
       onEnter: () => {
         entryLockUntil = Date.now() + ENTRY_LOCK_MS;
@@ -1497,6 +1528,7 @@
   };
 
   const SCROLL_POSITION_KEY = 'equil:index-scroll-y';
+  const FORCE_TOP_KEY = 'equil:index-force-top';
 
   const start = () => {
     if ('scrollRestoration' in history) {
@@ -1504,6 +1536,8 @@
     }
 
     window.addEventListener('pagehide', () => {
+      /* 로고로 메인 KV 이동 시에는 이전 스크롤 위치를 저장하지 않음 */
+      if (sessionStorage.getItem(FORCE_TOP_KEY) === '1') return;
       sessionStorage.setItem(SCROLL_POSITION_KEY, String(window.scrollY));
     });
 
@@ -1515,9 +1549,20 @@
       initMainSleepBalanceFadeDown();
       ScrollTrigger.refresh();
 
-      const savedY = Number(sessionStorage.getItem(SCROLL_POSITION_KEY));
-      if (Number.isFinite(savedY) && savedY > 0) {
-        window.scrollTo(0, savedY);
+      const forceTop = sessionStorage.getItem(FORCE_TOP_KEY) === '1';
+      if (forceTop) {
+        sessionStorage.removeItem(FORCE_TOP_KEY);
+        sessionStorage.removeItem(SCROLL_POSITION_KEY);
+        if (typeof window.resetEquilMainToHero === 'function') {
+          window.resetEquilMainToHero();
+        } else {
+          window.scrollTo(0, 0);
+        }
+      } else {
+        const savedY = Number(sessionStorage.getItem(SCROLL_POSITION_KEY));
+        if (Number.isFinite(savedY) && savedY > 0) {
+          window.scrollTo(0, savedY);
+        }
       }
 
       window.initEquilHeading3tierFadeUp?.();
