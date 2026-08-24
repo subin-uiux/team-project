@@ -964,7 +964,7 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
   box-sizing: border-box;
   width: 100%;
   max-width: 120rem; /* 1920px */
-  height: 100vh;
+  height: auto;
   margin-inline: auto;
   padding-block: 6.25rem; /* 100px 위아래 */
 }
