@@ -66,7 +66,6 @@
 
   const FADE_UP_DURATION = 1.26;
   const HEADING_3TIER_SCROLL_START = 'top 90%';
-  const HEADING_3TIER_TOGGLE_ACTIONS = 'restart none none reset';
 
   const getHeading3tierScrollTrigger = (heading) =>
     heading.closest('section') || heading;
@@ -153,30 +152,22 @@
 
       gsap.set(allChars, { opacity: 0, y: 40 });
 
-      const fadeUpTimeline = gsap.timeline({
-        paused: true,
+      gsap.to(allChars, {
+        opacity: 1,
+        y: 0,
+        duration: fadeUpDuration,
+        ease: 'power3.out',
+        stagger: allChars.length > 1 ? charStagger : 0,
         scrollTrigger: {
           trigger: getHeading3tierScrollTrigger(heading),
           start: HEADING_3TIER_SCROLL_START,
-          toggleActions: HEADING_3TIER_TOGGLE_ACTIONS,
+          once: true,
           invalidateOnRefresh: true,
         },
         onComplete: () => {
           gsap.set(allChars, { clearProps: 'will-change' });
         },
       });
-
-      fadeUpTimeline.fromTo(
-        allChars,
-        { opacity: 0, y: 40 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: fadeUpDuration,
-          ease: 'power3.out',
-          stagger: allChars.length > 1 ? charStagger : 0,
-        },
-      );
     });
   };
 

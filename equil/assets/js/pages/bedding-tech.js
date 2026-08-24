@@ -389,69 +389,27 @@
       const goingDown = event.deltaY > 0;
 
       if (isEntryLocked()) {
-        event?.preventDefault?.();
-        return true;
-      }
-
-      if (isTransitioning) {
-        event?.preventDefault?.();
-        return true;
-      }
-
-      if (goingDown && currentStep === LAST_STEP) {
-        return false;
-      }
-
-      if (!goingDown && currentStep === 0) {
-        return false;
-      }
-
-      event?.preventDefault?.();
-      if (isInCooldown()) return true;
-
-      setStep(goingDown ? currentStep + 1 : currentStep - 1, true);
-      return true;
-    };
-
-    const onWheel = (event) => {
-      handleScrollIntent(event.deltaY > 0, event);
-    };
-
-    const onPinTouchStart = (event) => {
-      if (!pinTrigger?.isActive || !event.touches?.length) return;
-      touchStartY = event.touches[0].clientY;
-      touchGestureHandled = false;
-    };
-
-    const onPinTouchMove = (event) => {
-      if (!pinTrigger?.isActive || !event.touches?.length) return;
-
-      const deltaY =
-        touchStartY === null ? 0 : event.touches[0].clientY - touchStartY;
-      const goingDown = deltaY < 0;
-      const exitingPin =
-        (goingDown && currentStep === LAST_STEP) ||
-        (!goingDown && currentStep === 0);
-
-      if (!exitingPin && (isEntryLocked() || isTransitioning || isInCooldown())) {
         event.preventDefault();
         return;
       }
 
-      if (exitingPin) return;
+      if (isTransitioning) {
+        event.preventDefault();
+        return;
+      }
+
+      if (goingDown && currentStep === LAST_STEP) {
+        return;
+      }
+
+      if (!goingDown && currentStep === 0) {
+        return;
+      }
 
       event.preventDefault();
+      if (isInCooldown()) return;
 
-      if (touchStartY === null || touchGestureHandled) return;
-      if (Math.abs(deltaY) < SWIPE_THRESHOLD) return;
-
-      touchGestureHandled = true;
-      handleScrollIntent(goingDown, event);
-    };
-
-    const onPinTouchEnd = () => {
-      touchStartY = null;
-      touchGestureHandled = false;
+      setStep(goingDown ? currentStep + 1 : currentStep - 1, true);
     };
 
     pinTrigger = ScrollTrigger.create({
@@ -495,10 +453,6 @@
     });
 
     window.addEventListener('wheel', onWheel, { passive: false });
-    window.addEventListener('touchstart', onPinTouchStart, { passive: true });
-    window.addEventListener('touchmove', onPinTouchMove, { passive: false });
-    window.addEventListener('touchend', onPinTouchEnd, { passive: true });
-    window.addEventListener('touchcancel', onPinTouchEnd, { passive: true });
     window.addEventListener(
       'touchmove',
       (event) => {
@@ -518,19 +472,25 @@
     const cards = Array.from(
       section.querySelectorAll('.bedding-tech-seasonal__card')
     );
+    const medias = Array.from(
+      section.querySelectorAll('.bedding-tech-seasonal__media')
+    );
     const dots = Array.from(
       section.querySelectorAll('.bedding-tech-seasonal__dot')
     );
-    if (!cards.length) return;
+    if (!medias.length) return;
 
     const compactMq = window.matchMedia('(max-width: 63.9375rem)');
     const isCompact = () => compactMq.matches;
+    const LAST_INDEX = cards.length - 1;
     const SWIPE_THRESHOLD = 40;
     const TRANSITION_DURATION = 1;
     const FADE_OUT_RATIO = 0.55;
     const fadeOutDuration = TRANSITION_DURATION * FADE_OUT_RATIO;
     let currentIndex = 0;
-    let compactRevealed = true;
+    let mediaStarted = false;
+    let compactRevealed = !compactMq.matches;
+    let compactCover = null;
     let isTransitioning = false;
     let transitionTl = null;
     let pointerStartX = null;
@@ -538,11 +498,6 @@
 
     const getCopy = (card) =>
       card.querySelector('.bedding-tech-seasonal__copy');
-
-    const wrapIndex = (index) => {
-      const count = cards.length;
-      return ((index % count) + count) % count;
-    };
 
     const showCard = (index) => {
       currentIndex = index;
@@ -556,7 +511,7 @@
 
     const goTo = (index) => {
       if (!isCompact() || !compactRevealed || isTransitioning) return;
-      const nextIndex = wrapIndex(index);
+      const nextIndex = Math.max(0, Math.min(LAST_INDEX, index));
       if (nextIndex === currentIndex) return;
 
       const prevCopy = getCopy(cards[currentIndex]);
@@ -607,6 +562,31 @@
       }
     };
 
+    const coverActiveMedia = () => {
+      if (compactCover) return compactCover;
+
+      const card = cards[currentIndex];
+      const media = medias[currentIndex];
+      if (!card || !media) return null;
+
+      const coverHeight = card.offsetHeight;
+      const copy = getCopy(card);
+      const restTop = copy ? copy.offsetHeight : 0;
+      const restHeight = media.offsetHeight;
+
+      gsap.set(card, { minHeight: coverHeight });
+      gsap.set(media, {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: coverHeight,
+      });
+
+      compactCover = { card, media, restTop, restHeight };
+      return compactCover;
+    };
+
     if (isCompact()) {
       showCard(0);
       cards.forEach((card, index) => {
@@ -617,7 +597,49 @@
           y: 0,
         });
       });
+      coverActiveMedia();
+    } else {
+      /* PC — 카드 사진을 위에서 덮은 뒤 순차 하강 */
+      gsap.set(medias, { top: '0%' });
     }
+
+    const playMediaReveal = () => {
+      if (isCompact()) {
+        const cover = coverActiveMedia();
+        if (!cover) {
+          compactRevealed = true;
+          return;
+        }
+
+        gsap.to(cover.media, {
+          top: cover.restTop,
+          height: cover.restHeight,
+          duration: 1,
+          ease: 'power2.inOut',
+          onComplete: () => {
+            gsap.set(cover.media, {
+              clearProps: 'position,top,left,width,height',
+            });
+            gsap.set(cover.card, { clearProps: 'minHeight' });
+            compactRevealed = true;
+          },
+        });
+        return;
+      }
+
+      gsap.to(medias, {
+        top: '35%',
+        duration: 1,
+        ease: 'power2.inOut',
+        stagger: 0.5,
+      });
+    };
+
+    const playMediaRevealOnce = () => {
+      if (mediaStarted) return;
+      mediaStarted = true;
+      playMediaReveal();
+    };
 
     section.addEventListener('click', (event) => {
       if (!isCompact()) return;
@@ -656,7 +678,15 @@
       });
     }
 
-    if (!heading) return;
+    if (!heading) {
+      ScrollTrigger.create({
+        trigger: section,
+        start: 'top 80%',
+        once: true,
+        onEnter: playMediaRevealOnce,
+      });
+      return;
+    }
 
     const targets = [
       heading.querySelector('.heading-3tier__sub-title'),
@@ -672,31 +702,26 @@
 
     gsap.set(headingChars, { opacity: 0, y: 40 });
 
-    const headingFadeUpTimeline = gsap
-      .timeline({
-        paused: true,
-        scrollTrigger: {
-          trigger: heading.closest('section') || section,
-          start: 'top 90%',
-          toggleActions: 'restart none none reset',
-          invalidateOnRefresh: true,
-        },
-        onComplete: () => {
-          gsap.set(headingChars, { clearProps: 'will-change' });
-        },
-      })
-      .fromTo(
-        headingChars,
-        { opacity: 0, y: 40 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: FADE_UP_DURATION,
-          ease: 'power3.out',
-          stagger: headingChars.length > 1 ? charStagger : 0,
-        },
-      );
-
+    gsap.to(headingChars, {
+      opacity: 1,
+      y: 0,
+      duration: FADE_UP_DURATION,
+      ease: 'power3.out',
+      stagger: headingChars.length > 1 ? charStagger : 0,
+      scrollTrigger: {
+        trigger: heading.closest('section') || section,
+        start: 'top 90%',
+        once: true,
+        invalidateOnRefresh: true,
+      },
+      onUpdate() {
+        if (this.progress() >= 0.5) playMediaRevealOnce();
+      },
+      onComplete: () => {
+        gsap.set(headingChars, { clearProps: 'will-change' });
+        playMediaRevealOnce();
+      },
+    });
   };
 
   const start = () => {

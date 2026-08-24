@@ -1459,12 +1459,18 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
   overflow-x: clip;
 }
 
+.main-bedding-solution__viewport {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
 .main-bedding-solution__panel {
   display: flex;
   align-items: stretch;
   gap: 2.6875rem; /* 43px */
   width: 100%;
-  height: 100%;
+  height: 100vh;
 }
 
 .main-bedding-solution__panel--media-start {
@@ -1561,8 +1567,7 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
     align-items: stretch;
     gap: 1.25rem; /* 20px — content ↔ image */
     width: 100%;
-    height: 100%;
-    /* min-height: 100vh; */
+    height: auto;
     padding: 6.25rem 0; /* 100px 위아래 */
   }
 
@@ -1776,14 +1781,22 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
 }
 
 @media (max-width: 63.9375rem) {
+  .main-sleep-fit {
+    /* 사이트 헤더 아래 body padding을 상쇄해 뷰포트 전체(헤더 뒤 포함)를 채움 */
+    --sleep-fit-view-height: 100vh;
+    --sleep-fit-view-height: 100dvh;
+    --sleep-fit-header-offset: 5rem; /* site-header bar 80px */
+    margin-top: calc(var(--sleep-fit-header-offset) * -1);
+  }
+
   .main-sleep-fit,
   .main-sleep-fit__viewport {
-    height: 100vh;
+    height: var(--sleep-fit-view-height);
   }
 
   .main-sleep-fit.is-expanded {
     height: auto;
-    min-height: 100vh;
+    min-height: var(--sleep-fit-view-height);
     background-color: var(--color-brand-light-2);
   }
 
@@ -1793,7 +1806,7 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
   .main-sleep-fit.is-expanded.is-animating,
   .main-sleep-fit.is-expanded.is-animating .main-sleep-fit__viewport,
   .main-sleep-fit.is-expanded.is-animating .main-sleep-fit__container {
-    height: 100vh;
+    height: var(--sleep-fit-view-height);
   }
 
   .main-sleep-fit.is-measuring .main-sleep-fit__header {
@@ -1801,30 +1814,27 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
     pointer-events: none;
   }
 
-  .main-sleep-fit.is-animating .main-sleep-fit__media {
-    will-change: transform;
-  }
-
   .main-sleep-fit.is-expanded .main-sleep-fit__viewport {
     height: auto;
   }
 
   .main-sleep-fit.is-expanded.is-animating .main-sleep-fit__viewport {
-    height: 100vh;
+    height: var(--sleep-fit-view-height);
   }
 
   .main-sleep-fit__container {
     justify-content: flex-end;
     gap: 0;
-    height: 100vh;
+    height: var(--sleep-fit-view-height);
   }
 
   .main-sleep-fit.is-expanded .main-sleep-fit__container {
     justify-content: flex-start;
     gap: 2.5rem;
     height: auto;
-    min-height: 100vh;
-    padding-block: 2.5rem;
+    min-height: var(--sleep-fit-view-height);
+    padding-top: calc(var(--sleep-fit-header-offset) + 2.5rem);
+    padding-bottom: 2.5rem;
     box-sizing: border-box;
   }
 
@@ -1891,5 +1901,20 @@ body.is-main-scroll-pinned .site-header:not(.is-menu-open) {
 
   .main-sleep-fit__overlay {
     display: none;
+  }
+}
+
+/* 풀스크린 이미지 구간 — 사이트 헤더 뒤 이미지가 비치지 않도록 헤더 투명 */
+@media (max-width: 63.9375rem) {
+  body.is-main-sleep-fit-full .site-header,
+  body.is-main-sleep-fit-full .site-header__bar {
+    background-color: transparent;
+    box-shadow: none;
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .main-sleep-fit {
+    --sleep-fit-header-offset: 3.75rem; /* site-header bar 60px */
   }
 }

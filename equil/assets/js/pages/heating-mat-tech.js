@@ -80,8 +80,9 @@
     const DESC_OVERLAP = 1.2;
     const charClass = 'heating-mat-tech-product-overview__char';
     const titleChars = splitTextChars(title, charClass);
-    const descChars =
-      desc && !isMobile() ? splitTextChars(desc, charClass) : [];
+    const descChars = mobileQuery.matches
+      ? []
+      : splitTextChars(desc, charClass);
 
     if (!titleChars.length && !descChars.length) return;
 
@@ -1132,6 +1133,7 @@
       initFadeUp(title, [title], 'heating-mat-tech-certification__char');
     }
 
+    const slider = section.querySelector('.heating-mat-tech-certification__slider');
     const track = section.querySelector('.heating-mat-tech-certification__items');
     const items = [
       ...section.querySelectorAll('.heating-mat-tech-certification__item'),
@@ -1139,44 +1141,56 @@
     const navItems = [
       ...section.querySelectorAll('.heating-mat-tech-certification__nav-item'),
     ];
-    if (!track || !items.length || !navItems.length) return;
+    if (!slider || !track || !items.length || !navItems.length) return;
 
     const mobileQuery = window.matchMedia('(max-width: 47.9375rem)');
     const SWIPE_THRESHOLD = 40;
-    const CARD_TEXT_FADE_UP_DURATION = 1.2;
+    const SLIDE_TRANSITION = 'transform 0.55s cubic-bezier(0.22, 1, 0.36, 1)';
     let currentIndex = 0;
     let touchStartX = 0;
-    let cardTextTween = null;
+    let touchStartY = 0;
+    let dragOffsetX = 0;
+    let isDragging = false;
+    let lockAxis = null;
 
-    const playCardTextFadeUp = (item) => {
-      if (!mobileQuery.matches) return;
+    const isMobile = () => mobileQuery.matches;
 
-      const cardText = item?.querySelector(
-        '.heating-mat-tech-certification__card-text'
-      );
-      if (!cardText) return;
+    const getSlideWidth = () => slider.clientWidth;
 
-      if (cardTextTween) {
-        cardTextTween.kill();
-        cardTextTween = null;
+    const syncSlideWidths = () => {
+      if (!isMobile()) {
+        items.forEach((item) => {
+          item.style.flex = '';
+          item.style.width = '';
+          item.style.minWidth = '';
+          item.style.maxWidth = '';
+        });
+        track.style.width = '';
+        return;
       }
 
-      gsap.set(cardText, {
-        opacity: 0,
-        y: 40,
-        willChange: 'transform, opacity',
+      const slideWidth = getSlideWidth();
+      items.forEach((item) => {
+        item.style.flex = `0 0 ${slideWidth}px`;
+        item.style.width = `${slideWidth}px`;
+        item.style.minWidth = `${slideWidth}px`;
+        item.style.maxWidth = `${slideWidth}px`;
       });
+      track.style.width = `${slideWidth * items.length}px`;
+    };
 
-      cardTextTween = gsap.to(cardText, {
-        opacity: 1,
-        y: 0,
-        duration: CARD_TEXT_FADE_UP_DURATION,
-        ease: 'power3.out',
-        onComplete: () => {
-          gsap.set(cardText, { clearProps: 'will-change' });
-          cardTextTween = null;
-        },
-      });
+    const setTrackOffset = (index, { animate = true, dragX = 0 } = {}) => {
+      if (!isMobile()) {
+        track.style.transition = '';
+        track.style.transform = '';
+        return;
+      }
+
+      const slideWidth = getSlideWidth();
+      const targetX = -index * slideWidth + dragX;
+
+      track.style.transition = animate ? SLIDE_TRANSITION : 'none';
+      track.style.transform = `translate3d(${targetX}px, 0, 0)`;
     };
 
     const updateNav = (index) => {
@@ -1195,19 +1209,13 @@
       });
     };
 
-    const resetTrack = () => {
-      track.style.transform = '';
-    };
-
-    const goTo = (index) => {
-      if (!mobileQuery.matches) return;
+    const goTo = (index, { animate = true } = {}) => {
+      if (!isMobile()) return;
 
       const nextIndex = Math.max(0, Math.min(items.length - 1, index));
-      if (nextIndex === currentIndex) return;
-
       currentIndex = nextIndex;
       updateNav(currentIndex);
-      playCardTextFadeUp(items[currentIndex]);
+      setTrackOffset(currentIndex, { animate });
     };
 
     navItems.forEach((item) => {
@@ -1221,38 +1229,106 @@
     track.addEventListener(
       'touchstart',
       (event) => {
-        if (!mobileQuery.matches) return;
-        touchStartX = event.touches[0]?.clientX ?? 0;
+        if (!isMobile() || !event.touches?.length) return;
+        touchStartX = event.touches[0].clientX;
+        touchStartY = event.touches[0].clientY;
+        dragOffsetX = 0;
+        isDragging = true;
+        lockAxis = null;
+        setTrackOffset(currentIndex, { animate: false, dragX: 0 });
       },
       { passive: true }
     );
 
     track.addEventListener(
+      'touchmove',
+      (event) => {
+        if (!isMobile() || !isDragging || !event.touches?.length) return;
+
+        const currentX = event.touches[0].clientX;
+        const currentY = event.touches[0].clientY;
+        const deltaX = currentX - touchStartX;
+        const deltaY = currentY - touchStartY;
+
+        if (!lockAxis) {
+          if (Math.abs(deltaX) < 6 && Math.abs(deltaY) < 6) return;
+          lockAxis = Math.abs(deltaX) > Math.abs(deltaY) ? 'x' : 'y';
+        }
+
+        if (lockAxis !== 'x') return;
+
+        event.preventDefault();
+
+        const atStart = currentIndex === 0 && deltaX > 0;
+        const atEnd = currentIndex === items.length - 1 && deltaX < 0;
+        dragOffsetX = atStart || atEnd ? deltaX * 0.35 : deltaX;
+
+        setTrackOffset(currentIndex, { animate: false, dragX: dragOffsetX });
+      },
+      { passive: false }
+    );
+
+    const endDrag = (clientX) => {
+      if (!isMobile() || !isDragging) return;
+      isDragging = false;
+
+      if (lockAxis !== 'x') {
+        setTrackOffset(currentIndex, { animate: true });
+        lockAxis = null;
+        return;
+      }
+
+      const deltaX = clientX - touchStartX;
+      lockAxis = null;
+
+      if (Math.abs(deltaX) < SWIPE_THRESHOLD) {
+        setTrackOffset(currentIndex, { animate: true });
+        return;
+      }
+
+      if (deltaX < 0) {
+        goTo(currentIndex + 1);
+      } else {
+        goTo(currentIndex - 1);
+      }
+    };
+
+    track.addEventListener(
       'touchend',
       (event) => {
-        if (!mobileQuery.matches) return;
-
-        const touchEndX = event.changedTouches[0]?.clientX ?? 0;
-        const deltaX = touchStartX - touchEndX;
-        if (Math.abs(deltaX) < SWIPE_THRESHOLD) return;
-
-        if (deltaX > 0) {
-          goTo(currentIndex + 1);
-        } else {
-          goTo(currentIndex - 1);
-        }
+        endDrag(event.changedTouches[0]?.clientX ?? touchStartX);
       },
       { passive: true }
     );
 
+    track.addEventListener(
+      'touchcancel',
+      () => {
+        isDragging = false;
+        lockAxis = null;
+        setTrackOffset(currentIndex, { animate: true });
+      },
+      { passive: true }
+    );
+
+    const refreshLayout = () => {
+      syncSlideWidths();
+      setTrackOffset(currentIndex, { animate: false });
+    };
+
     mobileQuery.addEventListener('change', () => {
       currentIndex = 0;
       updateNav(0);
-      resetTrack();
+      refreshLayout();
+    });
+
+    window.addEventListener('resize', () => {
+      if (!isMobile()) return;
+      refreshLayout();
     });
 
     updateNav(0);
-    resetTrack();
+    refreshLayout();
   };
 
   const initHeatingMatTechSafety = () => {

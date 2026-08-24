@@ -380,9 +380,9 @@
   }
 
   .pillow-tech-structure .scroll-feature__feature-desc {
-    max-width: 21.25rem; /* 340px */
+    max-width: 22.5rem; /* 360px */
     word-break: keep-all;
-    /* text-wrap: pretty; */
+    text-wrap: balance;
   }
 }
 

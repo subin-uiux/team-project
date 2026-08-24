@@ -1157,25 +1157,31 @@ html {
   }
 
   .heating-mat-tech-certification__slider {
+    position: relative;
     overflow: hidden;
     width: 100%;
   }
 
   .heating-mat-tech-certification__items {
-    display: block;
-    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: 0;
+    width: auto;
     margin: 0;
     padding: 0;
     list-style: none;
-    transform: none !important;
+    will-change: transform;
+    transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .heating-mat-tech-certification__item {
-    display: none;
     position: relative;
-    width: 100%;
+    display: block;
+    flex: 0 0 auto;
     box-sizing: border-box;
     padding-top: 2.125rem; /* 34px — verified 68px 상단 겹침 */
+    /* 너비는 JS에서 slider 너비로 고정 */
   }
 
   .heating-mat-tech-certification__item.is-active {
@@ -2108,7 +2114,7 @@ html {
   .heating-mat-tech-safety__flow {
     flex-direction: column;
     align-items: stretch;
-    gap: 1.25; /* 24px */
+    gap: 1.25rem; /* 24px */
   }
 
   .heating-mat-tech-safety__card {
