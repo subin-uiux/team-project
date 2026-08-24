@@ -1,8 +1,23 @@
 (() => {
-  const GSAP_SRC =
-    'https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js';
-  const SCROLL_TRIGGER_SRC =
-    'https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js';
+  const getVendorScriptUrl = (fileName) => {
+    const current = document.currentScript;
+    if (current?.src) {
+      return new URL(`vendor/${fileName}`, current.src).href;
+    }
+
+    const commonScript = [...document.querySelectorAll('script[src]')]
+      .map((script) => script.getAttribute('src'))
+      .find((src) => src && /common\.js(?:\?|$)/.test(src));
+
+    if (commonScript) {
+      return new URL(`vendor/${fileName}`, new URL(commonScript, window.location.href)).href;
+    }
+
+    return new URL(`../assets/js/vendor/${fileName}`, window.location.href).href;
+  };
+
+  const GSAP_SRC = getVendorScriptUrl('gsap.min.js');
+  const SCROLL_TRIGGER_SRC = getVendorScriptUrl('ScrollTrigger.min.js');
 
   const loadScript = (src) =>
     new Promise((resolve, reject) => {

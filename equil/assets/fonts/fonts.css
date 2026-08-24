@@ -1,7 +1,7 @@
-/* SUIT — https://noonnu.cc (projectnoonnu/noonfonts_suit) */
+/* SUIT — local TTF (equil/assets/fonts/suit) */
 @font-face {
   font-family: 'Suit';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Thin.woff2') format('woff2');
+  src: url('./suit/SUIT-Thin.ttf') format('truetype');
   font-weight: 100;
   font-style: normal;
   font-display: swap;
@@ -9,7 +9,7 @@
 
 @font-face {
   font-family: 'Suit';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-ExtraLight.woff2') format('woff2');
+  src: url('./suit/SUIT-ExtraLight.ttf') format('truetype');
   font-weight: 200;
   font-style: normal;
   font-display: swap;
@@ -17,7 +17,7 @@
 
 @font-face {
   font-family: 'Suit';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Light.woff2') format('woff2');
+  src: url('./suit/SUIT-Light.ttf') format('truetype');
   font-weight: 300;
   font-style: normal;
   font-display: swap;
@@ -25,7 +25,7 @@
 
 @font-face {
   font-family: 'Suit';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Regular.woff2') format('woff2');
+  src: url('./suit/SUIT-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -33,7 +33,7 @@
 
 @font-face {
   font-family: 'Suit';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Medium.woff2') format('woff2');
+  src: url('./suit/SUIT-Medium.ttf') format('truetype');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -41,7 +41,7 @@
 
 @font-face {
   font-family: 'Suit';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-SemiBold.woff2') format('woff2');
+  src: url('./suit/SUIT-SemiBold.ttf') format('truetype');
   font-weight: 600;
   font-style: normal;
   font-display: swap;
@@ -49,7 +49,7 @@
 
 @font-face {
   font-family: 'Suit';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Bold.woff2') format('woff2');
+  src: url('./suit/SUIT-Bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -57,7 +57,7 @@
 
 @font-face {
   font-family: 'Suit';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-ExtraBold.woff2') format('woff2');
+  src: url('./suit/SUIT-ExtraBold.ttf') format('truetype');
   font-weight: 800;
   font-style: normal;
   font-display: swap;
@@ -65,16 +65,16 @@
 
 @font-face {
   font-family: 'Suit';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Heavy.woff2') format('woff2');
+  src: url('./suit/SUIT-Heavy.ttf') format('truetype');
   font-weight: 900;
   font-style: normal;
   font-display: swap;
 }
 
-/* Paperlogy (눈누 표기: Paperozi) — https://noonnu.cc (projectnoonnu/2408-3) */
+/* Paperlogy (눈누 표기: Paperozi) — local TTF (equil/assets/fonts/paperlogy) */
 @font-face {
   font-family: 'Paperozi';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-1Thin.woff2') format('woff2');
+  src: url('./paperlogy/Paperlogy-1Thin.ttf') format('truetype');
   font-weight: 100;
   font-style: normal;
   font-display: swap;
@@ -82,7 +82,7 @@
 
 @font-face {
   font-family: 'Paperozi';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-2ExtraLight.woff2') format('woff2');
+  src: url('./paperlogy/Paperlogy-2ExtraLight.ttf') format('truetype');
   font-weight: 200;
   font-style: normal;
   font-display: swap;
@@ -90,7 +90,7 @@
 
 @font-face {
   font-family: 'Paperozi';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-3Light.woff2') format('woff2');
+  src: url('./paperlogy/Paperlogy-3Light.ttf') format('truetype');
   font-weight: 300;
   font-style: normal;
   font-display: swap;
@@ -98,7 +98,7 @@
 
 @font-face {
   font-family: 'Paperozi';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-4Regular.woff2') format('woff2');
+  src: url('./paperlogy/Paperlogy-4Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -106,7 +106,7 @@
 
 @font-face {
   font-family: 'Paperozi';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-5Medium.woff2') format('woff2');
+  src: url('./paperlogy/Paperlogy-5Medium.ttf') format('truetype');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -114,7 +114,7 @@
 
 @font-face {
   font-family: 'Paperozi';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-6SemiBold.woff2') format('woff2');
+  src: url('./paperlogy/Paperlogy-6SemiBold.ttf') format('truetype');
   font-weight: 600;
   font-style: normal;
   font-display: swap;
@@ -122,7 +122,7 @@
 
 @font-face {
   font-family: 'Paperozi';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-7Bold.woff2') format('woff2');
+  src: url('./paperlogy/Paperlogy-7Bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -130,7 +130,7 @@
 
 @font-face {
   font-family: 'Paperozi';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-8ExtraBold.woff2') format('woff2');
+  src: url('./paperlogy/Paperlogy-8ExtraBold.ttf') format('truetype');
   font-weight: 800;
   font-style: normal;
   font-display: swap;
@@ -138,7 +138,7 @@
 
 @font-face {
   font-family: 'Paperozi';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-9Black.woff2') format('woff2');
+  src: url('./paperlogy/Paperlogy-9Black.ttf') format('truetype');
   font-weight: 900;
   font-style: normal;
   font-display: swap;
