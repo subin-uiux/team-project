@@ -1,5 +1,5 @@
 (() => {
-  const IMAGE_BASE = '../assets/images/community/news/';
+  const IMAGE_BASE = 'assets/images/community/news/';
 
   const NEWS_DATA = {
     '01': {

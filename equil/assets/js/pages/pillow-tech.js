@@ -1,8 +1,8 @@
 (() => {
   const SLEEP_POSITION_IMAGES = [
-    '../assets/images/about/pillow-tech/pillow-tech-sleep-position_img01.webp',
-    '../assets/images/about/pillow-tech/pillow-tech-sleep-position_img02.webp',
-    '../assets/images/about/pillow-tech/pillow-tech-sleep-position_img03.webp',
+    'assets/images/about/pillow-tech/pillow-tech-sleep-position_img01.webp',
+    'assets/images/about/pillow-tech/pillow-tech-sleep-position_img02.webp',
+    'assets/images/about/pillow-tech/pillow-tech-sleep-position_img03.webp',
   ];
 
   const initPillowTechHero = () => {

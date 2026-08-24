@@ -13,7 +13,7 @@
       return new URL(`vendor/${fileName}`, new URL(commonScript, window.location.href)).href;
     }
 
-    return new URL(`../assets/js/vendor/${fileName}`, window.location.href).href;
+    return new URL(`assets/js/vendor/${fileName}`, window.location.href).href;
   };
 
   const GSAP_SRC = getVendorScriptUrl('gsap.min.js');

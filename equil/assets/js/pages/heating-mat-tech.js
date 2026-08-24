@@ -240,9 +240,9 @@
   };
 
   const PRODUCT_IMAGES = [
-    '../assets/images/about/heating-mat-tech/heating-mat-tech-product_img01.webp',
-    '../assets/images/about/heating-mat-tech/heating-mat-tech-product_img02.webp',
-    '../assets/images/about/heating-mat-tech/heating-mat-tech-product_img03.webp',
+    'assets/images/about/heating-mat-tech/heating-mat-tech-product_img01.webp',
+    'assets/images/about/heating-mat-tech/heating-mat-tech-product_img02.webp',
+    'assets/images/about/heating-mat-tech/heating-mat-tech-product_img03.webp',
   ];
 
   const initHeatingMatTechProduct = () => {

@@ -1,5 +1,5 @@
 (() => {
-  const IMAGE_BASE = '../assets/images/product/';
+  const IMAGE_BASE = 'assets/images/product/';
 
   const HERO_IMAGES = {
     mattress: `${IMAGE_BASE}product-hero_mattress-bg.webp`,

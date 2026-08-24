@@ -907,9 +907,9 @@
   };
 
   const TOP_LAYER_IMAGES = [
-    '../assets/images/about/mattress-tech/mattress-tech-top-layer_char01.webp',
-    '../assets/images/about/mattress-tech/mattress-tech-top-layer_char02.webp',
-    '../assets/images/about/mattress-tech/mattress-tech-top-layer_char03.webp',
+    'assets/images/about/mattress-tech/mattress-tech-top-layer_char01.webp',
+    'assets/images/about/mattress-tech/mattress-tech-top-layer_char02.webp',
+    'assets/images/about/mattress-tech/mattress-tech-top-layer_char03.webp',
   ];
 
   const initMattressTechTopLayer = () => {
@@ -1184,21 +1184,21 @@
       cards: [
         {
           image:
-            '../assets/images/about/mattress-tech/mattress-tech-support-layer_soft01.webp',
+            'assets/images/about/mattress-tech/mattress-tech-support-layer_soft01.webp',
           engTitle: 'Soft Memory Foam',
           title: '소프트 메모리폼',
           text: '몸의 굴곡을 부드럽게 감싸며 어깨와 골반처럼<br>압력이 집중되는 부위의 부담을 분산해 줍니다.',
         },
         {
           image:
-            '../assets/images/about/mattress-tech/mattress-tech-support-layer_soft02.webp',
+            'assets/images/about/mattress-tech/mattress-tech-support-layer_soft02.webp',
           engTitle: 'High-Resilience Support Foam',
           title: '고탄성 지지폼',
           text: '몸이 지나치게 가라앉지 않도록 안정적으로 받쳐주며,<br>부드러운 착와감과 균형 잡힌 지지력을 유지합니다.',
         },
         {
           image:
-            '../assets/images/about/mattress-tech/mattress-tech-support-layer_soft03.webp',
+            'assets/images/about/mattress-tech/mattress-tech-support-layer_soft03.webp',
           engTitle: 'Soft Zoned Pocket Spring',
           title: '소프트 존 포켓스프링',
           text: '독립 포켓스프링이 신체 움직임과 부위별 하중에 유연하게 반응해,<br>부드러운 반발력과 안정적인 지지를 제공합니다.',
@@ -1209,21 +1209,21 @@
       cards: [
         {
           image:
-            '../assets/images/about/mattress-tech/mattress-tech-support-layer_balance01.webp',
+            'assets/images/about/mattress-tech/mattress-tech-support-layer_balance01.webp',
           engTitle: 'Responsive Comfort Foam',
           title: '반응형 컴포트폼',
           text: '몸의 움직임과 하중 변화에 빠르게 반응해<br>신체 굴곡을 자연스럽게 따라가며 편안하게 밀착됩니다.',
         },
         {
           image:
-            '../assets/images/about/mattress-tech/mattress-tech-support-layer_balance02.webp',
+            'assets/images/about/mattress-tech/mattress-tech-support-layer_balance02.webp',
           engTitle: 'Balance HR Foam',
           title: '밸런스 고탄성폼',
           text: '적당한 탄성과 복원력으로 몸을 안정적으로 받쳐주며,<br>부드러운 착와감과 탄탄한 지지감의 균형을 잡아줍니다.',
         },
         {
           image:
-            '../assets/images/about/mattress-tech/mattress-tech-support-layer_balance03.webp',
+            'assets/images/about/mattress-tech/mattress-tech-support-layer_balance03.webp',
           engTitle: 'Medium Zoned Pocket Spring',
           title: '미디엄 존 포켓스프링',
           text: '부위별 하중에 세밀하게 반응해 어깨와 골반을 안정적으로 받치며,<br>수면 중에도 균형 잡힌 자세를 유지하도록 돕습니다.',
@@ -1234,21 +1234,21 @@
       cards: [
         {
           image:
-            '../assets/images/about/mattress-tech/mattress-tech-support-layer_firm01.webp',
+            'assets/images/about/mattress-tech/mattress-tech-support-layer_firm01.webp',
           engTitle: 'High-Resilience Comfort Foam',
           title: '고탄성 컴포트폼',
           text: '몸의 움직임과 압력에 탄력 있게 반응해 단단하면서도<br>지나치게 딱딱하지 않은 착와감을 제공합니다.',
         },
         {
           image:
-            '../assets/images/about/mattress-tech/mattress-tech-support-layer_firm02.webp',
+            'assets/images/about/mattress-tech/mattress-tech-support-layer_firm02.webp',
           engTitle: 'High-Density Support Foam',
           title: '고밀도 서포트폼',
           text: '높은 밀도의 폼이 신체 하중을 견고하게 받쳐 깊은 꺼짐을 줄이고,<br>오랜 시간 안정적인 지지감과 구조적 균형을 유지합니다.',
         },
         {
           image:
-            '../assets/images/about/mattress-tech/mattress-tech-support-layer_firm03.webp',
+            'assets/images/about/mattress-tech/mattress-tech-support-layer_firm03.webp',
           engTitle: 'Firm Zoned Pocket Spring',
           title: '펌 존 포켓스프링',
           text: '단단한 독립 포켓스프링이 허리와 골반을 안정적으로 지지하며,<br>탄탄한 반발력으로 균형 잡힌 수면 자세를 유지합니다.',

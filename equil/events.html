@@ -1,19 +1,20 @@
 ﻿<!DOCTYPE html>
 <html lang="ko">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>News | EQUIL</title>
-  <link rel="icon" href="../assets/images/common/logo/favicon.svg?v=2" type="image/svg+xml" sizes="any">
+  <title>Events | EQUIL</title>
+  <link rel="icon" href="assets/images/common/logo/favicon.svg?v=2" type="image/svg+xml" sizes="any">
 
-  <link rel="stylesheet" href="../assets/css/reset.css">
-  <link rel="stylesheet" href="../assets/css/common.css">
-  <link rel="stylesheet" href="../assets/css/header.css">
-  <link rel="stylesheet" href="../assets/css/footer.css">
-  <link rel="stylesheet" href="../assets/css/components/popups.css">
-  <link rel="stylesheet" href="../assets/css/pages/community/news.css">
+  <link rel="stylesheet" href="assets/css/reset.css">
+  <link rel="stylesheet" href="assets/css/common.css">
+  <link rel="stylesheet" href="assets/css/header.css">
+  <link rel="stylesheet" href="assets/css/footer.css">
+  <link rel="stylesheet" href="assets/css/components/buttons.css">
+  <link rel="stylesheet" href="assets/css/components/cards.css">
+  <link rel="stylesheet" href="assets/css/components/popups.css">
+  <link rel="stylesheet" href="assets/css/pages/community/events.css">
 </head>
 
 <body>
@@ -39,7 +40,7 @@
         >
           <img
             class="site-header__menu-icon"
-            src="../assets/images/common/icons/hamburger-bar.png"
+            src="assets/images/common/icons/hamburger-bar.png"
             alt=""
           />
           <span class="site-header__menu-close" aria-hidden="true"></span>
@@ -127,103 +128,120 @@
   </header>
 
   <main>
-    <section class="news-hero">
-      <div class="container news-hero__container">
-        <h1 class="news-hero__title text-title-01">News Room</h1>
+    <section class="event-hero">
+      <div class="container event-hero__container">
+        <h1 class="event-hero__title text-title-01">Event</h1>
+        <div class="event-hero__media">
+          <img
+            class="event-hero__image"
+            src="assets/images/community/events/event-hero-img.webp"
+            alt=""
+          />
+        </div>
       </div>
     </section>
 
-    <section class="news-list">
-      <div class="container news-list__container">
-        <ul class="news-list__list">
-          <li class="news-list__item">
+    <section class="event-list">
+      <div class="container event-list__container">
+        <div class="btn-tab-group event-list__tabs" role="tablist" aria-label="이벤트 필터">
+          <button
+            type="button"
+            class="btn btn-tab is-active"
+            role="tab"
+            aria-selected="true"
+            data-event-filter="all"
+          >
+            전체
+          </button>
+          <button
+            type="button"
+            class="btn btn-tab"
+            role="tab"
+            aria-selected="false"
+            data-event-filter="ongoing"
+          >
+            진행 중
+          </button>
+          <button
+            type="button"
+            class="btn btn-tab"
+            role="tab"
+            aria-selected="false"
+            data-event-filter="ended"
+          >
+            종료
+          </button>
+        </div>
+
+        <ul class="event-list__list">
+          <li class="event-list__item" data-event-status="ongoing">
             <a
-              class="news-list__link"
+              class="card card-event"
               href="#"
-              data-popup-open="popup-news-layer"
-              data-news-id="01"
+              data-popup-open="popup-event-layer"
+              data-event-id="01"
             >
-              <p class="news-list__number">01</p>
-              <div class="news-list__media">
-                <div class="news-list__image-frame">
-                  <img
-                    class="news-list__image"
-                    src="../assets/images/community/news/news1.webp"
-                    alt=""
-                  />
-                </div>
+              <div class="card-event__media">
+                <img
+                  class="card-event__image"
+                  src="assets/images/community/events/event1.webp"
+                  alt=""
+                />
               </div>
-              <div class="news-list__content">
-                <p class="news-list__title">EQUIL, 브랜드 공식 런칭… 새로운 수면 경험을 제안</p>
-                <p class="news-list__date">2026.08.01</p>
-              </div>
+              <h2 class="card-event__title">Sleep Fit Test 체험 이벤트</h2>
             </a>
           </li>
-          <li class="news-list__item">
+          <li class="event-list__item" data-event-status="ongoing">
             <a
-              class="news-list__link"
+              class="card card-event"
               href="#"
-              data-popup-open="popup-news-layer"
-              data-news-id="02"
+              data-popup-open="popup-event-layer"
+              data-event-id="02"
             >
-              <p class="news-list__number">02</p>
-              <div class="news-list__media">
-                <div class="news-list__image-frame">
-                  <img
-                    class="news-list__image"
-                    src="../assets/images/community/news/news2.webp"
-                    alt=""
-                  />
-                </div>
+              <div class="card-event__media">
+                <img
+                  class="card-event__image"
+                  src="assets/images/community/events/event2.webp"
+                  alt=""
+                />
               </div>
-              <div class="news-list__content">
-                <p class="news-list__title">EQUIL, Sleep Fit Test 서비스 정식 오픈</p>
-                <p class="news-list__date">2026.08.04</p>
-              </div>
+              <h2 class="card-event__title">OPENING EVENT</h2>
             </a>
           </li>
-          <li class="news-list__item">
-            <a
-              class="news-list__link"
-              href="#"
-              data-popup-open="popup-news-layer"
-              data-news-id="03"
-            >
-              <p class="news-list__number">03</p>
-              <div class="news-list__media">
-                <div class="news-list__image-frame">
-                  <img
-                    class="news-list__image"
-                    src="../assets/images/community/news/news3.webp"
-                    alt=""
-                  />
-                </div>
+          <li class="event-list__item" data-event-status="ended">
+            <article class="card card-event card-event--ended" aria-disabled="true">
+              <div class="card-event__media">
+                <img
+                  class="card-event__image"
+                  src="assets/images/community/events/event3.webp"
+                  alt=""
+                />
+                <p class="card-event__status">이미 종료된 이벤트 입니다.</p>
               </div>
-              <div class="news-list__content">
-                <p class="news-list__title">성수 팝업스토어 오픈… 프리미엄 수면 체험 공간 운영</p>
-                <p class="news-list__date">2026.09.01</p>
-              </div>
-            </a>
+              <h2 class="card-event__title">2026년 웨딩멤버스 이벤트</h2>
+            </article>
           </li>
         </ul>
       </div>
     </section>
   </main>
 
-  <div class="popup-layer" id="popup-news-layer" aria-hidden="true">
+  <div class="popup-layer" id="popup-event-layer" aria-hidden="true">
     <button type="button" class="popup-layer__dim" data-popup-close aria-label="닫기"></button>
-    <div class="popup-layer__dialog" role="dialog" aria-modal="true" aria-labelledby="popup-news-title">
-      <article class="popup-news">
-        <button type="button" class="popup-news__close" data-popup-close aria-label="닫기">×</button>
-        <div class="popup-news__inner">
-          <header class="popup-news__header">
-            <h2 id="popup-news-title" class="popup-news__title"></h2>
-            <p class="popup-news__date"></p>
+    <div class="popup-layer__dialog" role="dialog" aria-modal="true" aria-labelledby="popup-event-title">
+      <article class="popup-event">
+        <button type="button" class="popup-event__close" data-popup-close aria-label="닫기">×</button>
+        <div class="popup-event__inner">
+          <header class="popup-event__header">
+            <h2 id="popup-event-title" class="popup-event__title"></h2>
+            <p class="popup-event__date"></p>
           </header>
-          <div class="popup-news__media">
-            <img class="popup-news__image" src="" alt="" />
+          <div class="popup-event__content">
+            <div class="popup-event__media">
+              <img class="popup-event__image" src="" alt="" />
+            </div>
+            <div class="popup-event__body"></div>
           </div>
-          <div class="popup-news__body"></div>
         </div>
       </article>
     </div>
@@ -245,21 +263,21 @@
       </div>
       <div class="site-footer__sns">
         <a class="site-footer__sns-link" href="#" aria-label="Instagram">
-          <img src="../assets/images/common/icons/insta.png" alt="" />
+          <img src="assets/images/common/icons/insta.png" alt="" />
         </a>
         <a class="site-footer__sns-link" href="#" aria-label="Facebook">
-          <img src="../assets/images/common/icons/facebook.png" alt="" />
+          <img src="assets/images/common/icons/facebook.png" alt="" />
         </a>
         <a class="site-footer__sns-link" href="#" aria-label="Blog">
-          <img src="../assets/images/common/icons/blog.png" alt="" />
+          <img src="assets/images/common/icons/blog.png" alt="" />
         </a>
       </div>
     </div>
   </footer>
 
-  <script src="../assets/js/common.js"></script>
-  <script src="../assets/js/popup.js"></script>
-  <script src="../assets/js/pages/community/news.js"></script>
+  <script src="assets/js/common.js"></script>
+  <script src="assets/js/popup.js"></script>
+  <script src="assets/js/pages/community/events.js"></script>
 </body>
 
 </html>
