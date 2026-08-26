@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+Disallow: /guide.html
+
+Sitemap: https://flourishing-heliotrope-b65ca8.netlify.app/sitemap.xml

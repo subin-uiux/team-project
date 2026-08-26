@@ -1,16 +1,50 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EQUIL | Component Guide</title>
-    <!-- Favicon -->
+    
+  <!-- Canonical -->
+  <link rel="canonical" href="https://flourishing-heliotrope-b65ca8.netlify.app/guide.html">
+  <!-- Resource hints -->
+  <link rel="dns-prefetch" href="https://unpkg.com">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://unpkg.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preload" href="assets/fonts/suit/SUIT-Regular.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="preload" href="assets/fonts/suit/SUIT-SemiBold.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="preload" href="assets/fonts/paperlogy/Paperlogy-4Regular.ttf" as="font" type="font/ttf" crossorigin>
+  <title>컴포넌트 가이드 | EQUIL</title>
+    
+  <meta name="description" content="EQUIL 웹사이트 UI 컴포넌트와 공통 패턴을 확인하는 내부 가이드 페이지입니다.">
+  <meta name="robots" content="noindex, nofollow">
+  <!-- Favicon -->
   <link rel="icon" type="image/x-icon" href="assets/images/common/icons/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/images/common/icons/favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/images/common/icons/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="192x192" href="assets/images/common/icons/android-chrome-192x192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="assets/images/common/icons/android-chrome-512x512.png">
-    <link rel="stylesheet" href="assets/css/reset.css" />
+    
+  <!-- Open Graph -->
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="컴포넌트 가이드 | EQUIL">
+  <meta property="og:description" content="EQUIL 웹사이트 UI 컴포넌트와 공통 패턴을 확인하는 내부 가이드 페이지입니다.">
+  <meta property="og:url" content="https://flourishing-heliotrope-b65ca8.netlify.app/guide.html">
+  <meta property="og:site_name" content="EQUIL">
+  <meta property="og:image" content="https://flourishing-heliotrope-b65ca8.netlify.app/assets/images/common/og/og-image.webp">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="EQUIL 맞춤형 수면 브랜드 대표 이미지">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="컴포넌트 가이드 | EQUIL">
+  <meta name="twitter:description" content="EQUIL 웹사이트 UI 컴포넌트와 공통 패턴을 확인하는 내부 가이드 페이지입니다.">
+  <meta name="twitter:image" content="https://flourishing-heliotrope-b65ca8.netlify.app/assets/images/common/og/og-image.webp">
+  <meta name="twitter:domain" content="flourishing-heliotrope-b65ca8.netlify.app">
+
+  <link rel="stylesheet" href="assets/css/reset.css" />
     <link rel="stylesheet" href="assets/css/common.css" />
     <link rel="stylesheet" href="assets/css/components/buttons.css" />
     <link rel="stylesheet" href="assets/css/components/cards.css" />
@@ -42,7 +76,7 @@
             <img
               class="site-header__menu-icon"
               src="assets/images/common/icons/hamburger-bar.png"
-              alt=""
+              alt="메뉴"
             />
             <span class="site-header__menu-close" aria-hidden="true"></span>
           </button>
@@ -963,13 +997,13 @@
         </div>
         <div class="site-footer__sns">
           <a class="site-footer__sns-link" href="#" aria-label="Instagram">
-            <img src="assets/images/common/icons/insta.png" alt="" />
+            <img loading="lazy" src="assets/images/common/icons/insta.png" alt="인스타그램" />
           </a>
           <a class="site-footer__sns-link" href="#" aria-label="Facebook">
-            <img src="assets/images/common/icons/facebook.png" alt="" />
+            <img loading="lazy" src="assets/images/common/icons/facebook.png" alt="페이스북" />
           </a>
           <a class="site-footer__sns-link" href="#" aria-label="Blog">
-            <img src="assets/images/common/icons/blog.png" alt="" />
+            <img loading="lazy" src="assets/images/common/icons/blog.png" alt="블로그" />
           </a>
         </div>
       </div>
