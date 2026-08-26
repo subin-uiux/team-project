@@ -175,6 +175,7 @@
         weight: getOption('weight', answers.weight)?.label || '',
         posture: getOption('posture', answers.posture)?.label || '',
         discomfort: getOption('discomfort', answers.discomfort)?.label || '',
+        preference: getOption('preference', answers.preference)?.text || '',
       },
     };
   };
@@ -452,6 +453,24 @@
       }
     };
 
+    const getSelectedChoiceLabels = () =>
+      QUESTION_KEYS.map((questionKey) => {
+        const label = section.querySelector(
+          `.sleep-fit-test__choice[data-question="${questionKey}"].is-selected .sleep-fit-test__choice-label`,
+        );
+        return label?.textContent.trim() || '';
+      }).filter(Boolean);
+
+    const updateResultTags = (labels) => {
+      if (!resultSection || !labels.length) return;
+
+      resultSection.querySelectorAll('.sleep-fit-result__tags').forEach((tagsEl) => {
+        tagsEl.innerHTML = labels
+          .map((label) => `<span class="btn btn-tab is-active">${label}</span>`)
+          .join('');
+      });
+    };
+
     const showResult = (result) => {
       root.sleepFitResult = result;
       if (loading) loading.hidden = true;
@@ -465,6 +484,8 @@
       resultSection.querySelectorAll('.sleep-fit-result__panel').forEach((panel) => {
         panel.hidden = panel.dataset.result !== resultKey;
       });
+
+      updateResultTags(getSelectedChoiceLabels());
 
       if (structureImage) {
         const nextSrc = structureImage.dataset[`image${resultKey.charAt(0).toUpperCase()}${resultKey.slice(1)}`];

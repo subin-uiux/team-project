@@ -416,13 +416,15 @@
       });
     });
 
-    if (!media) return;
-
-    media.addEventListener('pointerdown', (event) => {
+    section.addEventListener('pointerdown', (event) => {
+      if (event.target.closest('.pillow-tech-zones__dots')) {
+        pointerStartX = null;
+        return;
+      }
       pointerStartX = event.clientX;
     });
 
-    media.addEventListener('pointerup', (event) => {
+    section.addEventListener('pointerup', (event) => {
       if (pointerStartX === null || !hasRevealed) {
         pointerStartX = null;
         return;
@@ -433,14 +435,12 @@
 
       if (Math.abs(deltaX) < SWIPE_THRESHOLD) return;
 
-      if (deltaX < 0 && currentIndex < LAST_INDEX) {
-        activateZone(currentIndex + 1, true);
+      if (deltaX < 0) {
+        activateZone(currentIndex >= LAST_INDEX ? 0 : currentIndex + 1, true);
         return;
       }
 
-      if (deltaX > 0 && currentIndex > 0) {
-        activateZone(currentIndex - 1, true);
-      }
+      activateZone(currentIndex <= 0 ? LAST_INDEX : currentIndex - 1, true);
     });
   };
 
